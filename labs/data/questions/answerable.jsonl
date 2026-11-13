@@ -1,0 +1,30 @@
+{"id": "QA-01", "lang": "en", "question": "How much is a single fare across two zones?", "source": "P01.1", "page": "P01_en", "must_contain": "6"}
+{"id": "QA-02", "lang": "en", "question": "How long can I transfer between metro and bus on one fare?", "source": "P01.1", "page": "P01_en", "must_contain": "90"}
+{"id": "QA-03", "lang": "en", "question": "Can I pay cash on the bus?", "source": "P01.3", "page": "P01_en", "must_contain": "not on buses"}
+{"id": "QA-04", "lang": "en", "question": "What is the daily fare cap?", "source": "P02.1", "page": "P02_en", "must_contain": "16"}
+{"id": "QA-05", "lang": "en", "question": "My metro was 20 minutes late. Do I get my fare back?", "source": "P03.1", "page": "P03_en", "must_contain": "15 minutes"}
+{"id": "QA-06", "lang": "en", "question": "How many days do I have to claim a delay refund?", "source": "P03.2", "page": "P03_en", "must_contain": "14"}
+{"id": "QA-07", "lang": "en", "question": "Will Darb pay for my taxi when a trip is cancelled?", "source": "P04.2", "page": "P04_en", "must_contain": "does not refund"}
+{"id": "QA-08", "lang": "en", "question": "Do seniors pay on the metro?", "source": "P05.2", "page": "P05_en", "must_contain": "60"}
+{"id": "QA-09", "lang": "en", "question": "How long is lost property kept?", "source": "P07.2", "page": "P07_en", "must_contain": "30 days"}
+{"id": "QA-10", "lang": "en", "question": "What does it cost to collect a lost item after ten days?", "source": "P07.3", "page": "P07_en", "must_contain": "10"}
+{"id": "QA-11", "lang": "en", "question": "Can I take a full-size bicycle on the metro at peak time?", "source": "P09.1", "page": "P09_en", "must_contain": "outside peak"}
+{"id": "QA-12", "lang": "en", "question": "What is the penalty fare if I forget to tap in?", "source": "P12.2", "page": "P12_en", "must_contain": "200"}
+{"id": "QA-13", "lang": "en", "question": "How much does a Darb card cost?", "source": "P13.1", "page": "P13_en", "must_contain": "10"}
+{"id": "QA-14", "lang": "en", "question": "How long does Darb take to answer a complaint?", "source": "P15.2", "page": "P15_en", "must_contain": "10 working days"}
+{"id": "QA-15", "lang": "en", "question": "How long are my messages to the assistant kept?", "source": "P24.2", "page": "P24_en", "must_contain": "90 days"}
+{"id": "QA-16", "lang": "en", "question": "Can Wasil approve my refund?", "source": "P25.2", "page": "P25_en", "must_contain": "does not approve"}
+{"id": "QA-17", "lang": "en", "question": "How often does the Red Line run off-peak?", "source": "P32.2", "page": "P32_en", "must_contain": "8"}
+{"id": "QA-18", "lang": "en", "question": "Does bus route 33 run on Friday?", "source": "P40.1", "page": "P40_en", "must_contain": "does not run on Friday"}
+{"id": "QA-19", "lang": "en", "question": "How far ahead must I book station assistance?", "source": "P06.3", "page": "P06_en", "must_contain": "2 hours"}
+{"id": "QA-20", "lang": "en", "question": "Are pets allowed on the bus?", "source": "P10.2", "page": "P10_en", "must_contain": "carrier"}
+{"id": "QA-21", "lang": "ar", "question": "كم أجرة الرحلة داخل منطقة واحدة؟", "source": "P01.1", "page": "P01_ar", "must_contain": "4"}
+{"id": "QA-22", "lang": "ar", "question": "ما الحد الأسبوعي للأجرة؟", "source": "P02.2", "page": "P02_ar", "must_contain": "70"}
+{"id": "QA-23", "lang": "ar", "question": "تأخرت الحافلة 30 دقيقة، هل أسترد الأجرة؟", "source": "P03.1", "page": "P03_ar", "must_contain": "25"}
+{"id": "QA-24", "lang": "ar", "question": "هل يسافر الأطفال مجانًا؟", "source": "P05.3", "page": "P05_ar", "must_contain": "السادسة"}
+{"id": "QA-25", "lang": "ar", "question": "هل في كل حافلة مساحة للكرسي المتحرك؟", "source": "P06.2", "page": "P06_ar", "must_contain": "مساحتان"}
+{"id": "QA-26", "lang": "ar", "question": "كم غرامة الأكل داخل القطار؟", "source": "P11.2", "page": "P11_ar", "must_contain": "100"}
+{"id": "QA-27", "lang": "ar", "question": "خلال كم يومًا أعترض على المخالفة؟", "source": "P12.3", "page": "P12_ar", "must_contain": "21"}
+{"id": "QA-28", "lang": "ar", "question": "كم ساعة يعمل المترو يوم الأحد؟", "source": "P14.1", "page": "P14_ar", "must_contain": "19"}
+{"id": "QA-29", "lang": "ar", "question": "أين مواقف اركن واركب؟", "source": "P22.1", "page": "P22_ar", "must_contain": "النخيل"}
+{"id": "QA-30", "lang": "ar", "question": "هل الإعلانات باللغتين؟", "source": "P29.2", "page": "P29_ar", "must_contain": "الإنجليزية"}

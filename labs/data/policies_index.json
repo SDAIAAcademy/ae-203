@@ -1,0 +1,422 @@
+[
+ {
+  "id": "P01",
+  "title_en": "Fares and zones",
+  "title_ar": "الأجور والمناطق",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P02",
+  "title_en": "Daily and weekly fare caps",
+  "title_ar": "الحد الأعلى للأجرة اليومية والأسبوعية",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P03",
+  "title_en": "Refunds for delays",
+  "title_ar": "الاسترداد بسبب التأخير",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P04",
+  "title_en": "Refunds for cancelled trips",
+  "title_ar": "الاسترداد عن الرحلات الملغاة",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P05",
+  "title_en": "Concession fares",
+  "title_ar": "الأجور المخفضة",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P06",
+  "title_en": "Riders with disabilities",
+  "title_ar": "الركاب ذوو الإعاقة",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P07",
+  "title_en": "Lost property",
+  "title_ar": "المفقودات",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P08",
+  "title_en": "Luggage and large items",
+  "title_ar": "الأمتعة والأغراض الكبيرة",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P09",
+  "title_en": "Bicycles and scooters",
+  "title_ar": "الدراجات والسكوترات",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P10",
+  "title_en": "Animals",
+  "title_ar": "الحيوانات",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P11",
+  "title_en": "Food and drink",
+  "title_ar": "الطعام والشراب",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P12",
+  "title_en": "Fare inspection and penalties",
+  "title_ar": "التفتيش على الأجرة والمخالفات",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P13",
+  "title_en": "The Darb card",
+  "title_ar": "بطاقة درب",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P14",
+  "title_en": "Service hours",
+  "title_ar": "ساعات الخدمة",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P15",
+  "title_en": "Complaints",
+  "title_ar": "الشكاوى",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P16",
+  "title_en": "Staff conduct",
+  "title_ar": "سلوك الموظفين",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P17",
+  "title_en": "Rider conduct",
+  "title_ar": "سلوك الركاب",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P18",
+  "title_en": "Cleanliness",
+  "title_ar": "النظافة",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P19",
+  "title_en": "Overcrowding",
+  "title_ar": "الازدحام",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P20",
+  "title_en": "Planned maintenance",
+  "title_ar": "الصيانة المجدولة",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P21",
+  "title_en": "Weather disruption",
+  "title_ar": "التعطل بسبب الطقس",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P22",
+  "title_en": "Park and ride",
+  "title_ar": "مواقف اركن واركب",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P23",
+  "title_en": "Events and match days",
+  "title_ar": "الفعاليات وأيام المباريات",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P24",
+  "title_en": "Privacy notice",
+  "title_ar": "إشعار الخصوصية",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P25",
+  "title_en": "The rider assistant",
+  "title_ar": "المساعد الذكي للركاب",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P26",
+  "title_en": "Group travel",
+  "title_ar": "سفر المجموعات",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P27",
+  "title_en": "The Darb app",
+  "title_ar": "تطبيق درب",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P28",
+  "title_en": "Safety and security",
+  "title_ar": "السلامة والأمن",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P29",
+  "title_en": "Accessibility of information",
+  "title_ar": "إتاحة المعلومات",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P30",
+  "title_en": "Partner drop points for lost property",
+  "title_ar": "نقاط الشركاء لتسليم المفقودات",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P31",
+  "title_en": "Refunds for delays (2025 edition, superseded by P03)",
+  "title_ar": "الاسترداد بسبب التأخير (إصدار 2025، أُلغي وحل محله P03)",
+  "sections": 2,
+  "status": "superseded"
+ },
+ {
+  "id": "P32",
+  "title_en": "Metro Red Line (M1) service pattern",
+  "title_ar": "نمط خدمة مترو الخط الأحمر (M1)",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P33",
+  "title_en": "Metro Green Line (M2) service pattern",
+  "title_ar": "نمط خدمة مترو الخط الأخضر (M2)",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P34",
+  "title_en": "Metro Blue Line (M3) service pattern",
+  "title_ar": "نمط خدمة مترو الخط الأزرق (M3)",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P35",
+  "title_en": "Metro Orange Line (M4) service pattern",
+  "title_ar": "نمط خدمة مترو الخط البرتقالي (M4)",
+  "sections": 3,
+  "status": "in force"
+ },
+ {
+  "id": "P36",
+  "title_en": "Bus route 10 service pattern",
+  "title_ar": "نمط خدمة مسار الحافلة 10",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P37",
+  "title_en": "Bus route 12 service pattern",
+  "title_ar": "نمط خدمة مسار الحافلة 12",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P38",
+  "title_en": "Bus route 21 service pattern",
+  "title_ar": "نمط خدمة مسار الحافلة 21",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P39",
+  "title_en": "Bus route 27 service pattern",
+  "title_ar": "نمط خدمة مسار الحافلة 27",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P40",
+  "title_en": "Bus route 33 service pattern",
+  "title_ar": "نمط خدمة مسار الحافلة 33",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P41",
+  "title_en": "Bus route 40 service pattern",
+  "title_ar": "نمط خدمة مسار الحافلة 40",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P42",
+  "title_en": "Bus route 51 service pattern",
+  "title_ar": "نمط خدمة مسار الحافلة 51",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P43",
+  "title_en": "Bus route 60 service pattern",
+  "title_ar": "نمط خدمة مسار الحافلة 60",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P44",
+  "title_en": "Central station",
+  "title_ar": "محطة المحطة المركزية",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P45",
+  "title_en": "Old Souq station",
+  "title_ar": "محطة السوق القديم",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P46",
+  "title_en": "University station",
+  "title_ar": "محطة الجامعة",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P47",
+  "title_en": "Airport station",
+  "title_ar": "محطة المطار",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P48",
+  "title_en": "Al-Nakheel station",
+  "title_ar": "محطة النخيل",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P49",
+  "title_en": "Stadium station",
+  "title_ar": "محطة الملعب",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P50",
+  "title_en": "Al-Yasmin station",
+  "title_ar": "محطة الياسمين",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P51",
+  "title_en": "Hospital station",
+  "title_ar": "محطة المستشفى",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P52",
+  "title_en": "Corniche station",
+  "title_ar": "محطة الكورنيش",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P53",
+  "title_en": "Rail Station station",
+  "title_ar": "محطة محطة القطار",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P54",
+  "title_en": "Industrial station",
+  "title_ar": "محطة المدينة الصناعية",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P55",
+  "title_en": "Harbour station",
+  "title_ar": "محطة الميناء",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P56",
+  "title_en": "Museum station",
+  "title_ar": "محطة المتحف",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P57",
+  "title_en": "Al-Rawdah station",
+  "title_ar": "محطة الروضة",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P58",
+  "title_en": "Wadi Park station",
+  "title_ar": "محطة منتزه الوادي",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P59",
+  "title_en": "King Road station",
+  "title_ar": "محطة طريق الملك",
+  "sections": 2,
+  "status": "in force"
+ },
+ {
+  "id": "P60",
+  "title_en": "Exhibition station",
+  "title_ar": "محطة المعارض",
+  "sections": 2,
+  "status": "in force"
+ }
+]

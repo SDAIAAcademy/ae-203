@@ -1,0 +1,941 @@
+{
+ "service_window": [
+  "2026-11-01",
+  "2026-11-15"
+ ],
+ "routes": [
+  {
+   "id": "M1",
+   "kind": "metro",
+   "name_en": "Red Line",
+   "name_ar": "الخط الأحمر"
+  },
+  {
+   "id": "M2",
+   "kind": "metro",
+   "name_en": "Green Line",
+   "name_ar": "الخط الأخضر"
+  },
+  {
+   "id": "M3",
+   "kind": "metro",
+   "name_en": "Blue Line",
+   "name_ar": "الخط الأزرق"
+  },
+  {
+   "id": "M4",
+   "kind": "metro",
+   "name_en": "Orange Line",
+   "name_ar": "الخط البرتقالي"
+  },
+  {
+   "id": "B10",
+   "kind": "bus",
+   "name_en": "Bus route 10",
+   "name_ar": "مسار الحافلة 10"
+  },
+  {
+   "id": "B12",
+   "kind": "bus",
+   "name_en": "Bus route 12",
+   "name_ar": "مسار الحافلة 12"
+  },
+  {
+   "id": "B21",
+   "kind": "bus",
+   "name_en": "Bus route 21",
+   "name_ar": "مسار الحافلة 21"
+  },
+  {
+   "id": "B27",
+   "kind": "bus",
+   "name_en": "Bus route 27",
+   "name_ar": "مسار الحافلة 27"
+  },
+  {
+   "id": "B33",
+   "kind": "bus",
+   "name_en": "Bus route 33",
+   "name_ar": "مسار الحافلة 33"
+  },
+  {
+   "id": "B40",
+   "kind": "bus",
+   "name_en": "Bus route 40",
+   "name_ar": "مسار الحافلة 40"
+  },
+  {
+   "id": "B51",
+   "kind": "bus",
+   "name_en": "Bus route 51",
+   "name_ar": "مسار الحافلة 51"
+  },
+  {
+   "id": "B60",
+   "kind": "bus",
+   "name_en": "Bus route 60",
+   "name_ar": "مسار الحافلة 60"
+  }
+ ],
+ "slow_routes": [
+  "B33"
+ ],
+ "status": {
+  "M1|2026-11-01": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M2|2026-11-01": {
+   "delay_minutes": 40,
+   "cancelled_trips": 0,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "M3|2026-11-01": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-01": {
+   "delay_minutes": 20,
+   "cancelled_trips": 2,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B10|2026-11-01": {
+   "delay_minutes": 22,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B12|2026-11-01": {
+   "delay_minutes": 12,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B21|2026-11-01": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B27|2026-11-01": {
+   "delay_minutes": 22,
+   "cancelled_trips": 0,
+   "reason_en": "weather",
+   "reason_ar": "الطقس"
+  },
+  "B33|2026-11-01": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B40|2026-11-01": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B51|2026-11-01": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B60|2026-11-01": {
+   "delay_minutes": 18,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "M1|2026-11-02": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M2|2026-11-02": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-02": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-02": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B10|2026-11-02": {
+   "delay_minutes": 20,
+   "cancelled_trips": 2,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "B12|2026-11-02": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B21|2026-11-02": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B27|2026-11-02": {
+   "delay_minutes": 30,
+   "cancelled_trips": 0,
+   "reason_en": "traffic",
+   "reason_ar": "ازدحام مروري"
+  },
+  "B33|2026-11-02": {
+   "delay_minutes": 22,
+   "cancelled_trips": 0,
+   "reason_en": "traffic",
+   "reason_ar": "ازدحام مروري"
+  },
+  "B40|2026-11-02": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B51|2026-11-02": {
+   "delay_minutes": 12,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B60|2026-11-02": {
+   "delay_minutes": 12,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "M1|2026-11-03": {
+   "delay_minutes": 8,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "M2|2026-11-03": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-03": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-03": {
+   "delay_minutes": 30,
+   "cancelled_trips": 0,
+   "reason_en": "weather",
+   "reason_ar": "الطقس"
+  },
+  "B10|2026-11-03": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B12|2026-11-03": {
+   "delay_minutes": 20,
+   "cancelled_trips": 1,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "B21|2026-11-03": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B27|2026-11-03": {
+   "delay_minutes": 10,
+   "cancelled_trips": 3,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "B33|2026-11-03": {
+   "delay_minutes": 20,
+   "cancelled_trips": 1,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "B40|2026-11-03": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B51|2026-11-03": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B60|2026-11-03": {
+   "delay_minutes": 25,
+   "cancelled_trips": 0,
+   "reason_en": "traffic",
+   "reason_ar": "ازدحام مروري"
+  },
+  "M1|2026-11-04": {
+   "delay_minutes": 20,
+   "cancelled_trips": 3,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "M2|2026-11-04": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-04": {
+   "delay_minutes": 5,
+   "cancelled_trips": 0,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "M4|2026-11-04": {
+   "delay_minutes": 30,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B10|2026-11-04": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B12|2026-11-04": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B21|2026-11-04": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B27|2026-11-04": {
+   "delay_minutes": 35,
+   "cancelled_trips": 0,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "B33|2026-11-04": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B40|2026-11-04": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B51|2026-11-04": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B60|2026-11-04": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M1|2026-11-05": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M2|2026-11-05": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-05": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-05": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B10|2026-11-05": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B12|2026-11-05": {
+   "delay_minutes": 25,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B21|2026-11-05": {
+   "delay_minutes": 30,
+   "cancelled_trips": 3,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "B27|2026-11-05": {
+   "delay_minutes": 8,
+   "cancelled_trips": 0,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "B33|2026-11-05": {
+   "delay_minutes": 5,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B40|2026-11-05": {
+   "delay_minutes": 25,
+   "cancelled_trips": 0,
+   "reason_en": "traffic",
+   "reason_ar": "ازدحام مروري"
+  },
+  "B51|2026-11-05": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B60|2026-11-05": {
+   "delay_minutes": 10,
+   "cancelled_trips": 3,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "M1|2026-11-06": {
+   "delay_minutes": 12,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "M2|2026-11-06": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-06": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-06": {
+   "delay_minutes": 35,
+   "cancelled_trips": 0,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "B10|2026-11-06": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B12|2026-11-06": {
+   "delay_minutes": 18,
+   "cancelled_trips": 0,
+   "reason_en": "weather",
+   "reason_ar": "الطقس"
+  },
+  "B21|2026-11-06": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B27|2026-11-06": {
+   "delay_minutes": 25,
+   "cancelled_trips": 0,
+   "reason_en": "weather",
+   "reason_ar": "الطقس"
+  },
+  "B33|2026-11-06": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B40|2026-11-06": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B51|2026-11-06": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B60|2026-11-06": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M1|2026-11-07": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M2|2026-11-07": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-07": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-07": {
+   "delay_minutes": 18,
+   "cancelled_trips": 0,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "B10|2026-11-07": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B12|2026-11-07": {
+   "delay_minutes": 18,
+   "cancelled_trips": 0,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "B21|2026-11-07": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B27|2026-11-07": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B33|2026-11-07": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B40|2026-11-07": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B51|2026-11-07": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B60|2026-11-07": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M1|2026-11-08": {
+   "delay_minutes": 20,
+   "cancelled_trips": 3,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "M2|2026-11-08": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-08": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-08": {
+   "delay_minutes": 15,
+   "cancelled_trips": 0,
+   "reason_en": "weather",
+   "reason_ar": "الطقس"
+  },
+  "B10|2026-11-08": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B12|2026-11-08": {
+   "delay_minutes": 5,
+   "cancelled_trips": 0,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "B21|2026-11-08": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B27|2026-11-08": {
+   "delay_minutes": 30,
+   "cancelled_trips": 3,
+   "reason_en": "traffic",
+   "reason_ar": "ازدحام مروري"
+  },
+  "B33|2026-11-08": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B40|2026-11-08": {
+   "delay_minutes": 10,
+   "cancelled_trips": 4,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "B51|2026-11-08": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B60|2026-11-08": {
+   "delay_minutes": 5,
+   "cancelled_trips": 0,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "M1|2026-11-09": {
+   "delay_minutes": 10,
+   "cancelled_trips": 3,
+   "reason_en": "traffic",
+   "reason_ar": "ازدحام مروري"
+  },
+  "M2|2026-11-09": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-09": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-09": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B10|2026-11-09": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B12|2026-11-09": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B21|2026-11-09": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B27|2026-11-09": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B33|2026-11-09": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B40|2026-11-09": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B51|2026-11-09": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B60|2026-11-09": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M1|2026-11-10": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M2|2026-11-10": {
+   "delay_minutes": 8,
+   "cancelled_trips": 0,
+   "reason_en": "traffic",
+   "reason_ar": "ازدحام مروري"
+  },
+  "M3|2026-11-10": {
+   "delay_minutes": 12,
+   "cancelled_trips": 0,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "M4|2026-11-10": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B10|2026-11-10": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B12|2026-11-10": {
+   "delay_minutes": 10,
+   "cancelled_trips": 3,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B21|2026-11-10": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B27|2026-11-10": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B33|2026-11-10": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B40|2026-11-10": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B51|2026-11-10": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B60|2026-11-10": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M1|2026-11-11": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M2|2026-11-11": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-11": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-11": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B10|2026-11-11": {
+   "delay_minutes": 12,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B12|2026-11-11": {
+   "delay_minutes": 10,
+   "cancelled_trips": 2,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B21|2026-11-11": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B27|2026-11-11": {
+   "delay_minutes": 20,
+   "cancelled_trips": 4,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "B33|2026-11-11": {
+   "delay_minutes": 30,
+   "cancelled_trips": 2,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "B40|2026-11-11": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B51|2026-11-11": {
+   "delay_minutes": 15,
+   "cancelled_trips": 0,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "B60|2026-11-11": {
+   "delay_minutes": 8,
+   "cancelled_trips": 0,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "M1|2026-11-12": {
+   "delay_minutes": 12,
+   "cancelled_trips": 0,
+   "reason_en": "weather",
+   "reason_ar": "الطقس"
+  },
+  "M2|2026-11-12": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-12": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-12": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B10|2026-11-12": {
+   "delay_minutes": 30,
+   "cancelled_trips": 3,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "B12|2026-11-12": {
+   "delay_minutes": 20,
+   "cancelled_trips": 4,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "B21|2026-11-12": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B27|2026-11-12": {
+   "delay_minutes": 30,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B33|2026-11-12": {
+   "delay_minutes": 10,
+   "cancelled_trips": 1,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B40|2026-11-12": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B51|2026-11-12": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B60|2026-11-12": {
+   "delay_minutes": 25,
+   "cancelled_trips": 0,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "M1|2026-11-13": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M2|2026-11-13": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-13": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-13": {
+   "delay_minutes": 12,
+   "cancelled_trips": 0,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "B10|2026-11-13": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B12|2026-11-13": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B21|2026-11-13": {
+   "delay_minutes": 25,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B27|2026-11-13": {
+   "delay_minutes": 8,
+   "cancelled_trips": 0,
+   "reason_en": "signal fault",
+   "reason_ar": "عطل في الإشارات"
+  },
+  "B33|2026-11-13": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B40|2026-11-13": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B51|2026-11-13": {
+   "delay_minutes": 5,
+   "cancelled_trips": 0,
+   "reason_en": "weather",
+   "reason_ar": "الطقس"
+  },
+  "B60|2026-11-13": {
+   "delay_minutes": 30,
+   "cancelled_trips": 0,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "M1|2026-11-14": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M2|2026-11-14": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-14": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-14": {
+   "delay_minutes": 30,
+   "cancelled_trips": 1,
+   "reason_en": "weather",
+   "reason_ar": "الطقس"
+  },
+  "B10|2026-11-14": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B12|2026-11-14": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B21|2026-11-14": {
+   "delay_minutes": 18,
+   "cancelled_trips": 0,
+   "reason_en": "traffic",
+   "reason_ar": "ازدحام مروري"
+  },
+  "B27|2026-11-14": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B33|2026-11-14": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B40|2026-11-14": {
+   "delay_minutes": 30,
+   "cancelled_trips": 0,
+   "reason_en": "vehicle breakdown",
+   "reason_ar": "تعطل مركبة"
+  },
+  "B51|2026-11-14": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B60|2026-11-14": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M1|2026-11-15": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M2|2026-11-15": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M3|2026-11-15": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "M4|2026-11-15": {
+   "delay_minutes": 12,
+   "cancelled_trips": 0,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "B10|2026-11-15": {
+   "delay_minutes": 10,
+   "cancelled_trips": 4,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "B12|2026-11-15": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B21|2026-11-15": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B27|2026-11-15": {
+   "delay_minutes": 30,
+   "cancelled_trips": 0,
+   "reason_en": "weather",
+   "reason_ar": "الطقس"
+  },
+  "B33|2026-11-15": {
+   "delay_minutes": 12,
+   "cancelled_trips": 0,
+   "reason_en": "staff shortage",
+   "reason_ar": "نقص في الموظفين"
+  },
+  "B40|2026-11-15": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  },
+  "B51|2026-11-15": {
+   "delay_minutes": 5,
+   "cancelled_trips": 0,
+   "reason_en": "weather",
+   "reason_ar": "الطقس"
+  },
+  "B60|2026-11-15": {
+   "delay_minutes": 0,
+   "cancelled_trips": 0
+  }
+ }
+}

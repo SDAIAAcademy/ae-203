@@ -1,158 +1,482 @@
 <section class="slide title" id="title" data-auto="title">
-  <aside class="notes">REPLACE: welcome; introduce yourself; one question to the room that calibrates the pace; the rhythm of the day</aside>
+  <aside class="notes"><p>Welcome the room and introduce yourself. Ask one calibrating question: who has called a model API from Python and read the JSON that came back? Hands up. If most have, move faster through Session 2 and slower through Session 4.</p><p>The rhythm: four sessions, each about 25 minutes of ideas and a 25-minute lab. Everything happens on one fictional organisation, Darb Transit Authority, and one assistant, Wasil.</p></aside>
 </section>
 
-<section class="slide" id="agenda" data-auto="agenda"></section>
+<section class="slide" id="agenda" data-auto="agenda">
+  <aside class="notes"><p>Today is the plumbing of every application on a language model: what a call costs, what it looks like, where the instructions live, and what happens when the call fails. Tomorrow the replies become data.</p></aside>
+</section>
 
-<!-- Session 1 -->
+<section class="slide" id="meet-darb" data-label="The case">
+  <div class="kicker">The case study for four days</div>
+  <h2>Darb Transit Authority wants a rider assistant that it can test and defend</h2>
+  <div class="cols cols-3">
+    <div class="card c-teal"><h4>The network</h4><p class="small mb0">Four metro lines (M1 to M4) and eight bus routes, a trip-status service and a ticket service.</p></div>
+    <div class="card c-coral"><h4>The riders</h4><p class="small mb0">300 messages in Arabic, English, Arabizi and a mix; some carry personal data or embedded instructions.</p></div>
+    <div class="card c-purple"><h4>The rules</h4><p class="small mb0">60 policies in two languages: 120 pages, one of them superseded, one carrying a planted instruction.</p></div>
+  </div>
+  <div class="callout note mt"><b>Wasil (واصل)</b> is the assistant you build. Ghada Al-Qahtani owns its behaviour, Mishal Al-Anazi runs operations control, Hanan Al-Shehri is the data protection officer and Ziyad Al-Amri runs the service.</div>
+  <aside class="notes"><p>Everything is synthetic and generated with a fixed seed by labs/prepare_data.py, so every participant sees the same numbers as the slides. The personas return in the labs: Ghada signs off prompt changes, Hanan decides what may reach a hosted model, Ziyad gets paged when the service fails.</p></aside>
+</section>
 
+<!-- ======================= SESSION 1 ======================= -->
 <section class="slide section" id="s1" data-auto="section" data-session="1"></section>
 
-<section class="slide" id="s1-idea" data-lo="LO1">
-  <div class="kicker">REPLACE: the question this slide answers</div>
-  <h2>REPLACE: one idea, stated as a sentence</h2>
+<section class="slide" id="what-a-token-is" data-label="Tokens" data-lo="LO1">
+  <div class="kicker">The unit of everything</div>
+  <h2>A model reads and writes tokens, and you pay per token</h2>
   <div class="cols cols-2">
     <ul class="bullets">
-      <li>REPLACE: at most six bullets, each a complete thought</li>
-      <li>REPLACE: bold the key phrase; numbers come from the lab run, not from memory</li>
+      <li>A <b>token</b> is a piece of text from the model's vocabulary: a word, part of a word, a digit, a space.</li>
+      <li>Input tokens (what you send) and output tokens (what it writes) are counted and usually priced apart.</li>
+      <li>The <b>context window</b> is the most tokens one call can hold, input and output together.</li>
+      <li>Each model family has its own tokenizer, so the same text has a different count on each.</li>
     </ul>
-    <div class="card c-teal"><h4>In the case study</h4><p class="small mb0">REPLACE: tie the idea to the case study and its data</p></div>
+    <div class="trace s">
+      <div class="ev user"><b>text</b>Was the Red Line late yesterday?</div>
+      <div class="ev result"><b>tokens</b>7 with the open Qwen3 tokenizer</div>
+    </div>
   </div>
-  <div class="callout warn mt"><b>What goes wrong.</b> REPLACE: the failure participants will hit, and how to recognise it</div>
-  <aside class="notes">REPLACE: what to say, the demo to run, the question to ask the room, the common failure and its fix</aside>
+  <aside class="notes"><p>The count of 7 comes from the first cell of Lab 1.1, with the open tokenizer file of the Qwen3 family (a few megabytes, no model weights). Stress that a tokenizer is model-specific: the lab compares texts with one tokenizer; the bill comes from the usage field of each real response.</p></aside>
 </section>
 
-<section class="slide" id="s1-steps" data-lo="LO1">
-  <div class="kicker">Step by step</div>
-  <h2>REPLACE: a process, shown one step per key press</h2>
-  <div class="flow">
-    <div class="step c-teal"><b>1 · REPLACE: name</b>REPLACE: what happens first</div>
-    <div class="arrow frag" data-frag="b">→</div><div class="step c-cyan frag" data-frag="b"><b>2 · REPLACE: name</b>REPLACE: the next piece</div>
-    <div class="arrow frag" data-frag="c">→</div><div class="step c-coral frag" data-frag="c"><b>3 · REPLACE: name</b>REPLACE: the result</div>
+<section class="slide" id="arabic-token-tax" data-label="Arabic" data-lo="LO1">
+  <div class="kicker">Measured in Lab 1.1</div>
+  <h2>The same policy costs more tokens in Arabic than in English</h2>
+  <div class="cols cols-2">
+    <div class="bars">
+      <div class="row"><span>English, per 100 characters</span><div class="bar c-teal" style="--w:66%"></div><span class="val">28.8</span></div>
+      <div class="row"><span>Mixed</span><div class="bar c-cyan" style="--w:87%"></div><span class="val">38.0</span></div>
+      <div class="row"><span>Arabizi</span><div class="bar c-purple" style="--w:97%"></div><span class="val">42.1</span></div>
+      <div class="row"><span>Arabic script</span><div class="bar c-coral" style="--w:100%"></div><span class="val">43.3</span></div>
+    </div>
+    <div class="stack">
+      <div class="stat"><div class="big">1.37×</div><div class="lbl">tokens for the 60 policies in Arabic against the same 60 in English</div></div>
+      <div class="card c-navy flat"><h4>Why it matters</h4><p class="small mb0">Arabic riders pay more of the budget and fill the window sooner. Measure it for the model you choose.</p></div>
+    </div>
   </div>
-  <div class="callout tip mt frag"><b>Takeaway.</b> REPLACE: the one sentence to remember</div>
-  <aside class="notes">Press once per step and say what each step adds before the next one appears. REPLACE: the example to walk through</aside>
+  <aside class="notes"><p>Bars: mean tokens per 100 characters over the 300 messages, by language. The fair comparison is the 1.37 on the right: the same content in both languages. A tokenizer trained on more Arabic narrows the gap, so this number belongs to this tokenizer only. Ask: who on the team would notice this in a cost forecast?</p></aside>
+</section>
+
+<section class="slide" id="what-a-request-sends" data-label="One request" data-lo="LO1">
+  <div class="kicker">What one request really sends</div>
+  <h2>The rider writes 22 tokens; the request carries 488</h2>
+  <div class="bars">
+    <div class="row"><span>Tool definitions (two tools)</span><div class="bar c-coral" style="--w:83%"></div><span class="val">406</span></div>
+    <div class="row"><span>System instructions</span><div class="bar c-purple" style="--w:12%"></div><span class="val">60</span></div>
+    <div class="row"><span>The rider's message</span><div class="bar c-teal" style="--w:5%"></div><span class="val">22</span></div>
+  </div>
+  <div class="callout tip mt"><b>Stable first.</b> Instructions and tool definitions repeat on every call. Keep them identical and first, so a provider that caches a repeated prefix can reuse them.</div>
+  <aside class="notes"><p>Numbers from Lab 1.1 step 3 on message MSG-002, counted with the open tokenizer. The tool definitions are the JSON Schemas of get_trip_status and create_ticket generated from Pydantic models. Prompt caching: several providers reuse the computation on an unchanged prefix of a request, sometimes at a lower price; how much and when differs by provider, so check the provider's page before counting on it.</p></aside>
+</section>
+
+<section class="slide" id="cost-from-tokens" data-label="Cost" data-lo="LO1">
+  <div class="kicker">From tokens to money</div>
+  <h2>Daily cost is messages times tokens times price, per million</h2>
+  <pre class="code s" data-file="Lab 1.1 · step 4"><code class="language-python">def daily_cost(n, tokens_in, tokens_out, price_in, price_out):
+    return n * (tokens_in * price_in + tokens_out * price_out) / 1_000_000
+
+daily_cost(10_000, 490, 60, 0.10, 0.40)    # 0.73 a day
+daily_cost(10_000, 490, 60, 3.00, 15.00)   # 23.7 a day</code></pre>
+  <div class="callout warn mt"><b>Example prices, not a provider's.</b> The two price pairs are inputs to compute with. Take real ones from the pricing page on the day you decide.</div>
+  <aside class="notes"><p>The lab uses two example price pairs per million tokens to show that the price list changes the answer by more than an order of magnitude while the tokens stay the same. Free hosted models cost nothing in money but have request limits per minute and per day; the OpenRouter limits page states them. Cost per 1,000 requests, which the capstone reports, is the daily cost divided by ten here.</p><p>Sources: OpenRouter API rate limits page.</p></aside>
+</section>
+
+<section class="slide" id="latency-parts" data-label="Latency" data-lo="LO1">
+  <div class="kicker">Two clocks in every reply</div>
+  <h2>Latency is the time to the first token plus the writing time</h2>
+  <div class="flow">
+    <div class="step c-teal"><b>Send</b>the request crosses the network</div>
+    <div class="arrow">→</div>
+    <div class="step c-cyan"><b>Read</b>the model processes the input: time to first token</div>
+    <div class="arrow">→</div>
+    <div class="step c-coral"><b>Write</b>output tokens, one after another</div>
+  </div>
+  <div class="cols cols-2 mt">
+    <div class="stat"><div class="big">2.1 s</div><div class="lbl">per reply with 0.6 s to the first token, 60 tokens at 40 per second (assumed)</div></div>
+    <div class="stat"><div class="big">0.42</div><div class="lbl">requests per second in the busiest hour, if 15% of 10,000 arrive then</div></div>
+  </div>
+  <aside class="notes"><p>Lab 1.1 step 5. The time to first token and the output speed are assumptions until Lab 1.4 and a real provider measure them. Short outputs are cheap and fast: asking for a short reply is a design decision. The busiest hour, not the daily total, is what meets rate limits.</p></aside>
+</section>
+
+<section class="slide" id="choose-model-per-task" data-label="Model per task" data-lo="LO1">
+  <div class="kicker">Choosing a model per task</div>
+  <h2>Pick the smallest model that passes your tests, task by task</h2>
+  <table class="t small">
+    <tr><th>Wasil's task</th><th>What it needs</th><th>A reasonable first choice</th></tr>
+    <tr><td>Extract route, date, type</td><td>Follows a schema, reads Arabic and Arabizi</td><td>A small model with structured output</td></tr>
+    <tr><td>Call trip-status and tickets</td><td>Reliable tool calls</td><td>A model that supports tools well</td></tr>
+    <tr><td>Answer from policy pages</td><td>Stays inside the passages, cites them</td><td>A mid-size model, checked on Day 3</td></tr>
+    <tr><td>Grade answers</td><td>Agrees with human labels</td><td>Validated on Day 4 before use</td></tr>
+  </table>
+  <div class="callout note mt-s"><b>Where data may go decides first.</b> Content classified above what a hosted provider may receive stays on a local model, whatever the scores.</div>
+  <aside class="notes"><p>No model names on this slide on purpose: names and prices change monthly. The method holds: a small evaluation (Day 4) decides, not a leaderboard. The last line links to Hanan's question on Day 4: the national data classification levels decide which content may go to a hosted model at all.</p></aside>
+</section>
+
+<section class="slide" id="checkpoint-1" data-lo="LO1">
+  <div class="kicker">Checkpoint</div>
+  <h2>Where does Wasil's token bill come from?</h2>
+  <div class="quiz" data-type="single" data-lo="LO1">
+    <p class="lead">Wasil answers 10,000 short rider messages a day with two tools defined. Ghada wants to cut the input tokens. Which change cuts the most?</p>
+    <div class="opts">
+      <div class="opt" data-why="Assumes the rider's text is the bulk of the request; it is about 22 of 488 tokens">Ask riders to write shorter messages</div>
+      <div class="opt" data-ok>Shorten the tool definitions and their descriptions</div>
+      <div class="opt" data-why="Confuses output with input: a shorter reply cuts output tokens, not input">Ask the model for shorter replies</div>
+      <div class="opt" data-why="Thinks the language of the reply changes what is sent; the request stays the same">Answer every rider in English</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> The tool definitions are 406 of the 488 input tokens and are sent on every call, so they are the biggest lever on input cost.</div>
+  </div>
+  <aside class="notes"><p>Answer: B. If the room picks "shorter replies", separate input from output tokens again. If they pick "shorter messages", show the bars of the request slide. A good follow-up: shortening descriptions can hurt tool-call accuracy, so test before and after.</p></aside>
 </section>
 
 <section class="slide lab" id="lab-1-1" data-auto="lab" data-lab="1.1">
-  <aside class="notes">REPLACE: what to watch for while participants work, the typical problems, and the fallback for anyone who did not finish an earlier lab</aside>
+  <aside class="notes"><p>No model call in this lab: it runs offline once the tokenizer file is downloaded (a few megabytes). If the Hugging Face Hub is blocked, llm.count_tokens falls back to an estimate of characters divided by 3.5 and says so by giving round numbers; the comparisons still hold. Common slip: summing tokens of the whole page against characters of one section.</p></aside>
 </section>
 
-<!-- Session 2 -->
-
+<!-- ======================= SESSION 2 ======================= -->
 <section class="slide section" id="s2" data-auto="section" data-session="2"></section>
 
-<section class="slide" id="s2-idea" data-lo="LO1">
-  <div class="kicker">REPLACE: the question this slide answers</div>
-  <h2>REPLACE: one idea, stated as a sentence</h2>
-  <div class="cols cols-2">
-    <ul class="bullets">
-      <li>REPLACE: at most six bullets, each a complete thought</li>
-      <li>REPLACE: bold the key phrase; numbers come from the lab run, not from memory</li>
-    </ul>
-    <div class="card c-teal"><h4>In the case study</h4><p class="small mb0">REPLACE: tie the idea to the case study and its data</p></div>
+<section class="slide" id="three-shapes" data-label="Three shapes" data-lo="LO1">
+  <div class="kicker">Three ways to say the same thing</div>
+  <h2>Three API shapes carry the same conversation in different places</h2>
+  <div class="cols cols-3">
+    <div class="card c-teal"><h4>Chat Completions</h4><p class="small mb0">A list of messages with roles: system, user, assistant, tool. The most widely copied shape.</p></div>
+    <div class="card c-cyan"><h4>Responses</h4><p class="small mb0">Instructions plus input items; the reply is a list of output items such as messages and function calls.</p></div>
+    <div class="card c-purple"><h4>Messages</h4><p class="small mb0">A top-level system field; content is a list of typed blocks such as text, tool use and tool result.</p></div>
   </div>
-  <div class="callout warn mt"><b>What goes wrong.</b> REPLACE: the failure participants will hit, and how to recognise it</div>
-  <aside class="notes">REPLACE: what to say, the demo to run, the question to ask the room, the common failure and its fix</aside>
+  <div class="callout note mt"><b>Open Responses</b> is an open specification, based on the Responses shape, for one interface across providers.</div>
+  <aside class="notes"><p>Chat Completions and Responses are documented by OpenAI; Messages is Anthropic's shape. Many providers and local servers serve Chat Completions, which is why the course client speaks it. The Open Responses project describes itself as an open-source specification for multi-provider interfaces based on the Responses API.</p><p>Sources: OpenAI API reference for Chat Completions and Responses; Anthropic Messages API reference; openresponses.org.</p></aside>
 </section>
 
-<section class="slide" id="s2-steps" data-lo="LO1">
-  <div class="kicker">Step by step</div>
-  <h2>REPLACE: a process, shown one step per key press</h2>
-  <div class="flow">
-    <div class="step c-teal"><b>1 · REPLACE: name</b>REPLACE: what happens first</div>
-    <div class="arrow frag" data-frag="b">→</div><div class="step c-cyan frag" data-frag="b"><b>2 · REPLACE: name</b>REPLACE: the next piece</div>
-    <div class="arrow frag" data-frag="c">→</div><div class="step c-coral frag" data-frag="c"><b>3 · REPLACE: name</b>REPLACE: the result</div>
+<section class="slide" id="tool-call-three-ways" data-label="Tool call" data-lo="LO1">
+  <div class="kicker">Lab 1.2 · step 1</div>
+  <h2>The same tool call sits in three different places</h2>
+  <table class="t small">
+    <tr><th>Shape</th><th>Where the call is</th><th>Arguments</th></tr>
+    <tr><td>Chat Completions</td><td><code>choices[0].message.tool_calls</code></td><td>a JSON string</td></tr>
+    <tr><td>Responses</td><td>an <code>output</code> item of type <code>function_call</code></td><td>a JSON string</td></tr>
+    <tr><td>Messages</td><td>a <code>content</code> block of type <code>tool_use</code></td><td>an object</td></tr>
+  </table>
+  <p class="small mt">All three carry <code>get_trip_status(route="M1", date="2026-11-14")</code> for "Was the Red Line late yesterday?"</p>
+  <aside class="notes"><p>From the recorded examples in data/reference/shapes.json. The string-or-object difference bites: code that calls json.loads on a Messages input fails. Ask the room where the tool result goes back in each shape before showing the next slide.</p></aside>
+</section>
+
+<section class="slide" id="results-and-usage" data-label="Results, usage" data-lo="LO1">
+  <div class="kicker">Lab 1.2 · steps 2 and 3</div>
+  <h2>Tool results, stop reasons and usage fields are spelled differently too</h2>
+  <table class="t small">
+    <tr><th></th><th>Chat Completions</th><th>Responses</th><th>Messages</th></tr>
+    <tr><td>Tool result back</td><td>role <code>tool</code>, <code>tool_call_id</code></td><td><code>function_call_output</code>, <code>call_id</code></td><td><code>tool_result</code> block, <code>tool_use_id</code></td></tr>
+    <tr><td>Why it stopped</td><td><code>finish_reason</code></td><td><code>status</code> and item types</td><td><code>stop_reason</code></td></tr>
+    <tr><td>Usage</td><td><code>prompt_tokens</code>, <code>completion_tokens</code></td><td><code>input_tokens</code>, <code>output_tokens</code></td><td><code>input_tokens</code>, <code>output_tokens</code></td></tr>
+  </table>
+  <aside class="notes"><p>This is the evidence LO1 asks for: an annotated comparison table that matches the reference on message structure, tool calls and usage reporting. The lab's check compares each cell with data/reference/comparison.json by the field name it must mention. Point out that usage reporting is where cost dashboards silently break when a provider changes.</p></aside>
+</section>
+
+<section class="slide" id="one-interface" data-label="One interface" data-lo="LO1">
+  <div class="kicker">Provider-neutral code</div>
+  <h2>Handle the shape in one place; the rest of the code never sees it</h2>
+  <div class="cols cols-2">
+    <pre class="code s" data-file="labs/llm.py"><code class="language-python">resp = llm.complete(messages, tools=TOOLS)
+# provider from LLM_PROVIDER:
+#   openrouter  hosted, free models
+#   local       any OpenAI-compatible server
+#   scripted    offline stand-in
+text = llm.text(resp)
+usage = resp.usage</code></pre>
+    <div class="stack">
+      <div class="card c-teal flat"><h4>Your own thin client</h4><p class="small mb0">What the course uses: one function, a cache, a fallback list, a ledger of tokens.</p></div>
+      <div class="card c-navy flat"><h4>A gateway or library</h4><p class="small mb0">LiteLLM and similar tools translate between providers for you, with routing and budgets.</p></div>
+    </div>
   </div>
-  <div class="callout tip mt frag"><b>Takeaway.</b> REPLACE: the one sentence to remember</div>
-  <aside class="notes">Press once per step and say what each step adds before the next one appears. REPLACE: the example to walk through</aside>
+  <aside class="notes"><p>Show labs/llm.py on screen: complete() builds the request once; the provider is configuration. The scripted provider is the course's offline stand-in: rules, not a model, so labs run without a key. Never present its answers as a model's. A gateway is worth it when several teams share keys, budgets and routing.</p><p>Sources: LiteLLM documentation.</p></aside>
+</section>
+
+<section class="slide" id="local-endpoint" data-label="Local" data-lo="LO1">
+  <div class="kicker">Hosted or local</div>
+  <h2>A local server that speaks the same protocol changes three settings, not your code</h2>
+  <table class="t small">
+    <tr><th>Setting</th><th>Hosted (OpenRouter)</th><th>Local server</th></tr>
+    <tr><td>Base URL</td><td><code>https://openrouter.ai/api/v1</code></td><td><code>http://127.0.0.1:8765/v1</code></td></tr>
+    <tr><td>Key</td><td>from <code>OPENROUTER_API_KEY</code></td><td>usually none</td></tr>
+    <tr><td>Model name</td><td>a free model id</td><td>whatever the server loaded</td></tr>
+  </table>
+  <div class="callout warn mt-s"><b>Same protocol, different behaviour.</b> Another model, chat template and tool support: evaluate before switching.</div>
+  <aside class="notes"><p>Ollama, llama.cpp server and vLLM all expose an OpenAI-compatible endpoint. In the lab the local side is the course's stand-in server on localhost, started from the notebook, because the course downloads no model. Anyone who already runs a local server can set LOCAL_BASE_URL and LOCAL_MODEL and repeat step 4 with it.</p><p>Sources: Ollama OpenAI compatibility page; llama.cpp server README.</p></aside>
+</section>
+
+<section class="slide" id="free-models-change" data-label="Free models" data-lo="LO1">
+  <div class="kicker">Working with free hosted models</div>
+  <h2>Free models come and go and have request limits: plan for both</h2>
+  <ul class="bullets">
+    <li>Free variants on OpenRouter have an id that ends in <code>:free</code> and limits per minute and per day.</li>
+    <li>The course default and its fallbacks are settings in <code>labs/.env</code>, not code.</li>
+    <li>Identical requests are replayed from a local cache, so re-running a cell spends nothing.</li>
+    <li>A model that disappears answers with an error: pick another free model with tool support.</li>
+  </ul>
+  <aside class="notes"><p>When this course was built, the free list included google/gemma-4-31b-it:free and google/gemma-4-26b-a4b-it:free with tool support; check the models page with the free filter before class, because the list changes. The limits are on the OpenRouter limits page; quote them from there on the day.</p><p>Sources: OpenRouter API rate limits page; OpenRouter models list.</p></aside>
+</section>
+
+<section class="slide" id="checkpoint-2" data-lo="LO1">
+  <div class="kicker">Checkpoint</div>
+  <h2>What breaks when the provider changes?</h2>
+  <div class="quiz" data-type="single" data-lo="LO1">
+    <p class="lead">Ziyad moves Wasil from a Chat Completions provider to one that serves only the Messages shape. The cost dashboard reads <code>usage.prompt_tokens</code>. What happens to it?</p>
+    <div class="opts">
+      <div class="opt" data-why="Assumes every shape names usage the same way">It keeps working, since every provider reports usage</div>
+      <div class="opt" data-why="Confuses a missing field with a price change">It shows higher costs, since the new provider is dearer</div>
+      <div class="opt" data-why="Thinks usage moves into the content; it stays in usage under another name">It reads the tokens from the reply's text instead</div>
+      <div class="opt" data-ok>It finds no such field: Messages reports input_tokens</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> Messages reports <code>input_tokens</code> and <code>output_tokens</code>. Reading usage in one adapter, not across the code, keeps the dashboard right.</div>
+  </div>
+  <aside class="notes"><p>Answer: D. Ask what else would break: tool calls (tool_use blocks, input as an object) and stop reasons. That list is the lab's comparison table.</p></aside>
 </section>
 
 <section class="slide lab" id="lab-1-2" data-auto="lab" data-lab="1.2">
-  <aside class="notes">REPLACE: what to watch for while participants work, the typical problems, and the fallback for anyone who did not finish an earlier lab</aside>
+  <aside class="notes"><p>Step 4 starts a small server on port 8765 inside the notebook. If the port is taken, change it in serve_local(...) and in LOCAL_BASE_URL. In Colab the server runs inside the runtime; it works the same. Without a hosted key, the "hosted" side runs on the scripted stand-in and the lab says so; the point, that only configuration changes, still holds.</p></aside>
 </section>
 
-<!-- Session 3 -->
-
+<!-- ======================= SESSION 3 ======================= -->
 <section class="slide section" id="s3" data-auto="section" data-session="3"></section>
 
-<section class="slide" id="s3-idea" data-lo="LO7">
-  <div class="kicker">REPLACE: the question this slide answers</div>
-  <h2>REPLACE: one idea, stated as a sentence</h2>
-  <div class="cols cols-2">
-    <ul class="bullets">
-      <li>REPLACE: at most six bullets, each a complete thought</li>
-      <li>REPLACE: bold the key phrase; numbers come from the lab run, not from memory</li>
-    </ul>
-    <div class="card c-teal"><h4>In the case study</h4><p class="small mb0">REPLACE: tie the idea to the case study and its data</p></div>
+<section class="slide" id="system-and-user" data-label="Roles" data-lo="LO1">
+  <div class="kicker">Who says what</div>
+  <h2>Instructions come from Darb; the message comes from the rider</h2>
+  <div class="prompt" data-tool="Wasil's request">
+    <span class="seg c-purple">System: You are Wasil, the rider assistant of Darb Transit Authority. Today is 2026-11-15. Never promise a refund.</span>
+    <span class="seg c-teal">User: The 27 bus was 22 minutes late yesterday. I want a refund.</span>
   </div>
-  <div class="callout warn mt"><b>What goes wrong.</b> REPLACE: the failure participants will hit, and how to recognise it</div>
-  <aside class="notes">REPLACE: what to say, the demo to run, the question to ask the room, the common failure and its fix</aside>
+  <div class="legend"><span class="c-purple">Darb's instructions</span><span class="c-teal">The rider's words</span></div>
+  <ul class="bullets small mt">
+    <li>The system message holds what is true for every rider: identity, rules, the date.</li>
+    <li>The user message holds only what this rider wrote. Never paste rider text into the instructions.</li>
+  </ul>
+  <aside class="notes"><p>The separation is not a security boundary: a model can still follow instructions written in the user's text (Day 4). It is a clarity boundary: it keeps the authority's rules in one reviewed place and makes the rider's words data.</p></aside>
 </section>
 
-<section class="slide" id="s3-steps" data-lo="LO7">
-  <div class="kicker">Step by step</div>
-  <h2>REPLACE: a process, shown one step per key press</h2>
-  <div class="flow">
-    <div class="step c-teal"><b>1 · REPLACE: name</b>REPLACE: what happens first</div>
-    <div class="arrow frag" data-frag="b">→</div><div class="step c-cyan frag" data-frag="b"><b>2 · REPLACE: name</b>REPLACE: the next piece</div>
-    <div class="arrow frag" data-frag="c">→</div><div class="step c-coral frag" data-frag="c"><b>3 · REPLACE: name</b>REPLACE: the result</div>
+<section class="slide" id="examples-in-prompt" data-label="Examples" data-lo="LO1">
+  <div class="kicker">Showing, not only telling</div>
+  <h2>One or two examples in the prompt fix the format faster than a paragraph</h2>
+  <div class="cols cols-2">
+    <div class="chat">
+      <div class="msg user"><span class="who">Example rider</span>el bas 27 ta2a5ar ams</div>
+      <div class="msg ai good"><span class="who">Example reply</span>{"route": "B27", "date": "2026-11-14", "complaint_type": "delay"}</div>
+    </div>
+    <div class="stack">
+      <div class="card c-teal flat"><h4>Choose hard examples</h4><p class="small mb0">Arabizi, Arabic-Indic digits, a date in words: the cases the model gets wrong.</p></div>
+      <div class="card c-coral flat"><h4>Keep them few</h4><p class="small mb0">Each example is sent on every call; it is part of the stable prefix.</p></div>
+    </div>
   </div>
-  <div class="callout tip mt frag"><b>Takeaway.</b> REPLACE: the one sentence to remember</div>
-  <aside class="notes">Press once per step and say what each step adds before the next one appears. REPLACE: the example to walk through</aside>
+  <aside class="notes"><p>Examples are tokens too: two good examples cost a few dozen tokens per call, 10,000 times a day. They earn their place only if a test shows they help. Day 2 measures the valid-output rate with and without them as a stretch.</p></aside>
+</section>
+
+<section class="slide" id="prompt-as-file" data-label="Prompt file" data-lo="LO1 LO5">
+  <div class="kicker">Lab 1.3 · steps 1 and 2</div>
+  <h2>A prompt is a file with a version and an owner, not a string in the code</h2>
+  <div class="cols cols-2">
+    <pre class="code s" data-file="artifacts/lab13/wasil.v1.md"><code>---
+name: wasil
+version: 1
+owner: Ghada Al-Qahtani
+note: moved out of the code
+---
+You are Wasil, ... Today is {today}.
+Introduce yourself as: "I am Wasil, ..."
+If the request is not about Darb, reply: ...</code></pre>
+    <ul class="bullets small">
+      <li>Under version control: every change has a diff, an author and a reason.</li>
+      <li>Rendered with named values; a missing value stops the call.</li>
+      <li>The owner reviews changes to behaviour, as a code owner would.</li>
+    </ul>
+  </div>
+  <aside class="notes"><p>The loader in the lab refuses to render when {today} is missing, so a template never reaches the model with a hole in it. Any template engine works; the point is the file, the version and the refusal.</p></aside>
+</section>
+
+<section class="slide" id="tests-pin-behaviour" data-label="Prompt tests" data-lo="LO1 LO5">
+  <div class="kicker">Lab 1.3 · step 3</div>
+  <h2>Pin behaviour with tests that check a property, not the wording</h2>
+  <pre class="code s" data-file="Lab 1.3"><code class="language-python">def test_discloses_ai(system):
+    return "ai assistant" in reply_to(system, "Who are you?").lower()
+
+def test_declines_off_topic(system):
+    reply = reply_to(system, "Write me a poem about the sea.")
+    return "only help with darb" in reply.lower()</code></pre>
+  <div class="callout tip mt"><b>Two properties Darb promised:</b> riders know they talk to an AI assistant, and Wasil stays on Darb business.</div>
+  <aside class="notes"><p>The SDAIA Generative AI Guideline for Government asks entities to be transparent about content made with generative AI; telling riders they talk to an AI assistant is how Wasil does that. A test of a property survives changes of wording and model; an exact-match test breaks on every run.</p><p>Sources: SDAIA Generative AI Guideline for Government.</p></aside>
+</section>
+
+<section class="slide" id="a-change-is-a-release" data-label="Release" data-lo="LO1 LO5">
+  <div class="kicker">Lab 1.3 · step 4</div>
+  <h2>A friendlier rewrite failed both tests: a prompt change is a release</h2>
+  <div class="cols cols-2">
+    <pre class="code s" data-file="wasil.v1.md → wasil.v2.md"><code>-Introduce yourself as: "I am Wasil, Darb's AI ..."
+-If the request is not about Darb, reply: "I can ..."
++Be warm and helpful with anything the rider asks.</code></pre>
+    <table class="t small">
+      <tr><th>Test</th><th>v1</th><th>v2</th></tr>
+      <tr><td>Discloses AI</td><td>pass</td><td>fail</td></tr>
+      <tr><td>Declines off-topic</td><td>pass</td><td>fail</td></tr>
+    </table>
+  </div>
+  <div class="callout warn mt"><b>Nothing in the diff looked dangerous.</b> The tests caught what review alone would miss.</div>
+  <aside class="notes"><p>From the lab run. Ask: who should have to approve v2? Ghada, the owner in the header. The same rule holds for a model change with an unchanged prompt: re-run the tests, because the same words behave differently on another model.</p></aside>
+</section>
+
+<section class="slide" id="prompt-release-flow" data-label="Release flow" data-lo="LO1 LO5">
+  <div class="kicker">The release path</div>
+  <h2>Edit, test, review, release, and keep the old version to roll back to</h2>
+  <div class="flow">
+    <div class="step c-teal"><b>Edit</b>a new version file</div>
+    <div class="arrow">→</div>
+    <div class="step c-cyan"><b>Test</b>the pinned properties</div>
+    <div class="arrow">→</div>
+    <div class="step c-purple"><b>Review</b>by the owner</div>
+    <div class="arrow">→</div>
+    <div class="step c-coral"><b>Release</b>with a changelog line</div>
+  </div>
+  <div class="callout note mt"><b>Day 4 widens the tests</b> into a 40-case evaluation set that runs on every change of prompt, model or code.</div>
+  <aside class="notes"><p>Keep v1 when v2 ships: rolling back a prompt is changing one version number in configuration. The changelog line written in the lab is the start of the habit.</p></aside>
+</section>
+
+<section class="slide" id="checkpoint-3" data-lo="LO5">
+  <div class="kicker">Checkpoint</div>
+  <h2>Which test pins the behaviour?</h2>
+  <div class="quiz" data-type="single" data-lo="LO5">
+    <p class="lead">Ghada wants a test that fails if a prompt change stops Wasil from telling riders it is an AI assistant. Which test does that and survives harmless rewording?</p>
+    <div class="opts">
+      <div class="opt" data-ok>Ask "Who are you?" and check that the reply mentions an AI assistant</div>
+      <div class="opt" data-why="Exact matching breaks on every harmless rewording and on every new model">Ask "Who are you?" and compare the reply with a saved reply</div>
+      <div class="opt" data-why="Checks the prompt text, not what the model does with it">Check that the prompt file contains the word "AI"</div>
+      <div class="opt" data-why="A length says nothing about the property Darb promised">Check that the reply is under 30 words long</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> The test sends a fixed input and checks the property riders were promised, whatever the exact words.</div>
+  </div>
+  <aside class="notes"><p>Answer: A. The file check (C) is tempting and fails silently when the model ignores the line. Ask the room for a second property worth pinning: declining off-topic requests, or never promising a refund.</p></aside>
 </section>
 
 <section class="slide lab" id="lab-1-3" data-auto="lab" data-lab="1.3">
-  <aside class="notes">REPLACE: what to watch for while participants work, the typical problems, and the fallback for anyone who did not finish an earlier lab</aside>
+  <aside class="notes"><p>With a hosted model the two v1 tests usually pass; if one fails, read the reply before blaming the test: free models sometimes paraphrase the introduction. That is a real finding, not noise. Without a key the scripted stand-in follows the two lines literally, which makes the v2 failure deterministic.</p></aside>
 </section>
 
-<!-- Session 4 -->
-
+<!-- ======================= SESSION 4 ======================= -->
 <section class="slide section" id="s4" data-auto="section" data-session="4"></section>
 
-<section class="slide" id="s4-idea" data-lo="LO1 LO7">
-  <div class="kicker">REPLACE: the question this slide answers</div>
-  <h2>REPLACE: one idea, stated as a sentence</h2>
+<section class="slide" id="streaming" data-label="Streaming" data-lo="LO1 LO7">
+  <div class="kicker">Lab 1.4 · step 1</div>
+  <h2>Streaming shows the first words early; the total time stays the same</h2>
   <div class="cols cols-2">
-    <ul class="bullets">
-      <li>REPLACE: at most six bullets, each a complete thought</li>
-      <li>REPLACE: bold the key phrase; numbers come from the lab run, not from memory</li>
-    </ul>
-    <div class="card c-teal"><h4>In the case study</h4><p class="small mb0">REPLACE: tie the idea to the case study and its data</p></div>
+    <div class="stat"><div class="big">0.60 s</div><div class="lbl">to the first word on the simulated endpoint</div></div>
+    <div class="stat"><div class="big">0.95 s</div><div class="lbl">to the whole reply</div></div>
   </div>
-  <div class="callout warn mt"><b>What goes wrong.</b> REPLACE: the failure participants will hit, and how to recognise it</div>
-  <aside class="notes">REPLACE: what to say, the demo to run, the question to ask the room, the common failure and its fix</aside>
+  <ul class="bullets small mt">
+    <li>Stream to a person reading; do not stream to code that needs the whole JSON.</li>
+    <li>A streamed reply can still fail half way: handle the cut-off end.</li>
+  </ul>
+  <aside class="notes"><p>Numbers from the simulated endpoint in Lab 1.4 (a planned delay before the first word, then a fixed gap between words), so they are the same on every laptop. With a real provider, ask for stream=True in Chat Completions and read the chunks; the time to first token is then a real measurement worth logging.</p></aside>
 </section>
 
-<section class="slide" id="s4-steps" data-lo="LO1 LO7">
-  <div class="kicker">Step by step</div>
-  <h2>REPLACE: a process, shown one step per key press</h2>
-  <div class="flow">
-    <div class="step c-teal"><b>1 · REPLACE: name</b>REPLACE: what happens first</div>
-    <div class="arrow frag" data-frag="b">→</div><div class="step c-cyan frag" data-frag="b"><b>2 · REPLACE: name</b>REPLACE: the next piece</div>
-    <div class="arrow frag" data-frag="c">→</div><div class="step c-coral frag" data-frag="c"><b>3 · REPLACE: name</b>REPLACE: the result</div>
+<section class="slide" id="timeouts" data-label="Timeouts" data-lo="LO1 LO7">
+  <div class="kicker">Never wait forever</div>
+  <h2>Every model call needs a timeout shorter than the rider's patience</h2>
+  <ul class="bullets">
+    <li>A call without a timeout ties up a worker until the provider gives up, if it ever does.</li>
+    <li>Set it from your latency budget: Wasil's reply should start within a few seconds.</li>
+    <li>A timeout is a failure you chose: decide what happens next, retry or fall back.</li>
+  </ul>
+  <div class="callout warn mt"><b>The client's default may be long.</b> The OpenAI Python client takes a <code>timeout</code> argument; the course client passes one on every call.</div>
+  <aside class="notes"><p>llm.client() passes timeout and max_retries explicitly so nobody relies on a library default. Ask what Wasil should tell a rider after a timeout: that the answer is delayed and a ticket can be opened, not silence.</p></aside>
+</section>
+
+<section class="slide" id="which-errors-retry" data-label="Retry or not" data-lo="LO1 LO7">
+  <div class="kicker">Lab 1.4 · step 2</div>
+  <h2>Retry what may pass next time; raise what will fail again</h2>
+  <table class="t small">
+    <tr><th>Failure</th><th>Retry?</th><th>Why</th></tr>
+    <tr><td>Timeout</td><td>yes, a few times</td><td>the next attempt may be faster</td></tr>
+    <tr><td>429 rate limited</td><td>yes, after waiting</td><td>the limit resets</td></tr>
+    <tr><td>500, 502, 503</td><td>yes</td><td>a busy or broken server</td></tr>
+    <tr><td>400 bad request</td><td>no</td><td>the same request fails the same way</td></tr>
+    <tr><td>401 bad key</td><td>no</td><td>fix the configuration</td></tr>
+  </table>
+  <aside class="notes"><p>The 401 row is not hypothetical: when this course was built, the key in the build environment answered 401, which is why the labs have an offline stand-in. Retrying a 401 only burns time.</p></aside>
+</section>
+
+<section class="slide" id="backoff-jitter" data-label="Backoff" data-lo="LO1 LO7">
+  <div class="kicker">How long to wait</div>
+  <h2>Wait longer after each failure, with a little randomness</h2>
+  <pre class="code s" data-file="Lab 1.4 · call_with_retry"><code class="language-python">for attempt in range(retries + 1):
+    try:
+        return endpoint(prompt, timeout=timeout)
+    except TimeoutError: ...
+    except EndpointError as e:
+        if e.status not in RETRYABLE:
+            raise                      # a 400 is not retried
+    time.sleep(base * 2 ** attempt + random.uniform(0, base))</code></pre>
+  <div class="callout tip mt"><b>Jitter</b> keeps clients that failed together from retrying together.</div>
+  <aside class="notes"><p>In the lab's run: a timeout, then a 429, then an answer on the third attempt. Exponential backoff gives the provider room; jitter spreads the retries. A provider's Retry-After header, when present, beats your own guess.</p></aside>
+</section>
+
+<section class="slide" id="fallback-model" data-label="Fallback" data-lo="LO1 LO7">
+  <div class="kicker">Lab 1.4 · step 3</div>
+  <h2>When the primary keeps failing, a fallback model answers</h2>
+  <div class="trace s">
+    <div class="ev error"><b>primary</b>timeout after 0.5 s</div>
+    <div class="ev error"><b>primary</b>timeout after 0.5 s</div>
+    <div class="ev error"><b>primary</b>timeout after 0.5 s</div>
+    <div class="ev call"><b>fallback</b>called</div>
+    <div class="ev final"><b>reply</b>[fallback] Route M1 is running 12 minutes late.</div>
   </div>
-  <div class="callout tip mt frag"><b>Takeaway.</b> REPLACE: the one sentence to remember</div>
-  <aside class="notes">Press once per step and say what each step adds before the next one appears. REPLACE: the example to walk through</aside>
+  <div class="callout warn mt"><b>A fallback is another model.</b> It must pass the same tests; record which model answered each request.</div>
+  <aside class="notes"><p>The trace is the lab's run on the simulated endpoint. llm.complete does the same with LLM_FALLBACKS for real providers on a 429 or 5xx. Ask: what does the evaluation set of Day 4 have to say about the fallback? It must be run on it too.</p></aside>
+</section>
+
+<section class="slide" id="test-the-failures" data-label="Test failures" data-lo="LO1 LO7">
+  <div class="kicker">Lab 1.4 · step 4</div>
+  <h2>Test each failure path on purpose, with a planned slow endpoint</h2>
+  <table class="t small">
+    <tr><th>Test</th><th>Plan of the endpoint</th><th>Expected</th></tr>
+    <tr><td>slow then ok</td><td>0.8 s, then 0.05 s</td><td>one timeout, then the reply</td></tr>
+    <tr><td>rate limited twice</td><td>429, 429, then 0 s</td><td>three attempts</td></tr>
+    <tr><td>fallback after server errors</td><td>503 three times</td><td>the fallback answers</td></tr>
+    <tr><td>bad request not retried</td><td>400</td><td>one attempt, no fallback</td></tr>
+  </table>
+  <aside class="notes"><p>Four of four pass in the reference run. Failures you cannot provoke on demand are failures you never test; the stand-in endpoint makes them happen when the test says so. Lab 4.4 uses the same idea with recorded model responses.</p></aside>
+</section>
+
+<section class="slide" id="checkpoint-4" data-lo="LO7">
+  <div class="kicker">Checkpoint</div>
+  <h2>Retry, fall back or raise?</h2>
+  <div class="quiz" data-type="single" data-lo="LO7">
+    <p class="lead">Wasil's call to the primary model answers 400: the tool schema it sent is invalid. What should the client do?</p>
+    <div class="opts">
+      <div class="opt" data-why="Treats every error as temporary; the same request fails the same way">Retry three times with backoff</div>
+      <div class="opt" data-why="Moves a bug in the request to another model, which rejects it too">Send the same request to the fallback model</div>
+      <div class="opt" data-ok>Raise the error and fix the schema</div>
+      <div class="opt" data-why="Hides a bug from the rider and from the team">Return an empty reply to the rider</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> A 400 means the request is wrong. Retries and fallbacks only repeat the mistake; the fix is in the code.</div>
+  </div>
+  <aside class="notes"><p>Answer: C. Follow-up: what does the rider see meanwhile? A short message that the answer is delayed, and the error reaches the team through the logs and the health check of Lab 4.4.</p></aside>
 </section>
 
 <section class="slide lab" id="lab-1-4" data-auto="lab" data-lab="1.4">
-  <aside class="notes">REPLACE: what to watch for while participants work, the typical problems, and the fallback for anyone who did not finish an earlier lab</aside>
+  <aside class="notes"><p>This lab needs no model and no network. Typical problems: catching every Exception (so a 400 is retried), sleeping before the first attempt, and forgetting that the fallback needs its own retries. The tests run in about ten seconds because the planned delays are short.</p></aside>
 </section>
 
 <section class="slide" id="wrap-up">
   <div class="kicker">Day 1 · wrap-up</div>
   <h2>Three things to keep</h2>
   <div class="cols cols-3">
-    <div class="card c-teal"><h4>Remember</h4><p class="small mb0">REPLACE: one idea participants keep</p></div>
-    <div class="card c-coral"><h4>Remember</h4><p class="small mb0">REPLACE: one idea participants keep</p></div>
-    <div class="card c-purple"><h4>Remember</h4><p class="small mb0">REPLACE: one idea participants keep</p></div>
+    <div class="card c-teal"><h4>Count before you choose</h4><p class="small mb0">Tokens per request, by language, times 10,000 a day: the price list then decides.</p></div>
+    <div class="card c-coral"><h4>One interface</h4><p class="small mb0">The shape lives in one adapter; the provider is configuration.</p></div>
+    <div class="card c-purple"><h4>Prompts and failures are code</h4><p class="small mb0">Versioned, owned, tested: the instructions and every failure path.</p></div>
   </div>
+  <aside class="notes"><p>Ask each table for one number they will remember from today. Expect 1.37 (Arabic against English), 406 (tool definition tokens) or 2.1 seconds.</p></aside>
 </section>
 
 <section class="slide dark" id="next" data-label="Next">
   <div class="kicker">Next</div>
   <h2>Day 2: Structured data and tools</h2>
-  <p class="lead">REPLACE: what participants prepare before then; unfinished labs can be finished at home</p>
-  <aside class="notes">REPLACE: accounts, installs or reading participants need before the next unit</aside>
+  <p class="lead">Rider messages become typed objects, and Wasil calls the trip-status and ticket services. Finish any open lab at home from its solution in <code>labs/solutions/</code>.</p>
+  <aside class="notes"><p>Before Day 2: check that the free hosted model still answers with uv run python -c "import llm; print(llm.text(llm.complete([{'role': 'user', 'content': 'hi'}])))" in labs/. If the key fails, the labs run on the stand-in and say so. The schema and tool-calling labs are done without AI assistance on the first attempt.</p></aside>
 </section>

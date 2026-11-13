@@ -5,7 +5,7 @@
 
 AI Engineering Track · SDAIA Academy · AE-203 · Level 200
 
-REPLACE: one line under the title: what participants can do after the course
+Build a tested bilingual assistant service on any language model: typed outputs, tools, grounded answers, evaluation and safety checks
 
 Participants build a bilingual rider assistant for a fictional transit authority on top of any language model, hosted or open-weight. They call models through a provider-neutral interface, extract validated structured data from rider messages, add tool calls to a synthetic trip-status service, ground answers in a policy corpus with citations and abstention, write a small evaluation set and run the assistant against it, and add input and output checks for personal data and instruction-like text. The result is a small tested web service.
 
@@ -40,7 +40,9 @@ Participants build a bilingual rider assistant for a fictional transit authority
 
 ## Case study
 
-**REPLACE: the name of the fictional organisation every lab works on.** REPLACE: two sentences on the case study and its synthetic data
+**Darb Transit Authority** (هيئة درب للنقل العام) is a fictional city transport authority with four metro lines and eight bus routes, a trip-status service, a ticket service and 60 policies published in Arabic and English. Participants build **Wasil** (واصل), its rider assistant, one piece per lab: what a request costs, one client for hosted and local models, versioned instructions, retries, typed extraction from 300 rider messages, tool calls, grounded answers with citations and abstention, an evaluation set with a validated grader, input and output checks, and a tested web service.
+
+All data is synthetic and generated with a fixed seed by `labs/prepare_data.py`: the messages carry fake names, phone numbers and identity numbers so that masking can be practised, one policy page is superseded, and one carries a planted instruction for "automated assistants". `labs/README.md` lists every file.
 
 <!-- academy:labs -->
 ## Labs
@@ -49,29 +51,31 @@ Every lab is a notebook in `labs/`. Open it in Google Colab from the course page
 
 | | Session | Lab | File |
 |---|---|---|---|
-| 1.1 | Day 1 · Session 1 | Count tokens for Arabic and English rider messages and estimate daily cost and latency for 10,000 messages | [`D1_1_count_tokens_arabic.ipynb`](labs/D1_1_count_tokens_arabic.ipynb) |
-| 1.2 | Day 1 · Session 2 | Send the same request to a hosted and a local model through one client and compare the responses and usage fields | [`D1_2_send_same_request.ipynb`](labs/D1_2_send_same_request.ipynb) |
-| 1.3 | Day 1 · Session 3 | Move the assistant's instructions into a versioned template and write two tests that pin its behaviour | [`D1_3_move_assistant_s.ipynb`](labs/D1_3_move_assistant_s.ipynb) |
-| 1.4 | Day 1 · Session 4 | Add a timeout, a retry with backoff and a fallback model, and test them against a simulated slow endpoint | [`D1_4_add_timeout_retry.ipynb`](labs/D1_4_add_timeout_retry.ipynb) |
-| 2.1 | Day 2 · Session 1 | Extract route, date and complaint type from 50 messages into a typed schema and measure the valid rate | [`D2_1_extract_route_date.ipynb`](labs/D2_1_extract_route_date.ipynb) |
-| 2.2 | Day 2 · Session 2 | Feed validation errors back to the model, cap the retries and route failures to a human queue | [`D2_2_feed_validation_errors.ipynb`](labs/D2_2_feed_validation_errors.ipynb) |
-| 2.3 | Day 2 · Session 3 | Expose the trip-status service as a tool and handle a correct call, a malformed call and a tool error | [`D2_3_expose_trip_status.ipynb`](labs/D2_3_expose_trip_status.ipynb) |
-| 2.4 | Day 2 · Session 4 | Write one task as a fixed workflow and as a tool loop and compare steps, cost and failures on ten cases | [`D2_4_write_one_task.ipynb`](labs/D2_4_write_one_task.ipynb) |
-| 3.1 | Day 3 · Session 1 | Chunk the Arabic and English policy pages two ways and index both versions | [`D3_1_chunk_arabic_english.ipynb`](labs/D3_1_chunk_arabic_english.ipynb) |
-| 3.2 | Day 3 · Session 2 | Compare keyword, embedding and combined search on 30 questions with known source pages | [`D3_2_compare_keyword_embedding.ipynb`](labs/D3_2_compare_keyword_embedding.ipynb) |
-| 3.3 | Day 3 · Session 3 | Generate answers that cite page and section and check automatically that each citation exists | [`D3_3_generate_answers_that.ipynb`](labs/D3_3_generate_answers_that.ipynb) |
-| 3.4 | Day 3 · Session 4 | Add an abstention rule and measure it on 30 questions the corpus cannot answer | [`D3_4_add_abstention_rule.ipynb`](labs/D3_4_add_abstention_rule.ipynb) |
-| 4.1 | Day 4 · Session 1 | Write 40 golden cases with code-based checks and run them against the assistant | [`D4_1_write_40_golden.ipynb`](labs/D4_1_write_40_golden.ipynb) |
-| 4.2 | Day 4 · Session 2 | Write a binary faithfulness grader and measure its agreement with 30 labelled answers | [`D4_2_write_binary_faithfulness.ipynb`](labs/D4_2_write_binary_faithfulness.ipynb) |
-| 4.3 | Day 4 · Session 3 | Mask personal data in messages and logs and flag instruction-like text found in retrieved pages | [`D4_3_mask_personal_data.ipynb`](labs/D4_3_mask_personal_data.ipynb) |
-| 4.4 | Day 4 · Session 4 | Wrap the assistant in a web API with a health check and run the tests against recorded model responses | [`D4_4_wrap_assistant_web.ipynb`](labs/D4_4_wrap_assistant_web.ipynb) |
+| 1.1 | Day 1 · Session 1 | Tokens and cost for 10,000 messages | [`D1_1_tokens_cost.ipynb`](labs/D1_1_tokens_cost.ipynb) |
+| 1.2 | Day 1 · Session 2 | One request, three shapes, one client | [`D1_2_three_shapes.ipynb`](labs/D1_2_three_shapes.ipynb) |
+| 1.3 | Day 1 · Session 3 | Wasil's instructions as a versioned template | [`D1_3_prompt_versions.ipynb`](labs/D1_3_prompt_versions.ipynb) |
+| 1.4 | Day 1 · Session 4 | Timeouts, retries and a fallback model | [`D1_4_retries.ipynb`](labs/D1_4_retries.ipynb) |
+| 2.1 | Day 2 · Session 1 | Route, date and complaint type as a typed object | [`D2_1_schemas.ipynb`](labs/D2_1_schemas.ipynb) |
+| 2.2 | Day 2 · Session 2 | Repair, cap and a human queue | [`D2_2_repair_fallback.ipynb`](labs/D2_2_repair_fallback.ipynb) |
+| 2.3 | Day 2 · Session 3 | The trip-status service as a tool | [`D2_3_tool_calling.ipynb`](labs/D2_3_tool_calling.ipynb) |
+| 2.4 | Day 2 · Session 4 | Workflow or tool loop | [`D2_4_workflow_agent.ipynb`](labs/D2_4_workflow_agent.ipynb) |
+| 3.1 | Day 3 · Session 1 | Two chunkings of the policy corpus | [`D3_1_chunking.ipynb`](labs/D3_1_chunking.ipynb) |
+| 3.2 | Day 3 · Session 2 | Keyword, vector and hybrid search | [`D3_2_search.ipynb`](labs/D3_2_search.ipynb) |
+| 3.3 | Day 3 · Session 3 | Answers with checked citations | [`D3_3_citations.ipynb`](labs/D3_3_citations.ipynb) |
+| 3.4 | Day 3 · Session 4 | Saying the answer is not there | [`D3_4_abstention.ipynb`](labs/D3_4_abstention.ipynb) |
+| 4.1 | Day 4 · Session 1 | Forty golden cases | [`D4_1_eval_set.ipynb`](labs/D4_1_eval_set.ipynb) |
+| 4.2 | Day 4 · Session 2 | A faithfulness grader against labels | [`D4_2_grader.ipynb`](labs/D4_2_grader.ipynb) |
+| 4.3 | Day 4 · Session 3 | Masking and flagging | [`D4_3_safety_checks.ipynb`](labs/D4_3_safety_checks.ipynb) |
+| 4.4 | Day 4 · Session 4 | Wasil as a tested web service | [`D4_4_service.ipynb`](labs/D4_4_service.ipynb) |
 <!-- /academy:labs -->
 
 ## Capstone
 
 An assistant for one of three supplied cases or an approved own case, submitted as a public repository with tests, an evaluation set of at least 40 cases and a README that reports results from two measured runs, cost per 1,000 requests and known limits, followed by an eight-minute defence and four minutes of questions
 
-**Submission:** REPLACE: what participants submit and how: a public repository link, or a shared folder for a course without code
+**Submission:** a public GitHub repository with the service, its tests, an evaluation set of at least 40 cases with its run logs and commit history, and a README that reports results from two measured runs, cost per 1,000 requests and known limits. Then an eight-minute defence with four minutes of questions: the participant runs the evaluation, explains a failing case the assessor selects, and predicts the result of one new case the assessor adds.
+
+The three supplied cases, all on the Darb data, and the starter are in `labs/capstone/`. Rubric: working service and tests 25, structured output and tools 20, grounding and abstention 20, evaluation 20, safety checks and limits 15.
 
 ## Prerequisites
 
@@ -99,12 +103,45 @@ Each line is a capability; the examples are interchangeable.
 <!-- academy:sources -->
 ## Sources
 
-- REPLACE: every source the course cites, with its address, in course.json under "sources"; this list is written from there
+### Model APIs and clients
+
+- [OpenRouter: API rate limits](https://openrouter.ai/docs/api-reference/limits)
+- [OpenRouter: models](https://openrouter.ai/models)
+- [OpenRouter: structured outputs](https://openrouter.ai/docs/guides/features/structured-outputs)
+- [OpenAI API reference: Chat Completions](https://developers.openai.com/api/reference/resources/chat)
+- [OpenAI API reference: Responses](https://developers.openai.com/api/reference/resources/responses)
+- [Anthropic API reference: Messages](https://docs.anthropic.com/en/api/messages)
+- [Open Responses specification](https://www.openresponses.org/)
+- [OpenAI Python library](https://github.com/openai/openai-python)
+- [LiteLLM documentation](https://docs.litellm.ai/docs/)
+- [Ollama: OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility)
+- [llama.cpp server](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md)
+- [Qwen3 open tokenizer (model card)](https://huggingface.co/Qwen/Qwen3-0.6B)
+- [Model Context Protocol](https://modelcontextprotocol.io/)
+
+### Libraries used in the labs
+
+- [Pydantic: JSON Schema](https://docs.pydantic.dev/latest/concepts/json_schema/)
+- [rank-bm25](https://github.com/dorianbrown/rank_bm25)
+- [SQLite FTS5 full-text search](https://www.sqlite.org/fts5.html)
+- [Python sqlite3](https://docs.python.org/3/library/sqlite3.html)
+- [FastAPI: testing](https://fastapi.tiangolo.com/tutorial/testing/)
+- [Microsoft Presidio](https://github.com/microsoft/presidio)
+- [promptfoo](https://www.promptfoo.dev/)
+- [Inspect](https://inspect.aisi.org.uk/)
+
+### National references
+
+- [Personal Data Protection Law](https://sdaia.gov.sa/en/SDAIA/about/Documents/PersonalDataProtectionLaw.pdf)
+- [Data Classification Policy (National Data Management Office)](https://sdaia.gov.sa/en/SDAIA/about/Documents/DataClassificationPolicy.pdf)
+- [Generative AI Guideline for Government](https://sdaia.gov.sa/en/SDAIA/about/Files/GenAIGuidelinesForGovernmentENCompressed.pdf)
+- [Generative AI Guideline for Public](https://sdaia.gov.sa/en/SDAIA/about/Files/GenerativeAIPublicEN.pdf)
+- [Principles of AI Ethics](https://sdaia.gov.sa/en/SDAIA/about/Documents/ai-principles.pdf)
 <!-- /academy:sources -->
 
 ### National references
 
-- Personal Data Protection Law and its implementing regulations: REPLACE: the address of the official text
-- NDMO Data Classification Policy: REPLACE: the address of the official text
-- SDAIA Generative AI Guidelines: REPLACE: the address of the official text
-- SDAIA AI Ethics Principles: REPLACE: the address of the official text
+- Personal Data Protection Law and its implementing regulations: https://sdaia.gov.sa/en/SDAIA/about/Documents/PersonalDataProtectionLaw.pdf
+- NDMO Data Classification Policy: https://sdaia.gov.sa/en/SDAIA/about/Documents/DataClassificationPolicy.pdf
+- SDAIA Generative AI Guidelines: https://sdaia.gov.sa/en/SDAIA/about/Files/GenAIGuidelinesForGovernmentENCompressed.pdf (for government) and https://sdaia.gov.sa/en/SDAIA/about/Files/GenerativeAIPublicEN.pdf (for the public)
+- SDAIA AI Ethics Principles: https://sdaia.gov.sa/en/SDAIA/about/Documents/ai-principles.pdf

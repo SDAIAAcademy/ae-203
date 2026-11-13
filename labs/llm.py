@@ -403,9 +403,12 @@ def scripted_reply(messages: list[dict], model: str = "scripted-stand-in", tools
             res = str(last.get("content") or "")
             if '"error"' in res:
                 err = json.loads(res).get("error", "")
-                if "route" in err and calls_made.count("get_trip_status") < 2 and msg["route"]:
+                if "invalid arguments" in err and calls_made.count("get_trip_status") < 2 and msg["route"]:
                     return _completion(model, tool_calls=[{"name": "get_trip_status",
                                                            "arguments": {"route": msg["route"], "date": msg["date"] or received.isoformat()}}], prompt=prompt)
+                if "unknown route" in err:
+                    return _completion(model, "I could not find that route. Darb runs metro lines M1 to M4 and bus "
+                                              "routes B10 to B60; which one did you take?", prompt=prompt)
                 return _completion(model, "I could not reach the trip-status service just now. I have noted your "
                                           "message and a staff member will follow up.", prompt=prompt)
             if ("create_ticket" in names and "create_ticket" not in calls_made

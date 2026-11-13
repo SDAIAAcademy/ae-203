@@ -187,9 +187,15 @@ class Wasil:
                 reply, calls = self.tool_loop(masked, received)
                 out.update(answer=reply, tool_calls=calls)
         # output checks: no personal data, no promise the assistant may not make
-        out["answer"], leaked = D.mask_pii(out["answer"])
-        if leaked or re.search(r"refund (?:is |has been )?approved|national ID number", out["answer"], re.I):
+        out["answer"], blocked = self.check_output(out["answer"], lang_of(text))
+        if blocked:
             out["flags"].append("output_blocked")
-            out["answer"] = ABSTAIN[lang_of(text)]
         self.log.append({"input": masked, "kind": kind, "flags": out["flags"]})
         return out
+
+    def check_output(self, answer: str, lang: str) -> tuple[str, bool]:
+        """The output check: no personal data, no promise of a refund, no request for an ID number."""
+        answer, leaked = D.mask_pii(answer)
+        if leaked or re.search(r"refund (?:is |has been )?approved|national ID number", answer, re.I):
+            return ABSTAIN[lang], True
+        return answer, False

@@ -37,6 +37,31 @@
   <div class="callout note mt"><b>Peer feedback.</b> After each talk, everyone writes one strength, one question and one suggestion.</div>
 </section>
 
+<section class="slide" id="cases" data-label="The cases">
+  <div class="kicker">What was built</div>
+  <h2>One assistant on Darb's data, from one of three cases or an approved own case</h2>
+  <div class="cols cols-3">
+    <div class="card c-teal"><h4>A · Fares and refunds</h4><p class="small mb0">Refund eligibility decided by code from the trip status and P03 or P04; answers that never cite the superseded P31.</p></div>
+    <div class="card c-coral"><h4>B · Accessibility and lost property</h4><p class="small mb0">Lost-item and assistance requests, one tool of the participant's design, the planted P30 flagged.</p></div>
+    <div class="card c-purple"><h4>C · Disruption notices</h4><p class="small mb0">Bilingual notices from the day's status, every number checked against the data, for a person to approve.</p></div>
+  </div>
+  <aside class="notes"><p>The cases and the starter are in labs/capstone/README.md. Note on the running order which case each participant took, so the questions can compare like with like.</p></aside>
+</section>
+
+<section class="slide" id="defence" data-label="The defence">
+  <div class="kicker">The defence</div>
+  <h2>Run it, explain a failure, predict a new case</h2>
+  <div class="flow">
+    <div class="step c-teal"><b>1 · Run</b>the evaluation, live, from a clean clone</div>
+    <div class="arrow">→</div>
+    <div class="step c-cyan"><b>2 · Explain</b>a failing case the assessor picks: model, retrieval, rule or label?</div>
+    <div class="arrow">→</div>
+    <div class="step c-coral"><b>3 · Predict</b>the result of one new case the assessor adds, then run it</div>
+  </div>
+  <div class="callout note mt"><b>The README is the evidence:</b> two measured runs, cost per 1,000 requests and known limits, with the run log and the commits behind them.</div>
+  <aside class="notes"><p>Prepare one new case per case study before the day: an Arabizi lost-item message for B, a cancelled trip on a planned-closure day for C, a refund question on a concession fare for A. A wrong prediction explained well scores better than a right one by luck. The defence is 20% of the course grade; the repository rubric is 60%.</p></aside>
+</section>
+
 <section class="slide order" id="running-order" data-label="Running order">
   <div class="kicker">Running order</div>
   <h2>Who presents when</h2>
@@ -88,8 +113,10 @@
   <h2>Keep going</h2>
   <ul class="bullets">
     <li><b>Your project stays yours:</b> keep it reproducible and add the next improvement you named today</li>
-    <li><b>Next Academy course:</b> REPLACE: the course that follows this one</li>
+    <li><b>The follow-up task:</b> extend your evaluation set to 80 cases and run it again after one change of model</li>
+    <li><b>Next Academy courses:</b> AE-303 Evaluation-Driven Development for Language Model Applications, AE-304 Retrieval and Knowledge Engineering, or AE-302 Agentic Systems Engineering</li>
   </ul>
+  <aside class="notes"><p>The follow-up task is tracked: participants submit the second run log with the 80 cases. Point those who liked Day 4 to AE-303, Day 3 to AE-304, and the workflow-or-agent lab to AE-302.</p></aside>
 </section>
 
 <section class="slide dark" id="thanks" data-label="Thank you">

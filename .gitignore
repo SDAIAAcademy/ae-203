@@ -36,3 +36,4 @@ Thumbs.db
 /*.log
 labs/artifacts/
 labs/cache/
+labs/capstone/starter/runs.jsonl

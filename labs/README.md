@@ -87,3 +87,10 @@ Synthetic and deterministic (seed 203), dated around **Sunday 15 November 2026**
 | `darb.py` | the data loaders, `TripStatus` and `Tickets` (the two services), `pages()`, chunkers, `BM25`, `Vectors`, `rrf`, `Retriever`, `mask_pii()`, `instruction_like()` |
 | `wasil.py` | the reference assistant of Day 4 and the capstone: `RiderMessage`, `extract()`, `TOOLS`, `Wasil.answer()` |
 | `prepare_data.py`, `policies_src.py` | the data generator and the policy texts |
+
+## Capstone and answer key
+
+- [`capstone/`](capstone/README.md): the three capstone cases, the rubric, and a starter (service, evaluation runner
+  with a run log, offline tests, and the README template the submission uses).
+- [`solutions/answer_key.md`](solutions/answer_key.md): for trainers, the planted problems of every lab and the numbers
+  the reference run produces.

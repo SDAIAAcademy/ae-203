@@ -38,7 +38,7 @@ instead of JSON. Validation rejects that, and the message goes to a person.
 | Lab | Planted problem | Reference result |
 |---|---|---|
 | 3.1 Chunking | Fixed windows cut rules and mislabel their section | 272 section chunks; 163 windows of 300 characters, 37 ending mid-word; 314, 163 and 120 chunks at 150, 300 and 600 characters |
-| 3.2 Search | Arabic questions and paraphrases | hit@1 / hit@4 / MRR: BM25 0.90 / 0.97 / 0.92; vectors 0.90 / 0.97 / 0.93; hybrid 0.93 / 0.97 / 0.94; QA-05 and QA-23 missed |
+| 3.2 Search | Arabic questions and paraphrases | hit@1 / hit@5 / MRR: BM25 0.90 / 0.97 / 0.92; vectors 0.90 / 0.97 / 0.93; hybrid 0.93 / 0.97 / 0.94; QA-05 and QA-23 missed |
 | 3.3 Citations | The superseded P31 (7 days) competes with P03 (14 days) | citations in force 0.90 → 0.93 without superseded pages; supported 0.73; QA-05 cites P31.1 before the fix |
 | 3.4 Abstention | Unanswerable questions share words with real policies | median best score 12.7 against 5.5; the model alone declines 23 of 30 unanswerable and 2 of 30 answerable questions; abstention 0.77 at threshold 0, 0.80 at 5 to 7, 0.93 at 8 with 0.13 false abstention |
 
@@ -51,7 +51,7 @@ passages like it before the model sees them.
 |---|---|---|
 | 4.1 Evaluation set | Grounded answers that cite the right section but quote the wrong sentence | extraction 16 of 16, tool use 10 of 10, grounded 11 of 16, 88% overall with the two cases the participant adds; failures GC-28, 29, 31 (right section, wrong sentence) and GC-30, 34 (wrong section); at threshold 4, GC-36 (cryptocurrency) is answered and grounded drops 0.69 → 0.62 |
 | 4.2 Grader | Six changed numbers and six unsupported additions among 30 labelled answers | the stand-in grader agrees on all 30 (kappa 1.0); with the answer first it fails every faithful answer (agreement 0.40, kappa 0, 18 verdicts change). A hosted grader typically misses some unsupported additions: look for that in the disagreements |
-| 4.3 Checks | A refund reference that looks like a national ID number; instructions in messages, in Arabic, and in documents | 12 of 12 masked, 5 of 6 harmless left alone (RK-25 over-masked); 12 of 12 instructions flagged, 0 of 18 others; without checks 13 of 24 messages put personal data in the answer or log and 2 promise a refund; with checks 0 and 0 |
+| 4.3 Checks | A refund reference that looks like a national ID number; instructions in messages, in Arabic, and in documents | 12 of 12 masked, 5 of 6 harmless left alone (RK-25 over-masked); 12 of 12 instructions flagged, 0 of 18 others; without checks 13 of 24 messages put personal data in the answer or log and 2 promise a refund; with checks 0 and 0. Before-and-after table on the 30 items: without checks 0 blocked, 0 masked, 30 passed, 24 misses; with checks 12 blocked, 13 masked, 5 passed, 1 false positive (RK-25), 0 misses |
 | 4.4 Service | Tests that would call the model; cost from one message instead of a mix | 43 recorded responses for 12 cases; four of four tests pass in under 2 s with no network; 1.7 calls, 844 input and 71 output tokens per request; 0.11 and 3.59 per 1,000 requests at the example prices |
 
 ## Common slips

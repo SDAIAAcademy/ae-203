@@ -98,8 +98,9 @@ with yours, one step at a time, and run the evaluation after each step.
 | Evaluation | 20 | at least 40 cases, two logged runs with one stated change between them, failures explained |
 | Safety checks and limits | 15 | personal data masked before the model and the log, instructions flagged, an output check, limits stated honestly |
 
-The repository is 60% of the course grade and the live defence is 20%. To pass you need 70% overall, with at least 60%
-on this rubric.
+The repository is 60% of the course grade and the live defence is 20%. The other 20% is the supervised entry quiz and
+exit check, taken without AI assistance. To pass you need 70% overall, with at least 60% on this rubric and at least
+60% on the supervised check.
 
 ## After the course
 

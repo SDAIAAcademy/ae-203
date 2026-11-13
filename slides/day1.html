@@ -1,5 +1,5 @@
 <section class="slide title" id="title" data-auto="title">
-  <aside class="notes"><p>Welcome the room and introduce yourself. Ask one calibrating question: who has called a model API from Python and read the JSON that came back? Hands up. If most have, move faster through Session 2 and slower through Session 4.</p><p>The rhythm: four sessions, each about 25 minutes of ideas and a 25-minute lab. Everything happens on one fictional organisation, Darb Transit Authority, and one assistant, Wasil.</p></aside>
+  <aside class="notes"><p>Welcome the room and introduce yourself. Ask one calibrating question: who has called a model API from Python and read the JSON that came back? Hands up. If most have, move faster through Session 2 and slower through Session 4.</p><p>The rhythm: four sessions, each about 25 minutes of ideas and a 25-minute lab. Everything happens on one fictional organisation, Darb Transit Authority, and one assistant, Wasil.</p><p>Before the first session: the entry quiz on the two hours of guided pre-work (HTTP, JSON and tokens). It is supervised and taken without AI assistance. State the AI policy once: no AI assistance in the supervised checks and in the first attempt at the schema lab (2.1) and the tool-calling lab (2.3); in the other labs the course assistant may hint and explain but does not write the module; in the capstone any AI assistance is allowed, and the participant defends the work live.</p></aside>
 </section>
 
 <section class="slide" id="agenda" data-auto="agenda">
@@ -366,13 +366,13 @@ def test_declines_off_topic(system):
   <h2>Streaming shows the first words early; the total time stays the same</h2>
   <div class="cols cols-2">
     <div class="stat"><div class="big">0.60 s</div><div class="lbl">to the first word on the simulated endpoint</div></div>
-    <div class="stat"><div class="big">0.95 s</div><div class="lbl">to the whole reply</div></div>
+    <div class="stat"><div class="big">about 1 s</div><div class="lbl">to the whole reply</div></div>
   </div>
   <ul class="bullets small mt">
     <li>Stream to a person reading; do not stream to code that needs the whole JSON.</li>
     <li>A streamed reply can still fail half way: handle the cut-off end.</li>
   </ul>
-  <aside class="notes"><p>Numbers from the simulated endpoint in Lab 1.4 (a planned delay before the first word, then a fixed gap between words), so they are the same on every laptop. With a real provider, ask for stream=True in Chat Completions and read the chunks; the time to first token is then a real measurement worth logging.</p></aside>
+  <aside class="notes"><p>Numbers from the simulated endpoint in Lab 1.4 (a planned delay before the first word, then a fixed gap between words), so they are nearly the same on every laptop. With a real provider, ask for stream=True in Chat Completions and read the chunks; the time to first token is then a real measurement worth logging.</p></aside>
 </section>
 
 <section class="slide" id="timeouts" data-label="Timeouts" data-lo="LO1 LO7">
@@ -398,7 +398,7 @@ def test_declines_off_topic(system):
     <tr><td>400 bad request</td><td>no</td><td>the same request fails the same way</td></tr>
     <tr><td>401 bad key</td><td>no</td><td>fix the configuration</td></tr>
   </table>
-  <aside class="notes"><p>The 401 row is not hypothetical: when this course was built, the key in the build environment answered 401, which is why the labs have an offline stand-in. Retrying a 401 only burns time.</p></aside>
+  <aside class="notes"><p>The 401 row is the one every participant meets: a key pasted with a space, or a revoked key. Retrying a 401 only burns time; the fix is in the configuration. The lab's tests cover the 400 the same way: one attempt, no fallback.</p></aside>
 </section>
 
 <section class="slide" id="backoff-jitter" data-label="Backoff" data-lo="LO1 LO7">

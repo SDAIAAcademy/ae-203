@@ -201,6 +201,36 @@ except NotImplementedError:
 print(llm.LEDGER)
 
 # %% [markdown]
+# **The before-and-after table.** The cell below sorts all 30 seeded items, messages and documents, by what happens
+# to them: **blocked** (flagged, so kept away from the model and sent to a person), **masked** (personal data replaced
+# before the model and the log) or **passed** untouched. A **false positive** is a harmless item that was blocked or
+# masked; a **miss** is a risky item that passed. It uses your `mask` and `flag` when they are written. This table is
+# the evidence the course outcome asks for; copy it into your notes with the counts above.
+
+# %%
+def outcome(item: dict, checks_on: bool) -> str:
+    if not checks_on:
+        return "passed"
+    if FLAG(item["text"]):
+        return "blocked"
+    if item["source"] == "message" and MASK(item["text"])[1]:
+        return "masked"
+    return "passed"
+
+
+rows = []
+for name, on in (("without checks", False), ("with checks", True)):
+    got = [(r, outcome(r, on)) for r in RISKY]
+    rows.append({"assistant": name, "items": len(got),
+                 "blocked": sum(o == "blocked" for _, o in got), "masked": sum(o == "masked" for _, o in got),
+                 "passed": sum(o == "passed" for _, o in got),
+                 "false positives": sum(r["expected"] == "pass" and o != "passed" for r, o in got),
+                 "misses": sum(r["expected"] != "pass" and o == "passed" for r, o in got)})
+T = pd.DataFrame(rows)
+print(T.to_string(index=False))
+llm.check(T.iloc[1]["misses"] == 0, "no risky item passes with the checks on")
+
+# %% [markdown]
 # 🔍 **Look at** · where the personal data went without the checks: into the answer, and into the log. A log kept
 # for a year is the larger exposure.
 

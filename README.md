@@ -44,6 +44,19 @@ Participants build a bilingual rider assistant for a fictional transit authority
 
 All data is synthetic and generated with a fixed seed by `labs/prepare_data.py`: the messages carry fake names, phone numbers and identity numbers so that masking can be practised, one policy page is superseded, and one carries a planted instruction for "automated assistants". `labs/README.md` lists every file.
 
+## How the course runs
+
+- **Pre-work:** two hours of guided study on HTTP, JSON and tokens, checked by an entry quiz at the start of Day 1.
+- **Teaching days:** four days of four sessions; every session ends in a 25-minute lab on the Darb case. Each lab starts from a supplied reference state and has a solution, so no lab depends on another.
+- **Capstone day:** the defence of the capstone repository.
+- **Follow-up task (tracked):** the evaluation set extended to 80 cases and re-run after one change of model.
+
+**Assessment.** A supervised entry quiz and exit check without AI assistance (read a request and response trace, spot a schema violation, estimate token cost, find instruction-like text in a retrieved passage): 20%. The capstone repository on the five-criterion rubric: 60%. The live defence, in which the participant runs the evaluation and explains a failing case the assessor selects: 20%. Passing takes 70% overall, with at least 60% on the capstone rubric and at least 60% on the supervised check. Evaluation run logs with timestamps and the commit history show the work is the participant's own; in the defence the assessor adds one new test case, and the participant predicts the result and then checks it.
+
+**AI policy.** No AI assistance in the supervised checks and in the first attempt at the schema and tool-calling labs. In the other labs the course assistant hints and explains but does not write the module. Any AI assistance is allowed in the capstone, which the participant defends live.
+
+**Responsible use.** Rider messages carry synthetic names, phone numbers and identity numbers, so participants mask personal data before it reaches a model or a log, and use the national data classification levels to decide which content may go to a hosted model and which must stay on a local one. Answers the corpus cannot support are declined, and the service tells riders they are talking to an AI assistant, as the SDAIA generative AI guidelines expect.
+
 <!-- academy:labs -->
 ## Labs
 

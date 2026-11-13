@@ -164,7 +164,7 @@ class BM25:
 
 
 class Vectors:
-    """Dense vectors computed on the laptop: TF-IDF weights of character 3- to 5-grams, cosine similarity.
+    """Vectors computed on the laptop: TF-IDF weights of character 3- to 5-grams, cosine similarity.
 
     A stand-in for learned embeddings (which come from a model): same interface, no download."""
 

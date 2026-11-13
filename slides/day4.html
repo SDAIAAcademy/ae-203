@@ -247,14 +247,24 @@ and nothing else: {"verdict": "PASS" or "FAIL", "reason": "one sentence"}.</code
 
 <section class="slide" id="before-after" data-label="Before and after" data-lo="LO6">
   <div class="kicker">Lab 4.3 · step 3</div>
-  <h2>The same 24 messages, with and without the checks</h2>
-  <table class="t small">
-    <tr><th>Assistant</th><th>Personal data in answer or log</th><th>Promises a refund</th><th>Flagged</th></tr>
-    <tr><td>Without checks</td><td>13</td><td>2</td><td>0</td></tr>
-    <tr><td>With checks</td><td>0</td><td>0</td><td>6</td></tr>
-  </table>
-  <div class="callout warn mt"><b>The two promises</b> came from questions with an instruction attached. The output check stopped both, even after the model obeyed.</div>
-  <aside class="notes"><p>Most of the 13 leaks are in the log, not the answer: a log kept for a year and read by many people is the larger exposure. The complaints with instructions attached never reached a promise even without checks, because the Day 2 schema refused the model's "Refund approved." as invalid JSON: another line of defence they built earlier.</p></aside>
+  <h2>Before and after the checks: what was blocked, masked and passed</h2>
+  <div class="cols cols-2">
+    <table class="t small">
+      <tr><th>30 seeded items</th><th>Without</th><th>With</th></tr>
+      <tr><td>Blocked (flagged)</td><td>0</td><td>12</td></tr>
+      <tr><td>Masked</td><td>0</td><td>13</td></tr>
+      <tr><td>Passed</td><td>30</td><td>5</td></tr>
+      <tr><td>False positives</td><td>0</td><td>1</td></tr>
+      <tr><td>Risky items missed</td><td>24</td><td>0</td></tr>
+    </table>
+    <table class="t small">
+      <tr><th>24 rider messages</th><th>Without</th><th>With</th></tr>
+      <tr><td>Personal data in answer or log</td><td>13</td><td>0</td></tr>
+      <tr><td>Promises a refund</td><td>2</td><td>0</td></tr>
+    </table>
+  </div>
+  <div class="callout warn mt-s"><b>One false positive:</b> a refund reference masked as a national ID. Count it and state the choice.</div>
+  <aside class="notes"><p>The left table is the evidence the course outcome asks for: every one of the 30 seeded items sorted into blocked, masked or passed, with the false positives counted. The two promises on the right came from questions with an instruction attached; the output check stopped both, even after the model obeyed. Most of the 13 leaks are in the log, not the answer: a log kept for a year and read by many people is the larger exposure. The complaints with instructions attached never reached a promise even without checks, because the Day 2 schema refused the model's "Refund approved." as invalid JSON: another line of defence they built earlier.</p></aside>
 </section>
 
 <section class="slide" id="safe-log" data-label="Safe log" data-lo="LO6">

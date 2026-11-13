@@ -163,15 +163,15 @@ db.execute("SELECT ref, page FROM chunks WHERE chunks MATCH ? "
 
 <section class="slide" id="vectors" data-label="Vectors" data-lo="LO4">
   <div class="kicker">Dense search</div>
-  <h2>Vectors match pieces and meaning that keywords miss</h2>
+  <h2>Vectors match what exact keywords miss: word pieces here, meaning with embeddings</h2>
   <div class="cols cols-2">
     <div class="stack">
-      <div class="card c-teal flat"><h4>In the lab</h4><p class="small mb0">Character 3- to 5-gram weights, cosine similarity, computed on the laptop: "استرداد" and "الاسترداد" share most pieces.</p></div>
-      <div class="card c-navy flat"><h4>In production</h4><p class="small mb0">Learned embeddings from a model, in an index such as FAISS, pgvector or Chroma.</p></div>
+      <div class="card c-teal flat"><h4>In the lab: a stand-in</h4><p class="small mb0">Character 3- to 5-gram weights, cosine similarity, computed on the laptop: "استرداد" and "الاسترداد" share most pieces. It matches spelling, not meaning.</p></div>
+      <div class="card c-navy flat"><h4>In production: embeddings</h4><p class="small mb0">Dense vectors learned by a model, so "fare cap" lands near "maximum daily charge"; kept in an index such as FAISS, pgvector or Chroma.</p></div>
     </div>
-    <div class="callout note"><b>No model download.</b> The course computes its vectors from the text itself. The interface is the one an embedding model would use: text in, vector out, nearest vectors back.</div>
+    <div class="callout note"><b>No model download.</b> The course computes its vectors from the text itself, so they are not learned embeddings. The interface is the same: text in, vector out, nearest vectors back.</div>
   </div>
-  <aside class="notes"><p>Say plainly that character n-grams are a stand-in for learned embeddings, chosen so nothing is downloaded. They capture spelling, not meaning: "fare cap" and "maximum daily charge" would not match. With an embedding model the same code would add meaning. Dense search scored 0.90 hit@1 too, but on different questions, which is why fusion helps.</p></aside>
+  <aside class="notes"><p>Say plainly that character n-grams are a stand-in for learned embeddings, chosen so nothing is downloaded. They capture spelling, not meaning: "fare cap" and "maximum daily charge" would not match. With an embedding model the same code would add meaning. The lab's vectors are sparse counts, not the dense vectors the session title names: say so, and that only the interface carries over. They scored 0.90 hit@1 too, but on different questions, which is why fusion helps.</p></aside>
 </section>
 
 <section class="slide" id="rrf" data-label="Hybrid" data-lo="LO4">

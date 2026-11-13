@@ -1,0 +1,481 @@
+{
+  "$schema": "https://sdaiaacademy.github.io/engine/schemas/course.schema.json",
+  "engine": "1",
+  "id": "llm-applications",
+  "code": "AE-203",
+  "version": "2027.1.0",
+  "lang": "en",
+  "title": {
+    "en": "Building Applications on Language Models",
+    "ar": "بناء التطبيقات القائمة على النماذج اللغوية"
+  },
+  "tagline": "REPLACE: one line under the title: what participants can do after the course",
+  "description": "Participants build a bilingual rider assistant for a fictional transit authority on top of any language model, hosted or open-weight. They call models through a provider-neutral interface, extract validated structured data from rider messages, add tool calls to a synthetic trip-status service, ground answers in a policy corpus with citations and abstention, write a small evaluation set and run the assistant against it, and add input and output checks for personal data and instruction-like text. The result is a small tested web service.",
+  "track": "ai-engineering",
+  "level": 200,
+  "badge": {
+    "name": "AI Engineering",
+    "level": "Assistant"
+  },
+  "audience": "Practitioners. Graduates and early-career developers who have completed the FN courses or passed the placement test, and software engineers moving into AI work.",
+  "prerequisites": [
+    "FN-101 Python for Data and AI Work",
+    "FN-102 Command Line, Git and Reproducible Projects",
+    "FN-105 How Machine Learning and Language Models Work",
+    "Calls a web API from Python and handles JSON",
+    "Writes and runs unit tests"
+  ],
+  "site": {
+    "url": "https://sdaiaacademy.github.io/llm-applications/",
+    "repo": "SDAIAAcademy/llm-applications"
+  },
+  "outcomes": [
+    {
+      "id": "LO1",
+      "text": "Compare the main model API shapes and identify what changes in code when an application switches provider or moves to a local model, given the same request written for three interfaces",
+      "level": "Awareness",
+      "evidence": "an annotated comparison table that matches the reference on message structure, tool calls and usage reporting"
+    },
+    {
+      "id": "LO2",
+      "text": "Implement structured extraction from free-text messages with schema validation, bounded retries and a fallback path, given 300 synthetic Arabic and English rider messages and a target schema",
+      "level": "Applied",
+      "evidence": "an extraction module with tests and a measured valid-output rate against a stated target"
+    },
+    {
+      "id": "LO3",
+      "text": "Implement tool calling for two services with typed arguments, argument validation and handling of tool errors, given a synthetic trip-status service and a ticket-creation service",
+      "level": "Applied",
+      "evidence": "a passing test suite that includes malformed calls, timeouts and tool errors"
+    },
+    {
+      "id": "LO4",
+      "text": "Implement a grounded answering step that retrieves policy passages, cites them and declines when the corpus holds no answer, given 120 bilingual policy pages and 30 questions the corpus cannot answer",
+      "level": "Applied",
+      "evidence": "answers whose citations are checked automatically and a measured abstention rate"
+    },
+    {
+      "id": "LO5",
+      "text": "Prepare a small evaluation set and measure the assistant with code-based checks and one model-graded check validated against labels, given 40 labelled cases across extraction, tool use and grounded answers",
+      "level": "Applied",
+      "evidence": "an evaluation run with pass rates per category and the grader's agreement with the labels"
+    },
+    {
+      "id": "LO6",
+      "text": "Configure input and output checks for personal data, off-topic requests and instruction-like text inside retrieved content, given 30 seeded risky messages and documents",
+      "level": "Applied",
+      "evidence": "a before-and-after table of blocked, masked and passed cases with false positives counted"
+    },
+    {
+      "id": "LO7",
+      "text": "Build a bilingual assistant service that combines structured extraction, tool calls and grounded answers behind a tested API, given the case corpus and services, a provider-neutral client and a cost limit per 1,000 requests",
+      "level": "Performance",
+      "evidence": "a locally runnable service whose repository README reports evaluation results and cost from two measured runs"
+    }
+  ],
+  "case_study": {
+    "name": "REPLACE: the name of the fictional organisation every lab works on",
+    "summary": "REPLACE: two sentences on the case study and its synthetic data"
+  },
+  "format": "intensive",
+  "format_note": "Intensive: 4 teaching days of four sessions and a capstone day, with guided pre-work and a tracked follow-up task",
+  "hours": {
+    "instruction": 6,
+    "lab": 7,
+    "guided_self_study": 6,
+    "assessment": 1,
+    "capstone": 6
+  },
+  "unit": "day",
+  "days": [
+    {
+      "id": "day1",
+      "kind": "day",
+      "title": "Calling models well",
+      "deck": "slides/day1.html",
+      "sessions": [
+        {
+          "title": "Tokens, context and cost",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO1"
+          ],
+          "lab": {
+            "id": "1.1",
+            "title": "Count tokens for Arabic and English rider messages and estimate daily cost and latency for 10,000 messages",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D1_1_count_tokens_arabic.ipynb"
+          }
+        },
+        {
+          "title": "Three API shapes, one interface",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO1"
+          ],
+          "lab": {
+            "id": "1.2",
+            "title": "Send the same request to a hosted and a local model through one client and compare the responses and usage fields",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D1_2_send_same_request.ipynb"
+          }
+        },
+        {
+          "title": "Prompts as versioned code",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO7"
+          ],
+          "lab": {
+            "id": "1.3",
+            "title": "Move the assistant's instructions into a versioned template and write two tests that pin its behaviour",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D1_3_move_assistant_s.ipynb"
+          }
+        },
+        {
+          "title": "Streaming, timeouts and retries",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO1",
+            "LO7"
+          ],
+          "lab": {
+            "id": "1.4",
+            "title": "Add a timeout, a retry with backoff and a fallback model, and test them against a simulated slow endpoint",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D1_4_add_timeout_retry.ipynb"
+          }
+        }
+      ]
+    },
+    {
+      "id": "day2",
+      "kind": "day",
+      "title": "Structured data and tools",
+      "deck": "slides/day2.html",
+      "sessions": [
+        {
+          "title": "Schemas for model output",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO2"
+          ],
+          "lab": {
+            "id": "2.1",
+            "title": "Extract route, date and complaint type from 50 messages into a typed schema and measure the valid rate",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D2_1_extract_route_date.ipynb"
+          }
+        },
+        {
+          "title": "Validation, retry and fallback",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO2"
+          ],
+          "lab": {
+            "id": "2.2",
+            "title": "Feed validation errors back to the model, cap the retries and route failures to a human queue",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D2_2_feed_validation_errors.ipynb"
+          }
+        },
+        {
+          "title": "Tool calling",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO3"
+          ],
+          "lab": {
+            "id": "2.3",
+            "title": "Expose the trip-status service as a tool and handle a correct call, a malformed call and a tool error",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D2_3_expose_trip_status.ipynb"
+          }
+        },
+        {
+          "title": "Workflow or agent",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO3"
+          ],
+          "lab": {
+            "id": "2.4",
+            "title": "Write one task as a fixed workflow and as a tool loop and compare steps, cost and failures on ten cases",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D2_4_write_one_task.ipynb"
+          }
+        }
+      ]
+    },
+    {
+      "id": "day3",
+      "kind": "day",
+      "title": "Grounded answers",
+      "deck": "slides/day3.html",
+      "sessions": [
+        {
+          "title": "Chunking and indexing a policy corpus",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO4"
+          ],
+          "lab": {
+            "id": "3.1",
+            "title": "Chunk the Arabic and English policy pages two ways and index both versions",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D3_1_chunk_arabic_english.ipynb"
+          }
+        },
+        {
+          "title": "Lexical, dense and hybrid search",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO4"
+          ],
+          "lab": {
+            "id": "3.2",
+            "title": "Compare keyword, embedding and combined search on 30 questions with known source pages",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D3_2_compare_keyword_embedding.ipynb"
+          }
+        },
+        {
+          "title": "Answers with citations",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO4"
+          ],
+          "lab": {
+            "id": "3.3",
+            "title": "Generate answers that cite page and section and check automatically that each citation exists",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D3_3_generate_answers_that.ipynb"
+          }
+        },
+        {
+          "title": "Saying the answer is not there",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO4"
+          ],
+          "lab": {
+            "id": "3.4",
+            "title": "Add an abstention rule and measure it on 30 questions the corpus cannot answer",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D3_4_add_abstention_rule.ipynb"
+          }
+        }
+      ]
+    },
+    {
+      "id": "day4",
+      "kind": "day",
+      "title": "Evaluate, protect and ship",
+      "deck": "slides/day4.html",
+      "sessions": [
+        {
+          "title": "A small evaluation set",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO5"
+          ],
+          "lab": {
+            "id": "4.1",
+            "title": "Write 40 golden cases with code-based checks and run them against the assistant",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D4_1_write_40_golden.ipynb"
+          }
+        },
+        {
+          "title": "One model grader, checked against labels",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO5"
+          ],
+          "lab": {
+            "id": "4.2",
+            "title": "Write a binary faithfulness grader and measure its agreement with 30 labelled answers",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D4_2_write_binary_faithfulness.ipynb"
+          }
+        },
+        {
+          "title": "Input and output checks",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO6"
+          ],
+          "lab": {
+            "id": "4.3",
+            "title": "Mask personal data in messages and logs and flag instruction-like text found in retrieved pages",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D4_3_mask_personal_data.ipynb"
+          }
+        },
+        {
+          "title": "Packaging the assistant as a service",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO7"
+          ],
+          "lab": {
+            "id": "4.4",
+            "title": "Wrap the assistant in a web API with a health check and run the tests against recorded model responses",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D4_4_wrap_assistant_web.ipynb"
+          }
+        }
+      ]
+    },
+    {
+      "id": "capstone",
+      "kind": "capstone",
+      "title": "Capstone project presentations",
+      "deck": "slides/capstone.html"
+    }
+  ],
+  "capstone": {
+    "summary": "An assistant for one of three supplied cases or an approved own case, submitted as a public repository with tests, an evaluation set of at least 40 cases and a README that reports results from two measured runs, cost per 1,000 requests and known limits, followed by an eight-minute defence and four minutes of questions",
+    "submission": "REPLACE: what participants submit and how: a public repository link, or a shared folder for a course without code",
+    "talk_minutes": 8,
+    "qa_minutes": 4,
+    "rubric": [
+      {
+        "criterion": "Working service and tests",
+        "weight": 25
+      },
+      {
+        "criterion": "Structured output and tools",
+        "weight": 20
+      },
+      {
+        "criterion": "Grounding and abstention",
+        "weight": 20
+      },
+      {
+        "criterion": "Evaluation",
+        "weight": 20
+      },
+      {
+        "criterion": "Safety checks and limits",
+        "weight": 15
+      }
+    ]
+  },
+  "labs": {
+    "kind": "notebooks",
+    "base": "labs/"
+  },
+  "tools": [
+    {
+      "slot": "Language model access",
+      "examples": [
+        "a free hosted open-weight model",
+        "a locally served open-weight model",
+        "any commercial API"
+      ]
+    },
+    {
+      "slot": "Provider-neutral client or gateway",
+      "examples": [
+        "LiteLLM",
+        "an OpenAI-compatible local server such as llama.cpp server or Ollama"
+      ]
+    },
+    {
+      "slot": "Schema validation and structured output",
+      "examples": [
+        "Pydantic",
+        "Instructor",
+        "Outlines"
+      ]
+    },
+    {
+      "slot": "Embeddings and vector search",
+      "examples": [
+        "Sentence Transformers with FAISS",
+        "pgvector",
+        "Chroma"
+      ]
+    },
+    {
+      "slot": "Lexical search",
+      "examples": [
+        "SQLite full-text search",
+        "rank-bm25"
+      ]
+    },
+    {
+      "slot": "Personal data detection",
+      "examples": [
+        "Presidio",
+        "regular-expression and dictionary rules"
+      ]
+    },
+    {
+      "slot": "Web service framework",
+      "examples": [
+        "FastAPI",
+        "Flask"
+      ]
+    },
+    {
+      "slot": "Evaluation harness",
+      "examples": [
+        "pytest with custom assertions",
+        "promptfoo",
+        "Inspect"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+# Colab already ships numpy, pandas, pydantic, httpx, pytest, fastapi and uvicorn.
+openai>=2.0
+python-dotenv>=1.1
+rank-bm25>=0.2.2
+tokenizers>=0.21

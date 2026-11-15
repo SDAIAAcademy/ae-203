@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-ax="page" data-track="ai-engineering">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building Applications on Language Models · SDAIA Academy</title>
+<meta name="generator" content="SDAIA Academy engine 1.0.0">
+<meta name="description" content="Build a tested bilingual assistant service on any language model: typed outputs, tools, grounded answers, evaluation and safety checks">
+<link rel="icon" href="_engine/icon.svg">
+<link rel="alternate" type="text/markdown" href="index.md">
+<link rel="describedby" href="llms.txt">
+<link rel="stylesheet" href="_engine/academy.css">
+</head>
+<body>
+<header>
+<div class="wrap">
+<div class="top"><div class="logo" id="logo"></div><nav><a href="slides/day1.html">Slides</a><a href="practice.html">Practice</a><a href="index.md" type="text/markdown">Markdown</a></nav></div>
+<div class="kicker">AI Engineering Track · SDAIA Academy · AE-203</div>
+<h1>Building Applications on Language Models<span class="sub ar" lang="ar" dir="rtl">بناء التطبيقات القائمة على النماذج اللغوية</span></h1>
+<p>Build a tested bilingual assistant service on any language model: typed outputs, tools, grounded answers, evaluation and safety checks</p>
+<div class="meta"><span class="track">AI Engineering Track</span><span>4 teaching days + capstone day</span><span>26 hours</span><span>Level 200</span><span>AI Engineering · Assistant badge</span></div>
+</div>
+</header>
+<main class="wrap">
+<h2>About the course</h2>
+<p>Participants build a bilingual rider assistant for a fictional transit authority on top of any language model, hosted or open-weight. They call models through a provider-neutral interface, extract validated structured data from rider messages, add tool calls to a synthetic trip-status service, ground answers in a policy corpus with citations and abstention, write a small evaluation set and run the assistant against it, and add input and output checks for personal data and instruction-like text. The result is a small tested web service.</p>
+<p><b>Who it is for:</b> Practitioners. Graduates and early-career developers who have completed the FN courses or passed the placement test, and software engineers moving into AI work.</p>
+<p><b>Format:</b> Intensive: 4 teaching days of four sessions and a capstone day, with guided pre-work and a tracked follow-up task</p>
+<h2>The case study</h2>
+<div class="note info"><b>Darb Transit Authority.</b> Darb Transit Authority is a fictional city transport authority with four metro lines and eight bus routes. Participants build Wasil, its bilingual rider assistant: token and cost estimates, one client for hosted and local models, versioned instructions, retries, typed extraction from 300 rider messages in Arabic, English and Arabizi, tool calls to a trip-status and a ticket service, grounded answers with citations and abstention over 120 policy pages, a 40-case evaluation set with a validated model grader, personal data masking and instruction detection, and a tested web service. All data is synthetic and generated with a fixed seed.</div>
+<h2>The course</h2>
+<div class="day">
+<div class="day-head c-teal"><div><div class="t">Day 1 · 4 sessions · 4 labs</div><h3>Calling models well</h3></div><a class="btn" href="slides/day1.html">Open the slides</a></div>
+<div class="scroll"><table>
+<tr><th>Session</th><th>Topic</th><th>Lab</th></tr>
+<tr><td>1</td><td><b>Tokens, context and cost</b><br>What a token is, why Arabic costs more of them, and what a request really sends and costs<ul><li>Count the tokens of a request, its instructions and its tool definitions</li><li>Compare the token cost of the same text in Arabic and English</li><li>Estimate daily cost and latency from tokens and example prices</li></ul></td><td><a href="labs/D1_1_tokens_cost.ipynb">Lab 1.1 · Tokens and cost for 10,000 messages</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D1_1_tokens_cost.ipynb">Open in Colab</a></td></tr>
+<tr><td>2</td><td><b>Three API shapes, one interface</b><br>Chat Completions, Responses and Messages side by side, and one client for hosted and local endpoints<ul><li>Locate messages, tool calls and usage in each of the three API shapes</li><li>Fill a comparison table that matches the reference</li><li>Switch between a hosted and a local endpoint by configuration</li></ul></td><td><a href="labs/D1_2_three_shapes.ipynb">Lab 1.2 · One request, three shapes, one client</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D1_2_three_shapes.ipynb">Open in Colab</a></td></tr>
+<tr><td>3</td><td><b>Prompts as versioned code</b><br>Instructions in a versioned file with an owner, rendered safely and pinned by tests<ul><li>Separate system instructions from the rider's message</li><li>Keep a prompt as a versioned template with an owner</li><li>Pin a prompt's behaviour with tests before a release</li></ul></td><td><a href="labs/D1_3_prompt_versions.ipynb">Lab 1.3 · Wasil's instructions as a versioned template</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D1_3_prompt_versions.ipynb">Open in Colab</a></td></tr>
+<tr><td>4</td><td><b>Streaming, timeouts and retries</b><br>Streaming, timeouts, which errors to retry, backoff with jitter, and a fallback model<ul><li>Measure the time to first token of a streamed reply</li><li>Retry only the errors worth retrying, with backoff</li><li>Fall back to a second model and test every path</li></ul></td><td><a href="labs/D1_4_retries.ipynb">Lab 1.4 · Timeouts, retries and a fallback model</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D1_4_retries.ipynb">Open in Colab</a></td></tr>
+</table></div>
+</div>
+<div class="day">
+<div class="day-head c-cyan"><div><div class="t">Day 2 · 4 sessions · 4 labs</div><h3>Structured data and tools</h3></div><a class="btn" href="slides/day2.html">Open the slides</a></div>
+<div class="scroll"><table>
+<tr><th>Session</th><th>Topic</th><th>Lab</th></tr>
+<tr><td>1</td><td><b>Schemas for model output</b><br>A typed schema for what the assistant needs from a message, and how often the model meets it<ul><li>Write a schema whose constraints catch wrong values</li><li>Request output under a JSON Schema response format</li><li>Measure the valid-output rate on a sample of messages</li></ul></td><td><a href="labs/D2_1_schemas.ipynb">Lab 2.1 · Route, date and complaint type as a typed object</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D2_1_schemas.ipynb">Open in Colab</a></td></tr>
+<tr><td>2</td><td><b>Validation, retry and fallback</b><br>Validation errors as feedback, a cap on retries, and a human queue for what still fails<ul><li>Turn a validation error into a repair message</li><li>Cap the retries of a repair loop</li><li>Route failures to a human queue and measure against a target</li></ul></td><td><a href="labs/D2_2_repair_fallback.ipynb">Lab 2.2 · Repair, cap and a human queue</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D2_2_repair_fallback.ipynb">Open in Colab</a></td></tr>
+<tr><td>3</td><td><b>Tool calling</b><br>Tool schemas, the call-execute-return cycle, argument validation, tool errors and timeouts<ul><li>Define a tool from a typed argument model</li><li>Validate arguments and return errors the model can act on</li><li>Test correct calls, malformed calls, tool errors and timeouts</li></ul></td><td><a href="labs/D2_3_tool_calling.ipynb">Lab 2.3 · The trip-status service as a tool</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D2_3_tool_calling.ipynb">Open in Colab</a></td></tr>
+<tr><td>4</td><td><b>Workflow or agent</b><br>The same task as a fixed workflow and as a tool loop, compared on steps, cost and failures<ul><li>Write a task as a fixed workflow of model and tool steps</li><li>Write the same task as a model-driven tool loop</li><li>Choose between them from measured steps, cost and failures</li></ul></td><td><a href="labs/D2_4_workflow_agent.ipynb">Lab 2.4 · Workflow or tool loop</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D2_4_workflow_agent.ipynb">Open in Colab</a></td></tr>
+</table></div>
+</div>
+<div class="day">
+<div class="day-head c-coral"><div><div class="t">Day 3 · 4 sessions · 4 labs</div><h3>Grounded answers</h3></div><a class="btn" href="slides/day3.html">Open the slides</a></div>
+<div class="scroll"><table>
+<tr><th>Session</th><th>Topic</th><th>Lab</th></tr>
+<tr><td>1</td><td><b>Chunking and indexing a policy corpus</b><br>Two ways to cut the bilingual policy corpus into chunks, and a full-text index for each<ul><li>Normalise Arabic text before indexing</li><li>Chunk pages by section and by fixed windows</li><li>Index chunks in SQLite full-text search and query them</li></ul></td><td><a href="labs/D3_1_chunking.ipynb">Lab 3.1 · Two chunkings of the policy corpus</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D3_1_chunking.ipynb">Open in Colab</a></td></tr>
+<tr><td>2</td><td><b>Lexical, dense and hybrid search</b><br>Keyword, vector and hybrid search measured on questions with known source pages<ul><li>Measure search with hit at k and mean reciprocal rank</li><li>Compare keyword and vector search by language</li><li>Fuse two rankings with reciprocal rank fusion</li></ul></td><td><a href="labs/D3_2_search.ipynb">Lab 3.2 · Keyword, vector and hybrid search</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D3_2_search.ipynb">Open in Colab</a></td></tr>
+<tr><td>3</td><td><b>Answers with citations</b><br>Answers that cite page and section, and a checker that verifies every citation by code<ul><li>Give the model passages with stable identifiers</li><li>Check by code that each citation exists and supports the answer</li><li>Keep superseded pages from being cited</li></ul></td><td><a href="labs/D3_3_citations.ipynb">Lab 3.3 · Answers with checked citations</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D3_3_citations.ipynb">Open in Colab</a></td></tr>
+<tr><td>4</td><td><b>Saying the answer is not there</b><br>An abstention rule from retrieval scores and the model, measured on questions the corpus cannot answer<ul><li>Set an abstention threshold from measured scores</li><li>Measure abstention and false abstention rates</li><li>Tell the rider plainly and offer a person</li></ul></td><td><a href="labs/D3_4_abstention.ipynb">Lab 3.4 · Saying the answer is not there</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D3_4_abstention.ipynb">Open in Colab</a></td></tr>
+</table></div>
+</div>
+<div class="day">
+<div class="day-head c-purple"><div><div class="t">Day 4 · 4 sessions · 4 labs</div><h3>Evaluate, protect and ship</h3></div><a class="btn" href="slides/day4.html">Open the slides</a></div>
+<div class="scroll"><table>
+<tr><th>Session</th><th>Topic</th><th>Lab</th></tr>
+<tr><td>1</td><td><b>A small evaluation set</b><br>Golden cases across extraction, tool use and grounded answers, checked by code, run on every change<ul><li>Write golden cases with code-based checks</li><li>Report pass rates per category</li><li>Re-run the set after a change and compare</li></ul></td><td><a href="labs/D4_1_eval_set.ipynb">Lab 4.1 · Forty golden cases</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D4_1_eval_set.ipynb">Open in Colab</a></td></tr>
+<tr><td>2</td><td><b>One model grader, checked against labels</b><br>A binary faithfulness grader and its agreement with human labels before it is trusted<ul><li>Write a binary grader prompt with a parsable verdict</li><li>Measure agreement and kappa against labels</li><li>Decide when a model grader can be trusted</li></ul></td><td><a href="labs/D4_2_grader.ipynb">Lab 4.2 · A faithfulness grader against labels</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D4_2_grader.ipynb">Open in Colab</a></td></tr>
+<tr><td>3</td><td><b>Input and output checks</b><br>Personal data masking, instruction-like text in messages and pages, output validation and safe logs<ul><li>Mask personal data before it reaches a model or a log</li><li>Flag instruction-like text in messages and retrieved pages</li><li>Count blocked, masked and passed cases with false positives</li></ul></td><td><a href="labs/D4_3_safety_checks.ipynb">Lab 4.3 · Masking and flagging</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D4_3_safety_checks.ipynb">Open in Colab</a></td></tr>
+<tr><td>4</td><td><b>Packaging the assistant as a service</b><br>A web API around the assistant, a health check, tests on recorded responses, configuration and cost<ul><li>Wrap the assistant in a web API with a health check</li><li>Test the service on recorded model responses</li><li>Report cost per 1,000 requests from measured usage</li></ul></td><td><a href="labs/D4_4_service.ipynb">Lab 4.4 · Wasil as a tested web service</a> <span class="muted">(25 min)</span><br><a href="https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D4_4_service.ipynb">Open in Colab</a></td></tr>
+</table></div>
+</div>
+<div class="day">
+<div class="day-head c-amber"><div><div class="t">Capstone</div><h3>Capstone project presentations</h3></div><a class="btn" href="slides/capstone.html">Open the slides</a></div>
+<div class="scroll"><table><tr><td>An assistant for one of three supplied cases or an approved own case, submitted as a public repository with tests, an evaluation set of at least 40 cases and a README that reports results from two measured runs, cost per 1,000 requests and known limits, followed by an eight-minute defence and four minutes of questions</td></tr></table></div>
+</div>
+<h2>Capstone</h2>
+<div class="two">
+<div><p>An assistant for one of three supplied cases or an approved own case, submitted as a public repository with tests, an evaluation set of at least 40 cases and a README that reports results from two measured runs, cost per 1,000 requests and known limits, followed by an eight-minute defence and four minutes of questions</p><p><b>What you submit:</b> A public GitHub repository with the service, its tests, an evaluation set of at least 40 cases with its run logs and commit history, and a README that reports results from two measured runs, cost per 1,000 requests and known limits. Then an eight-minute defence with four minutes of questions: the participant runs the evaluation, explains a failing case the assessor selects, and predicts the result of one new case the assessor adds.</p><p><b>Format:</b> 8 min talk and demo · 4 min Q&amp;A</p></div>
+<div><h3>Rubric</h3><div class="bar c-teal"><span>Working service and tests<i style="--w:100%"></i></span><b>25%</b></div><div class="bar c-cyan"><span>Structured output and tools<i style="--w:80%"></i></span><b>20%</b></div><div class="bar c-coral"><span>Grounding and abstention<i style="--w:80%"></i></span><b>20%</b></div><div class="bar c-purple"><span>Evaluation<i style="--w:80%"></i></span><b>20%</b></div><div class="bar c-amber"><span>Safety checks and limits<i style="--w:60%"></i></span><b>15%</b></div></div>
+</div>
+<h2>Outcomes</h2>
+<p>By the end of the course, participants can:</p>
+<div class="day"><div class="scroll"><table>
+<tr><th></th><th>Outcomes</th><th>Level</th><th>Evidence</th></tr>
+<tr><td><b>LO1</b></td><td>Compare the main model API shapes and identify what changes in code when an application switches provider or moves to a local model, given the same request written for three interfaces</td><td>Awareness</td><td>an annotated comparison table that matches the reference on message structure, tool calls and usage reporting</td></tr>
+<tr><td><b>LO2</b></td><td>Implement structured extraction from free-text messages with schema validation, bounded retries and a fallback path, given 300 synthetic Arabic and English rider messages and a target schema</td><td>Applied</td><td>an extraction module with tests and a measured valid-output rate against a stated target</td></tr>
+<tr><td><b>LO3</b></td><td>Implement tool calling for two services with typed arguments, argument validation and handling of tool errors, given a synthetic trip-status service and a ticket-creation service</td><td>Applied</td><td>a passing test suite that includes malformed calls, timeouts and tool errors</td></tr>
+<tr><td><b>LO4</b></td><td>Implement a grounded answering step that retrieves policy passages, cites them and declines when the corpus holds no answer, given 120 bilingual policy pages and 30 questions the corpus cannot answer</td><td>Applied</td><td>answers whose citations are checked automatically and a measured abstention rate</td></tr>
+<tr><td><b>LO5</b></td><td>Prepare a small evaluation set and measure the assistant with code-based checks and one model-graded check validated against labels, given 40 labelled cases across extraction, tool use and grounded answers</td><td>Applied</td><td>an evaluation run with pass rates per category and the grader's agreement with the labels</td></tr>
+<tr><td><b>LO6</b></td><td>Configure input and output checks for personal data, off-topic requests and instruction-like text inside retrieved content, given 30 seeded risky messages and documents</td><td>Applied</td><td>a before-and-after table of blocked, masked and passed cases with false positives counted</td></tr>
+<tr><td><b>LO7</b></td><td>Build a bilingual assistant service that combines structured extraction, tool calls and grounded answers behind a tested API, given the case corpus and services, a provider-neutral client and a cost limit per 1,000 requests</td><td>Performance</td><td>a locally runnable service whose repository README reports evaluation results and cost from two measured runs</td></tr>
+</table></div></div>
+<h2>Tools</h2>
+<div class="grid">
+<div class="card c-teal"><h3>Language model access</h3><p>a free hosted open-weight model · a locally served open-weight model · any commercial API</p></div>
+<div class="card c-cyan"><h3>Provider-neutral client or gateway</h3><p>LiteLLM · an OpenAI-compatible local server such as llama.cpp server or Ollama</p></div>
+<div class="card c-coral"><h3>Schema validation and structured output</h3><p>Pydantic · Instructor · Outlines</p></div>
+<div class="card c-purple"><h3>Embeddings and vector search</h3><p>Sentence Transformers with FAISS · pgvector · Chroma</p></div>
+<div class="card c-green"><h3>Lexical search</h3><p>SQLite full-text search · rank-bm25</p></div>
+<div class="card c-teal"><h3>Personal data detection</h3><p>Presidio · regular-expression and dictionary rules</p></div>
+<div class="card c-cyan"><h3>Web service framework</h3><p>FastAPI · Flask</p></div>
+<div class="card c-coral"><h3>Evaluation harness</h3><p>pytest with custom assertions · promptfoo · Inspect</p></div>
+</div>
+<h2>Before you start</h2>
+<h3>Prerequisites</h3>
+<ul><li>FN-101 Python for Data and AI Work</li><li>FN-102 Command Line, Git and Reproducible Projects</li><li>FN-105 How Machine Learning and Language Models Work</li><li>Calls a web API from Python and handles JSON</li><li>Writes and runs unit tests</li></ul>
+<div class="note tip">The labs are notebooks. Open each one in Google Colab from the table above, or clone the repository and run them locally.</div>
+<h2>Sources</h2>
+<h3>Model APIs and clients</h3>
+<ul><li><a href="https://openrouter.ai/docs/api-reference/limits">OpenRouter: API rate limits</a></li><li><a href="https://openrouter.ai/models">OpenRouter: models</a></li><li><a href="https://openrouter.ai/docs/guides/features/structured-outputs">OpenRouter: structured outputs</a></li><li><a href="https://developers.openai.com/api/reference/resources/chat">OpenAI API reference: Chat Completions</a></li><li><a href="https://developers.openai.com/api/reference/resources/responses">OpenAI API reference: Responses</a></li><li><a href="https://docs.anthropic.com/en/api/messages">Anthropic API reference: Messages</a></li><li><a href="https://www.openresponses.org/">Open Responses specification</a></li><li><a href="https://github.com/openai/openai-python">OpenAI Python library</a></li><li><a href="https://docs.litellm.ai/docs/">LiteLLM documentation</a></li><li><a href="https://docs.ollama.com/api/openai-compatibility">Ollama: OpenAI compatibility</a></li><li><a href="https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md">llama.cpp server</a></li><li><a href="https://huggingface.co/Qwen/Qwen3-0.6B">Qwen3 open tokenizer (model card)</a></li><li><a href="https://modelcontextprotocol.io/">Model Context Protocol</a></li></ul>
+<h3>Libraries used in the labs</h3>
+<ul><li><a href="https://docs.pydantic.dev/latest/concepts/json_schema/">Pydantic: JSON Schema</a></li><li><a href="https://github.com/dorianbrown/rank_bm25">rank-bm25</a></li><li><a href="https://www.sqlite.org/fts5.html">SQLite FTS5 full-text search</a></li><li><a href="https://docs.python.org/3/library/sqlite3.html">Python sqlite3</a></li><li><a href="https://fastapi.tiangolo.com/tutorial/testing/">FastAPI: testing</a></li><li><a href="https://github.com/microsoft/presidio">Microsoft Presidio</a></li><li><a href="https://www.promptfoo.dev/">promptfoo</a></li><li><a href="https://inspect.aisi.org.uk/">Inspect</a></li></ul>
+<h3>National references</h3>
+<ul><li><a href="https://sdaia.gov.sa/en/SDAIA/about/Documents/PersonalDataProtectionLaw.pdf">Personal Data Protection Law</a></li><li><a href="https://sdaia.gov.sa/en/SDAIA/about/Documents/DataClassificationPolicy.pdf">Data Classification Policy (National Data Management Office)</a></li><li><a href="https://sdaia.gov.sa/en/SDAIA/about/Files/GenAIGuidelinesForGovernmentENCompressed.pdf">Generative AI Guideline for Government</a></li><li><a href="https://sdaia.gov.sa/en/SDAIA/about/Files/GenerativeAIPublicEN.pdf">Generative AI Guideline for Public</a></li><li><a href="https://sdaia.gov.sa/en/SDAIA/about/Documents/ai-principles.pdf">Principles of AI Ethics</a></li></ul>
+<h2>Files and links</h2>
+<div class="files">
+<a href="practice.html"><b>practice.html</b><span>Practice questions with feedback</span></a>
+<a href="index.md"><b>index.md</b><span>This page as Markdown, for an AI assistant</span></a>
+<a href="llms.txt"><b>llms.txt</b><span>The course for AI assistants (llms.txt)</span></a>
+<a href="https://github.com/SDAIAAcademy/ae-203"><b>SDAIAAcademy/ae-203</b><span>The course repository</span></a>
+</div>
+</main>
+<footer><div class="wrap">SDAIA Academy · AI Engineering Track · Building Applications on Language Models<br><span class="muted">Course version 2027.1.0 · engine 1.0.0 · built 2026-11-15 · commit 1da0dd7</span></div></footer>
+<script type="application/json" id="academy-data">{"v":1,"engine":"1.0.0","build":{"at":"2026-11-15T03:19:06Z","version":"2027.1.0","commit":"1da0dd7"},"course":{"id":"ae-203","code":"AE-203","title":"Building Applications on Language Models","track":"ai-engineering","lang":"en","dir":"ltr","url":"https://sdaiaacademy.github.io/ae-203/","repo":"SDAIAAcademy/ae-203","home":"index.html"},"ai":{"context":{"course":"context/course.md","courseJs":"context/course.js","day":null,"llms":"llms.txt"},"tasks":[],"tools":[]},"features":{},"strings":{}}</script>
+<script src="_engine/academy.js"></script>
+</body>
+</html>

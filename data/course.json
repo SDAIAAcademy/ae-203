@@ -1,0 +1,1054 @@
+{
+  "v": 1,
+  "engine": "1.0.0",
+  "build": {
+    "at": "2026-11-15T03:19:06Z",
+    "version": "2027.1.0",
+    "commit": "1da0dd7"
+  },
+  "lang": "en",
+  "dir": "ltr",
+  "langs": [
+    "en"
+  ],
+  "alt": {},
+  "course": {
+    "id": "ae-203",
+    "code": "AE-203",
+    "version": "2027.1.0",
+    "title": "Building Applications on Language Models",
+    "tagline": "Build a tested bilingual assistant service on any language model: typed outputs, tools, grounded answers, evaluation and safety checks",
+    "description": "Participants build a bilingual rider assistant for a fictional transit authority on top of any language model, hosted or open-weight. They call models through a provider-neutral interface, extract validated structured data from rider messages, add tool calls to a synthetic trip-status service, ground answers in a policy corpus with citations and abstention, write a small evaluation set and run the assistant against it, and add input and output checks for personal data and instruction-like text. The result is a small tested web service.",
+    "track": "ai-engineering",
+    "track_name": "AI Engineering Track",
+    "level": 200,
+    "badge": {
+      "name": "AI Engineering",
+      "level": "Assistant"
+    },
+    "audience": "Practitioners. Graduates and early-career developers who have completed the FN courses or passed the placement test, and software engineers moving into AI work.",
+    "prerequisites": [
+      "FN-101 Python for Data and AI Work",
+      "FN-102 Command Line, Git and Reproducible Projects",
+      "FN-105 How Machine Learning and Language Models Work",
+      "Calls a web API from Python and handles JSON",
+      "Writes and runs unit tests"
+    ],
+    "url": "https://sdaiaacademy.github.io/ae-203/",
+    "repo": "SDAIAAcademy/ae-203",
+    "home": "../index.html",
+    "format": "intensive",
+    "format_note": "Intensive: 4 teaching days of four sessions and a capstone day, with guided pre-work and a tracked follow-up task",
+    "shape": "4 teaching days + capstone day",
+    "hours": {
+      "instruction": 6,
+      "lab": 7,
+      "guided_self_study": 6,
+      "assessment": 1,
+      "capstone": 6,
+      "total": 26
+    },
+    "unit": "day",
+    "outcomes": [
+      {
+        "id": "LO1",
+        "text": "Compare the main model API shapes and identify what changes in code when an application switches provider or moves to a local model, given the same request written for three interfaces",
+        "level": "Awareness",
+        "evidence": "an annotated comparison table that matches the reference on message structure, tool calls and usage reporting"
+      },
+      {
+        "id": "LO2",
+        "text": "Implement structured extraction from free-text messages with schema validation, bounded retries and a fallback path, given 300 synthetic Arabic and English rider messages and a target schema",
+        "level": "Applied",
+        "evidence": "an extraction module with tests and a measured valid-output rate against a stated target"
+      },
+      {
+        "id": "LO3",
+        "text": "Implement tool calling for two services with typed arguments, argument validation and handling of tool errors, given a synthetic trip-status service and a ticket-creation service",
+        "level": "Applied",
+        "evidence": "a passing test suite that includes malformed calls, timeouts and tool errors"
+      },
+      {
+        "id": "LO4",
+        "text": "Implement a grounded answering step that retrieves policy passages, cites them and declines when the corpus holds no answer, given 120 bilingual policy pages and 30 questions the corpus cannot answer",
+        "level": "Applied",
+        "evidence": "answers whose citations are checked automatically and a measured abstention rate"
+      },
+      {
+        "id": "LO5",
+        "text": "Prepare a small evaluation set and measure the assistant with code-based checks and one model-graded check validated against labels, given 40 labelled cases across extraction, tool use and grounded answers",
+        "level": "Applied",
+        "evidence": "an evaluation run with pass rates per category and the grader's agreement with the labels"
+      },
+      {
+        "id": "LO6",
+        "text": "Configure input and output checks for personal data, off-topic requests and instruction-like text inside retrieved content, given 30 seeded risky messages and documents",
+        "level": "Applied",
+        "evidence": "a before-and-after table of blocked, masked and passed cases with false positives counted"
+      },
+      {
+        "id": "LO7",
+        "text": "Build a bilingual assistant service that combines structured extraction, tool calls and grounded answers behind a tested API, given the case corpus and services, a provider-neutral client and a cost limit per 1,000 requests",
+        "level": "Performance",
+        "evidence": "a locally runnable service whose repository README reports evaluation results and cost from two measured runs"
+      }
+    ],
+    "case_study": {
+      "name": "Darb Transit Authority",
+      "summary": "Darb Transit Authority is a fictional city transport authority with four metro lines and eight bus routes. Participants build Wasil, its bilingual rider assistant: token and cost estimates, one client for hosted and local models, versioned instructions, retries, typed extraction from 300 rider messages in Arabic, English and Arabizi, tool calls to a trip-status and a ticket service, grounded answers with citations and abstention over 120 policy pages, a 40-case evaluation set with a validated model grader, personal data masking and instruction detection, and a tested web service. All data is synthetic and generated with a fixed seed."
+    },
+    "days": [
+      {
+        "id": "day1",
+        "kind": "day",
+        "n": 1,
+        "number": 1,
+        "label": "Day 1",
+        "title": "Calling models well",
+        "subtitle": "",
+        "shape": "4 sessions · 4 labs",
+        "deck": "../slides/day1.html",
+        "md": "../slides/day1.md",
+        "url": "https://sdaiaacademy.github.io/ae-203/slides/day1.html",
+        "sessions": [
+          {
+            "n": 1,
+            "label": "Session 1",
+            "title": "Tokens, context and cost",
+            "summary": "What a token is, why Arabic costs more of them, and what a request really sends and costs",
+            "outcomes": [
+              "Count the tokens of a request, its instructions and its tool definitions",
+              "Compare the token cost of the same text in Arabic and English",
+              "Estimate daily cost and latency from tokens and example prices"
+            ],
+            "lo": [
+              "LO1"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "1.1",
+              "title": "Tokens and cost for 10,000 messages",
+              "summary": "Count tokens for Arabic and English rider messages and estimate daily cost and latency for 10,000 messages, with an open tokenizer and no model call.",
+              "minutes": 25,
+              "href": "../labs/D1_1_tokens_cost.ipynb",
+              "steps": [
+                {
+                  "text": "Count tokens per message, by language",
+                  "minutes": 5
+                },
+                {
+                  "text": "The same policy in Arabic and in English",
+                  "minutes": 5
+                },
+                {
+                  "text": "What one request really sends",
+                  "minutes": 5
+                },
+                {
+                  "text": "Daily cost for 10,000 messages at two example prices",
+                  "minutes": 5
+                },
+                {
+                  "text": "Latency per message and load in the busiest hour",
+                  "minutes": 5
+                }
+              ],
+              "stretch": "Arabizi against Arabic script for the same complaint"
+            }
+          },
+          {
+            "n": 2,
+            "label": "Session 2",
+            "title": "Three API shapes, one interface",
+            "summary": "Chat Completions, Responses and Messages side by side, and one client for hosted and local endpoints",
+            "outcomes": [
+              "Locate messages, tool calls and usage in each of the three API shapes",
+              "Fill a comparison table that matches the reference",
+              "Switch between a hosted and a local endpoint by configuration"
+            ],
+            "lo": [
+              "LO1"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "1.2",
+              "title": "One request, three shapes, one client",
+              "summary": "Read the same request in three API shapes, fill the comparison table against the reference, and send one request to a hosted and a local endpoint through one client.",
+              "minutes": 25,
+              "href": "../labs/D1_2_three_shapes.ipynb",
+              "steps": [
+                {
+                  "text": "Read the tool call out of each shape",
+                  "minutes": 6
+                },
+                {
+                  "text": "Read the usage out of each shape",
+                  "minutes": 6
+                },
+                {
+                  "text": "Fill the comparison table and check it",
+                  "minutes": 6
+                },
+                {
+                  "text": "The same call to a hosted and a local endpoint",
+                  "minutes": 7
+                }
+              ],
+              "stretch": "Send the Responses shape to a provider that serves it"
+            }
+          },
+          {
+            "n": 3,
+            "label": "Session 3",
+            "title": "Prompts as versioned code",
+            "summary": "Instructions in a versioned file with an owner, rendered safely and pinned by tests",
+            "outcomes": [
+              "Separate system instructions from the rider's message",
+              "Keep a prompt as a versioned template with an owner",
+              "Pin a prompt's behaviour with tests before a release"
+            ],
+            "lo": [
+              "LO1",
+              "LO5"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "1.3",
+              "title": "Wasil's instructions as a versioned template",
+              "summary": "Move the assistant's instructions into a versioned template, write two tests that pin its behaviour, and watch a well-meant edit fail them.",
+              "minutes": 25,
+              "href": "../labs/D1_3_prompt_versions.ipynb",
+              "steps": [
+                {
+                  "text": "Save the instructions with a header",
+                  "minutes": 5
+                },
+                {
+                  "text": "Load and render, refusing missing variables",
+                  "minutes": 7
+                },
+                {
+                  "text": "Two tests that pin its behaviour",
+                  "minutes": 7
+                },
+                {
+                  "text": "A well-meant edit against the tests",
+                  "minutes": 6
+                }
+              ],
+              "stretch": "Pin the Arabic disclosure too"
+            }
+          },
+          {
+            "n": 4,
+            "label": "Session 4",
+            "title": "Streaming, timeouts and retries",
+            "summary": "Streaming, timeouts, which errors to retry, backoff with jitter, and a fallback model",
+            "outcomes": [
+              "Measure the time to first token of a streamed reply",
+              "Retry only the errors worth retrying, with backoff",
+              "Fall back to a second model and test every path"
+            ],
+            "lo": [
+              "LO1",
+              "LO7"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "1.4",
+              "title": "Timeouts, retries and a fallback model",
+              "summary": "Add a timeout, a retry with backoff and a fallback model, and test them against a simulated slow endpoint.",
+              "minutes": 25,
+              "href": "../labs/D1_4_retries.ipynb",
+              "steps": [
+                {
+                  "text": "Stream a reply and measure the time to first token",
+                  "minutes": 6
+                },
+                {
+                  "text": "A retry with exponential backoff",
+                  "minutes": 7
+                },
+                {
+                  "text": "A fallback model",
+                  "minutes": 6
+                },
+                {
+                  "text": "Four tests against planned failures",
+                  "minutes": 6
+                }
+              ],
+              "stretch": "A retry budget shared by all requests"
+            }
+          }
+        ]
+      },
+      {
+        "id": "day2",
+        "kind": "day",
+        "n": 2,
+        "number": 2,
+        "label": "Day 2",
+        "title": "Structured data and tools",
+        "subtitle": "",
+        "shape": "4 sessions · 4 labs",
+        "deck": "../slides/day2.html",
+        "md": "../slides/day2.md",
+        "url": "https://sdaiaacademy.github.io/ae-203/slides/day2.html",
+        "sessions": [
+          {
+            "n": 1,
+            "label": "Session 1",
+            "title": "Schemas for model output",
+            "summary": "A typed schema for what the assistant needs from a message, and how often the model meets it",
+            "outcomes": [
+              "Write a schema whose constraints catch wrong values",
+              "Request output under a JSON Schema response format",
+              "Measure the valid-output rate on a sample of messages"
+            ],
+            "lo": [
+              "LO2"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "2.1",
+              "title": "Route, date and complaint type as a typed object",
+              "summary": "Extract route, date and complaint type from 50 rider messages into a typed schema and measure the valid rate and field accuracy.",
+              "minutes": 25,
+              "href": "../labs/D2_1_schemas.ipynb",
+              "steps": [
+                {
+                  "text": "The schema: RiderMessage",
+                  "minutes": 5
+                },
+                {
+                  "text": "Ask for it with a JSON Schema response format",
+                  "minutes": 6
+                },
+                {
+                  "text": "Parse and validate one reply",
+                  "minutes": 7
+                },
+                {
+                  "text": "Fifty messages: valid rate and field accuracy",
+                  "minutes": 7
+                }
+              ],
+              "stretch": "A strict schema the provider enforces"
+            }
+          },
+          {
+            "n": 2,
+            "label": "Session 2",
+            "title": "Validation, retry and fallback",
+            "summary": "Validation errors as feedback, a cap on retries, and a human queue for what still fails",
+            "outcomes": [
+              "Turn a validation error into a repair message",
+              "Cap the retries of a repair loop",
+              "Route failures to a human queue and measure against a target"
+            ],
+            "lo": [
+              "LO2"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "2.2",
+              "title": "Repair, cap and a human queue",
+              "summary": "Feed validation errors back to the model, cap the retries and route failures to a human queue, with tests and a measured valid-output rate.",
+              "minutes": 25,
+              "href": "../labs/D2_2_repair_fallback.ipynb",
+              "steps": [
+                {
+                  "text": "A validation error as a repair message",
+                  "minutes": 6
+                },
+                {
+                  "text": "The repair loop with a cap",
+                  "minutes": 7
+                },
+                {
+                  "text": "A human queue for what still fails",
+                  "minutes": 6
+                },
+                {
+                  "text": "Measure against the target and test",
+                  "minutes": 6
+                }
+              ],
+              "stretch": "All 300 messages, by language"
+            }
+          },
+          {
+            "n": 3,
+            "label": "Session 3",
+            "title": "Tool calling",
+            "summary": "Tool schemas, the call-execute-return cycle, argument validation, tool errors and timeouts",
+            "outcomes": [
+              "Define a tool from a typed argument model",
+              "Validate arguments and return errors the model can act on",
+              "Test correct calls, malformed calls, tool errors and timeouts"
+            ],
+            "lo": [
+              "LO3"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "2.3",
+              "title": "The trip-status service as a tool",
+              "summary": "Expose the trip-status service as a tool and handle a correct call, a malformed call, a tool error and a timeout, with a test for each.",
+              "minutes": 25,
+              "href": "../labs/D2_3_tool_calling.ipynb",
+              "steps": [
+                {
+                  "text": "A tool definition from a typed model",
+                  "minutes": 5
+                },
+                {
+                  "text": "Run a call: validate, execute, return",
+                  "minutes": 6
+                },
+                {
+                  "text": "Three conversations: correct, malformed, failing",
+                  "minutes": 7
+                },
+                {
+                  "text": "A test suite for the tool",
+                  "minutes": 7
+                }
+              ],
+              "stretch": "The ticket service as a second tool"
+            }
+          },
+          {
+            "n": 4,
+            "label": "Session 4",
+            "title": "Workflow or agent",
+            "summary": "The same task as a fixed workflow and as a tool loop, compared on steps, cost and failures",
+            "outcomes": [
+              "Write a task as a fixed workflow of model and tool steps",
+              "Write the same task as a model-driven tool loop",
+              "Choose between them from measured steps, cost and failures"
+            ],
+            "lo": [
+              "LO3"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "2.4",
+              "title": "Workflow or tool loop",
+              "summary": "Write one task (a delay complaint that ends in a ticket) as a fixed workflow and as a tool loop, and compare steps, cost and failures on ten cases.",
+              "minutes": 25,
+              "href": "../labs/D2_4_workflow_agent.ipynb",
+              "steps": [
+                {
+                  "text": "The fixed workflow",
+                  "minutes": 6
+                },
+                {
+                  "text": "The tool loop",
+                  "minutes": 7
+                },
+                {
+                  "text": "Ten cases through both",
+                  "minutes": 6
+                },
+                {
+                  "text": "Compare and decide",
+                  "minutes": 6
+                }
+              ],
+              "stretch": "Add the refund rule as a workflow step"
+            }
+          }
+        ]
+      },
+      {
+        "id": "day3",
+        "kind": "day",
+        "n": 3,
+        "number": 3,
+        "label": "Day 3",
+        "title": "Grounded answers",
+        "subtitle": "",
+        "shape": "4 sessions · 4 labs",
+        "deck": "../slides/day3.html",
+        "md": "../slides/day3.md",
+        "url": "https://sdaiaacademy.github.io/ae-203/slides/day3.html",
+        "sessions": [
+          {
+            "n": 1,
+            "label": "Session 1",
+            "title": "Chunking and indexing a policy corpus",
+            "summary": "Two ways to cut the bilingual policy corpus into chunks, and a full-text index for each",
+            "outcomes": [
+              "Normalise Arabic text before indexing",
+              "Chunk pages by section and by fixed windows",
+              "Index chunks in SQLite full-text search and query them"
+            ],
+            "lo": [
+              "LO4"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "3.1",
+              "title": "Two chunkings of the policy corpus",
+              "summary": "Chunk the Arabic and English policy pages two ways and index both versions.",
+              "minutes": 25,
+              "href": "../labs/D3_1_chunking.ipynb",
+              "steps": [
+                {
+                  "text": "Load the pages and normalise Arabic",
+                  "minutes": 6
+                },
+                {
+                  "text": "Chunk by section",
+                  "minutes": 6
+                },
+                {
+                  "text": "Chunk by fixed windows with overlap",
+                  "minutes": 7
+                },
+                {
+                  "text": "Index both in SQLite full-text search",
+                  "minutes": 6
+                }
+              ],
+              "stretch": "Window sizes against chunk counts"
+            }
+          },
+          {
+            "n": 2,
+            "label": "Session 2",
+            "title": "Lexical, dense and hybrid search",
+            "summary": "Keyword, vector and hybrid search measured on questions with known source pages",
+            "outcomes": [
+              "Measure search with hit at k and mean reciprocal rank",
+              "Compare keyword and vector search by language",
+              "Fuse two rankings with reciprocal rank fusion"
+            ],
+            "lo": [
+              "LO4"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "3.2",
+              "title": "Keyword, vector and hybrid search",
+              "summary": "Compare keyword, vector and combined search on 30 questions with known source pages, by language.",
+              "minutes": 25,
+              "href": "../labs/D3_2_search.ipynb",
+              "steps": [
+                {
+                  "text": "An evaluation of search: hit at k and MRR",
+                  "minutes": 6
+                },
+                {
+                  "text": "Keyword search with BM25",
+                  "minutes": 6
+                },
+                {
+                  "text": "Vectors and the hybrid with RRF",
+                  "minutes": 7
+                },
+                {
+                  "text": "By language, and the misses",
+                  "minutes": 6
+                }
+              ],
+              "stretch": "Weight one ranking more than the other"
+            }
+          },
+          {
+            "n": 3,
+            "label": "Session 3",
+            "title": "Answers with citations",
+            "summary": "Answers that cite page and section, and a checker that verifies every citation by code",
+            "outcomes": [
+              "Give the model passages with stable identifiers",
+              "Check by code that each citation exists and supports the answer",
+              "Keep superseded pages from being cited"
+            ],
+            "lo": [
+              "LO4"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "3.3",
+              "title": "Answers with checked citations",
+              "summary": "Generate answers that cite page and section and check automatically that each citation exists, is in force and supports the answer.",
+              "minutes": 25,
+              "href": "../labs/D3_3_citations.ipynb",
+              "steps": [
+                {
+                  "text": "Passages with identifiers in the prompt",
+                  "minutes": 6
+                },
+                {
+                  "text": "Answer and collect citations",
+                  "minutes": 7
+                },
+                {
+                  "text": "A citation checker",
+                  "minutes": 6
+                },
+                {
+                  "text": "Thirty questions, and the superseded page",
+                  "minutes": 6
+                }
+              ],
+              "stretch": "Answer Arabic questions in Arabic"
+            }
+          },
+          {
+            "n": 4,
+            "label": "Session 4",
+            "title": "Saying the answer is not there",
+            "summary": "An abstention rule from retrieval scores and the model, measured on questions the corpus cannot answer",
+            "outcomes": [
+              "Set an abstention threshold from measured scores",
+              "Measure abstention and false abstention rates",
+              "Tell the rider plainly and offer a person"
+            ],
+            "lo": [
+              "LO4"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "3.4",
+              "title": "Saying the answer is not there",
+              "summary": "Add an abstention rule and measure it on 30 questions the corpus cannot answer and 30 it can.",
+              "minutes": 25,
+              "href": "../labs/D3_4_abstention.ipynb",
+              "steps": [
+                {
+                  "text": "Scores of answerable and unanswerable questions",
+                  "minutes": 6
+                },
+                {
+                  "text": "An abstention rule",
+                  "minutes": 6
+                },
+                {
+                  "text": "Thresholds against both rates",
+                  "minutes": 7
+                },
+                {
+                  "text": "What the rider reads",
+                  "minutes": 6
+                }
+              ],
+              "stretch": "A threshold per language"
+            }
+          }
+        ]
+      },
+      {
+        "id": "day4",
+        "kind": "day",
+        "n": 4,
+        "number": 4,
+        "label": "Day 4",
+        "title": "Evaluate, protect and ship",
+        "subtitle": "",
+        "shape": "4 sessions · 4 labs",
+        "deck": "../slides/day4.html",
+        "md": "../slides/day4.md",
+        "url": "https://sdaiaacademy.github.io/ae-203/slides/day4.html",
+        "sessions": [
+          {
+            "n": 1,
+            "label": "Session 1",
+            "title": "A small evaluation set",
+            "summary": "Golden cases across extraction, tool use and grounded answers, checked by code, run on every change",
+            "outcomes": [
+              "Write golden cases with code-based checks",
+              "Report pass rates per category",
+              "Re-run the set after a change and compare"
+            ],
+            "lo": [
+              "LO5"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "4.1",
+              "title": "Forty golden cases",
+              "summary": "Write code-based checks for 40 golden cases, run them against the assistant, report pass rates per category, and re-run after one change.",
+              "minutes": 25,
+              "href": "../labs/D4_1_eval_set.ipynb",
+              "steps": [
+                {
+                  "text": "Read the cases and write two of your own",
+                  "minutes": 6
+                },
+                {
+                  "text": "A check per category",
+                  "minutes": 7
+                },
+                {
+                  "text": "Run the set: pass rates per category",
+                  "minutes": 6
+                },
+                {
+                  "text": "Change one setting and re-run",
+                  "minutes": 6
+                }
+              ],
+              "stretch": "A run log with a timestamp and the commit"
+            }
+          },
+          {
+            "n": 2,
+            "label": "Session 2",
+            "title": "One model grader, checked against labels",
+            "summary": "A binary faithfulness grader and its agreement with human labels before it is trusted",
+            "outcomes": [
+              "Write a binary grader prompt with a parsable verdict",
+              "Measure agreement and kappa against labels",
+              "Decide when a model grader can be trusted"
+            ],
+            "lo": [
+              "LO5"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "4.2",
+              "title": "A faithfulness grader against labels",
+              "summary": "Write a binary faithfulness grader and measure its agreement with 30 labelled answers.",
+              "minutes": 25,
+              "href": "../labs/D4_2_grader.ipynb",
+              "steps": [
+                {
+                  "text": "The grader prompt",
+                  "minutes": 6
+                },
+                {
+                  "text": "Grade one answer and parse the verdict",
+                  "minutes": 7
+                },
+                {
+                  "text": "Agreement and kappa on 30 labels",
+                  "minutes": 6
+                },
+                {
+                  "text": "Read the disagreements",
+                  "minutes": 6
+                }
+              ],
+              "stretch": "Swap the order of passage and answer"
+            }
+          },
+          {
+            "n": 3,
+            "label": "Session 3",
+            "title": "Input and output checks",
+            "summary": "Personal data masking, instruction-like text in messages and pages, output validation and safe logs",
+            "outcomes": [
+              "Mask personal data before it reaches a model or a log",
+              "Flag instruction-like text in messages and retrieved pages",
+              "Count blocked, masked and passed cases with false positives"
+            ],
+            "lo": [
+              "LO6"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "4.3",
+              "title": "Masking and flagging",
+              "summary": "Mask personal data in messages and logs and flag instruction-like text in retrieved pages, with a before-and-after table on 30 seeded items.",
+              "minutes": 25,
+              "href": "../labs/D4_3_safety_checks.ipynb",
+              "steps": [
+                {
+                  "text": "Mask personal data",
+                  "minutes": 7
+                },
+                {
+                  "text": "Flag instruction-like text",
+                  "minutes": 7
+                },
+                {
+                  "text": "Before and after on 30 items",
+                  "minutes": 6
+                },
+                {
+                  "text": "A log line that leaks nothing",
+                  "minutes": 5
+                }
+              ],
+              "stretch": "Which fields may go to a hosted model"
+            }
+          },
+          {
+            "n": 4,
+            "label": "Session 4",
+            "title": "Packaging the assistant as a service",
+            "summary": "A web API around the assistant, a health check, tests on recorded responses, configuration and cost",
+            "outcomes": [
+              "Wrap the assistant in a web API with a health check",
+              "Test the service on recorded model responses",
+              "Report cost per 1,000 requests from measured usage"
+            ],
+            "lo": [
+              "LO7"
+            ],
+            "minutes": 50,
+            "lab": {
+              "id": "4.4",
+              "title": "Wasil as a tested web service",
+              "summary": "Wrap the assistant in a web API with a health check and run the tests against recorded model responses; report cost per 1,000 requests.",
+              "minutes": 25,
+              "href": "../labs/D4_4_service.ipynb",
+              "steps": [
+                {
+                  "text": "The API: health and ask",
+                  "minutes": 6
+                },
+                {
+                  "text": "Record and replay model responses",
+                  "minutes": 7
+                },
+                {
+                  "text": "Tests on the recorded responses",
+                  "minutes": 6
+                },
+                {
+                  "text": "Configuration and cost per 1,000 requests",
+                  "minutes": 6
+                }
+              ],
+              "stretch": "Run the service and call it from the command line"
+            }
+          }
+        ]
+      },
+      {
+        "id": "capstone",
+        "kind": "capstone",
+        "n": 5,
+        "number": null,
+        "label": "Capstone",
+        "title": "Capstone project presentations",
+        "subtitle": "",
+        "shape": "",
+        "deck": "../slides/capstone.html",
+        "md": "../slides/capstone.md",
+        "url": "https://sdaiaacademy.github.io/ae-203/slides/capstone.html",
+        "sessions": []
+      }
+    ],
+    "capstone": {
+      "summary": "An assistant for one of three supplied cases or an approved own case, submitted as a public repository with tests, an evaluation set of at least 40 cases and a README that reports results from two measured runs, cost per 1,000 requests and known limits, followed by an eight-minute defence and four minutes of questions",
+      "submission": "A public GitHub repository with the service, its tests, an evaluation set of at least 40 cases with its run logs and commit history, and a README that reports results from two measured runs, cost per 1,000 requests and known limits. Then an eight-minute defence with four minutes of questions: the participant runs the evaluation, explains a failing case the assessor selects, and predicts the result of one new case the assessor adds.",
+      "talk_minutes": 8,
+      "qa_minutes": 4,
+      "rubric": [
+        {
+          "criterion": "Working service and tests",
+          "weight": 25
+        },
+        {
+          "criterion": "Structured output and tools",
+          "weight": 20
+        },
+        {
+          "criterion": "Grounding and abstention",
+          "weight": 20
+        },
+        {
+          "criterion": "Evaluation",
+          "weight": 20
+        },
+        {
+          "criterion": "Safety checks and limits",
+          "weight": 15
+        }
+      ]
+    },
+    "labs": {
+      "kind": "notebooks",
+      "base": "labs/"
+    },
+    "tools": [
+      {
+        "slot": "Language model access",
+        "examples": [
+          "a free hosted open-weight model",
+          "a locally served open-weight model",
+          "any commercial API"
+        ]
+      },
+      {
+        "slot": "Provider-neutral client or gateway",
+        "examples": [
+          "LiteLLM",
+          "an OpenAI-compatible local server such as llama.cpp server or Ollama"
+        ]
+      },
+      {
+        "slot": "Schema validation and structured output",
+        "examples": [
+          "Pydantic",
+          "Instructor",
+          "Outlines"
+        ]
+      },
+      {
+        "slot": "Embeddings and vector search",
+        "examples": [
+          "Sentence Transformers with FAISS",
+          "pgvector",
+          "Chroma"
+        ]
+      },
+      {
+        "slot": "Lexical search",
+        "examples": [
+          "SQLite full-text search",
+          "rank-bm25"
+        ]
+      },
+      {
+        "slot": "Personal data detection",
+        "examples": [
+          "Presidio",
+          "regular-expression and dictionary rules"
+        ]
+      },
+      {
+        "slot": "Web service framework",
+        "examples": [
+          "FastAPI",
+          "Flask"
+        ]
+      },
+      {
+        "slot": "Evaluation harness",
+        "examples": [
+          "pytest with custom assertions",
+          "promptfoo",
+          "Inspect"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "group": "Model APIs and clients",
+        "items": [
+          {
+            "title": "OpenRouter: API rate limits",
+            "url": "https://openrouter.ai/docs/api-reference/limits"
+          },
+          {
+            "title": "OpenRouter: models",
+            "url": "https://openrouter.ai/models"
+          },
+          {
+            "title": "OpenRouter: structured outputs",
+            "url": "https://openrouter.ai/docs/guides/features/structured-outputs"
+          },
+          {
+            "title": "OpenAI API reference: Chat Completions",
+            "url": "https://developers.openai.com/api/reference/resources/chat"
+          },
+          {
+            "title": "OpenAI API reference: Responses",
+            "url": "https://developers.openai.com/api/reference/resources/responses"
+          },
+          {
+            "title": "Anthropic API reference: Messages",
+            "url": "https://docs.anthropic.com/en/api/messages"
+          },
+          {
+            "title": "Open Responses specification",
+            "url": "https://www.openresponses.org/"
+          },
+          {
+            "title": "OpenAI Python library",
+            "url": "https://github.com/openai/openai-python"
+          },
+          {
+            "title": "LiteLLM documentation",
+            "url": "https://docs.litellm.ai/docs/"
+          },
+          {
+            "title": "Ollama: OpenAI compatibility",
+            "url": "https://docs.ollama.com/api/openai-compatibility"
+          },
+          {
+            "title": "llama.cpp server",
+            "url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md"
+          },
+          {
+            "title": "Qwen3 open tokenizer (model card)",
+            "url": "https://huggingface.co/Qwen/Qwen3-0.6B"
+          },
+          {
+            "title": "Model Context Protocol",
+            "url": "https://modelcontextprotocol.io/"
+          }
+        ]
+      },
+      {
+        "group": "Libraries used in the labs",
+        "items": [
+          {
+            "title": "Pydantic: JSON Schema",
+            "url": "https://docs.pydantic.dev/latest/concepts/json_schema/"
+          },
+          {
+            "title": "rank-bm25",
+            "url": "https://github.com/dorianbrown/rank_bm25"
+          },
+          {
+            "title": "SQLite FTS5 full-text search",
+            "url": "https://www.sqlite.org/fts5.html"
+          },
+          {
+            "title": "Python sqlite3",
+            "url": "https://docs.python.org/3/library/sqlite3.html"
+          },
+          {
+            "title": "FastAPI: testing",
+            "url": "https://fastapi.tiangolo.com/tutorial/testing/"
+          },
+          {
+            "title": "Microsoft Presidio",
+            "url": "https://github.com/microsoft/presidio"
+          },
+          {
+            "title": "promptfoo",
+            "url": "https://www.promptfoo.dev/"
+          },
+          {
+            "title": "Inspect",
+            "url": "https://inspect.aisi.org.uk/"
+          }
+        ]
+      },
+      {
+        "group": "National references",
+        "items": [
+          {
+            "title": "Personal Data Protection Law",
+            "url": "https://sdaia.gov.sa/en/SDAIA/about/Documents/PersonalDataProtectionLaw.pdf"
+          },
+          {
+            "title": "Data Classification Policy (National Data Management Office)",
+            "url": "https://sdaia.gov.sa/en/SDAIA/about/Documents/DataClassificationPolicy.pdf"
+          },
+          {
+            "title": "Generative AI Guideline for Government",
+            "url": "https://sdaia.gov.sa/en/SDAIA/about/Files/GenAIGuidelinesForGovernmentENCompressed.pdf"
+          },
+          {
+            "title": "Generative AI Guideline for Public",
+            "url": "https://sdaia.gov.sa/en/SDAIA/about/Files/GenerativeAIPublicEN.pdf"
+          },
+          {
+            "title": "Principles of AI Ethics",
+            "url": "https://sdaia.gov.sa/en/SDAIA/about/Documents/ai-principles.pdf"
+          }
+        ]
+      }
+    ]
+  }
+}

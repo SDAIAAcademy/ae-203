@@ -1,0 +1,199 @@
+{
+ "chat_completions": {
+  "request": {
+   "model": "MODEL",
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are Wasil, the rider assistant of Darb Transit Authority. Today is 2026-11-15."
+    },
+    {
+     "role": "user",
+     "content": "Was the Red Line late yesterday?"
+    }
+   ],
+   "tools": [
+    {
+     "type": "function",
+     "function": {
+      "name": "get_trip_status",
+      "description": "Status of one route on one service day: delay in minutes and cancelled trips.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "route": {
+         "type": "string"
+        },
+        "date": {
+         "type": "string",
+         "format": "date"
+        }
+       },
+       "required": [
+        "route",
+        "date"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  "response": {
+   "id": "chatcmpl-1",
+   "object": "chat.completion",
+   "model": "MODEL",
+   "choices": [
+    {
+     "index": 0,
+     "finish_reason": "tool_calls",
+     "message": {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+       {
+        "id": "call_1",
+        "type": "function",
+        "function": {
+         "name": "get_trip_status",
+         "arguments": "{\"route\": \"M1\", \"date\": \"2026-11-14\"}"
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "usage": {
+    "prompt_tokens": 118,
+    "completion_tokens": 24,
+    "total_tokens": 142
+   }
+  },
+  "tool_result": {
+   "role": "tool",
+   "tool_call_id": "call_1",
+   "content": "{\"delay_minutes\": 12}"
+  }
+ },
+ "responses": {
+  "request": {
+   "model": "MODEL",
+   "instructions": "You are Wasil, the rider assistant of Darb Transit Authority. Today is 2026-11-15.",
+   "input": "Was the Red Line late yesterday?",
+   "tools": [
+    {
+     "type": "function",
+     "name": "get_trip_status",
+     "description": "Status of one route on one service day: delay in minutes and cancelled trips.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "route": {
+        "type": "string"
+       },
+       "date": {
+        "type": "string",
+        "format": "date"
+       }
+      },
+      "required": [
+       "route",
+       "date"
+      ]
+     }
+    }
+   ]
+  },
+  "response": {
+   "id": "resp_1",
+   "object": "response",
+   "model": "MODEL",
+   "status": "completed",
+   "output": [
+    {
+     "type": "function_call",
+     "id": "fc_1",
+     "call_id": "call_1",
+     "name": "get_trip_status",
+     "arguments": "{\"route\": \"M1\", \"date\": \"2026-11-14\"}"
+    }
+   ],
+   "usage": {
+    "input_tokens": 118,
+    "output_tokens": 24,
+    "total_tokens": 142
+   }
+  },
+  "tool_result": {
+   "type": "function_call_output",
+   "call_id": "call_1",
+   "output": "{\"delay_minutes\": 12}"
+  }
+ },
+ "messages": {
+  "request": {
+   "model": "MODEL",
+   "max_tokens": 512,
+   "system": "You are Wasil, the rider assistant of Darb Transit Authority. Today is 2026-11-15.",
+   "messages": [
+    {
+     "role": "user",
+     "content": "Was the Red Line late yesterday?"
+    }
+   ],
+   "tools": [
+    {
+     "name": "get_trip_status",
+     "description": "Status of one route on one service day: delay in minutes and cancelled trips.",
+     "input_schema": {
+      "type": "object",
+      "properties": {
+       "route": {
+        "type": "string"
+       },
+       "date": {
+        "type": "string",
+        "format": "date"
+       }
+      },
+      "required": [
+       "route",
+       "date"
+      ]
+     }
+    }
+   ]
+  },
+  "response": {
+   "id": "msg_1",
+   "type": "message",
+   "role": "assistant",
+   "model": "MODEL",
+   "stop_reason": "tool_use",
+   "content": [
+    {
+     "type": "tool_use",
+     "id": "toolu_1",
+     "name": "get_trip_status",
+     "input": {
+      "route": "M1",
+      "date": "2026-11-14"
+     }
+    }
+   ],
+   "usage": {
+    "input_tokens": 118,
+    "output_tokens": 24
+   }
+  },
+  "tool_result": {
+   "role": "user",
+   "content": [
+    {
+     "type": "tool_result",
+     "tool_use_id": "toolu_1",
+     "content": "{\"delay_minutes\": 12}"
+    }
+   ]
+  }
+ }
+}

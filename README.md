@@ -11,7 +11,7 @@ Participants build a bilingual rider assistant for a fictional transit authority
 
 **Format:** Intensive: 4 teaching days of four sessions and a capstone day, with guided pre-work and a tracked follow-up task
 
-**Course page:** https://sdaiaacademy.github.io/llm-applications/
+**Course page:** https://sdaiaacademy.github.io/ae-203/
 <!-- /academy:title -->
 
 ## Outcomes

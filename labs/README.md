@@ -9,13 +9,13 @@ All labs use **free hosted models over an API**, or no model at all. Nothing dow
 **1 · Get a free OpenRouter key.** Create one at <https://openrouter.ai/keys>. Free models have an id ending in `:free` and request limits per minute and per day (see <https://openrouter.ai/docs/api-reference/limits>). Identical requests are replayed from `labs/cache/`, so re-running a cell costs nothing.
 
 **2a · Google Colab**
-1. Open a notebook from the [course page](https://sdaiaacademy.github.io/llm-applications/), or directly: `https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/<notebook>.ipynb`.
+1. Open a notebook from the [course page](https://sdaiaacademy.github.io/ae-203/), or directly: `https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/<notebook>.ipynb`.
 2. In the **Secrets** panel add `OPENROUTER_API_KEY` and turn on notebook access.
 3. Run the first cell. It clones this repository and installs `requirements-colab.txt`.
 
 **2b · Local**
 ```bash
-git clone https://github.com/SDAIAAcademy/llm-applications
+git clone https://github.com/SDAIAAcademy/ae-203
 cd llm-applications/labs
 cp .env.example .env           # then paste your key into .env
 uv sync                        # creates the environment from pyproject.toml (uv.lock pins every version)
@@ -44,22 +44,22 @@ Free models change often. If the default disappears or is busy, pick another fre
 
 | Day | Session | Notebook | Model calls |
 |---|---|---|---|
-| 1 | Tokens, context and cost | [`D1_1_tokens_cost.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D1_1_tokens_cost.ipynb) | none |
-| 1 | Three API shapes, one interface | [`D1_2_three_shapes.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D1_2_three_shapes.ipynb) | two |
-| 1 | Prompts as versioned code | [`D1_3_prompt_versions.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D1_3_prompt_versions.ipynb) | four |
-| 1 | Streaming, timeouts and retries | [`D1_4_retries.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D1_4_retries.ipynb) | none (simulated endpoint) |
-| 2 | Schemas for model output | [`D2_1_schemas.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D2_1_schemas.ipynb) | 50 |
-| 2 | Validation, retry and fallback | [`D2_2_repair_fallback.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D2_2_repair_fallback.ipynb) | about 70 |
-| 2 | Tool calling | [`D2_3_tool_calling.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D2_3_tool_calling.ipynb) | about 10 |
-| 2 | Workflow or agent | [`D2_4_workflow_agent.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D2_4_workflow_agent.ipynb) | about 50 |
-| 3 | Chunking and indexing a policy corpus | [`D3_1_chunking.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D3_1_chunking.ipynb) | none |
-| 3 | Lexical, dense and hybrid search | [`D3_2_search.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D3_2_search.ipynb) | none |
-| 3 | Answers with citations | [`D3_3_citations.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D3_3_citations.ipynb) | 60 |
-| 3 | Saying the answer is not there | [`D3_4_abstention.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D3_4_abstention.ipynb) | 60 |
-| 4 | A small evaluation set | [`D4_1_eval_set.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D4_1_eval_set.ipynb) | about 100 |
-| 4 | One model grader, checked against labels | [`D4_2_grader.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D4_2_grader.ipynb) | 30 |
-| 4 | Input and output checks | [`D4_3_safety_checks.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D4_3_safety_checks.ipynb) | about 20 |
-| 4 | Packaging the assistant as a service | [`D4_4_service.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/llm-applications/blob/main/labs/D4_4_service.ipynb) | about 20, then none (replayed) |
+| 1 | Tokens, context and cost | [`D1_1_tokens_cost.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D1_1_tokens_cost.ipynb) | none |
+| 1 | Three API shapes, one interface | [`D1_2_three_shapes.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D1_2_three_shapes.ipynb) | two |
+| 1 | Prompts as versioned code | [`D1_3_prompt_versions.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D1_3_prompt_versions.ipynb) | four |
+| 1 | Streaming, timeouts and retries | [`D1_4_retries.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D1_4_retries.ipynb) | none (simulated endpoint) |
+| 2 | Schemas for model output | [`D2_1_schemas.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D2_1_schemas.ipynb) | 50 |
+| 2 | Validation, retry and fallback | [`D2_2_repair_fallback.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D2_2_repair_fallback.ipynb) | about 70 |
+| 2 | Tool calling | [`D2_3_tool_calling.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D2_3_tool_calling.ipynb) | about 10 |
+| 2 | Workflow or agent | [`D2_4_workflow_agent.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D2_4_workflow_agent.ipynb) | about 50 |
+| 3 | Chunking and indexing a policy corpus | [`D3_1_chunking.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D3_1_chunking.ipynb) | none |
+| 3 | Lexical, dense and hybrid search | [`D3_2_search.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D3_2_search.ipynb) | none |
+| 3 | Answers with citations | [`D3_3_citations.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D3_3_citations.ipynb) | 60 |
+| 3 | Saying the answer is not there | [`D3_4_abstention.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D3_4_abstention.ipynb) | 60 |
+| 4 | A small evaluation set | [`D4_1_eval_set.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D4_1_eval_set.ipynb) | about 100 |
+| 4 | One model grader, checked against labels | [`D4_2_grader.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D4_2_grader.ipynb) | 30 |
+| 4 | Input and output checks | [`D4_3_safety_checks.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D4_3_safety_checks.ipynb) | about 20 |
+| 4 | Packaging the assistant as a service | [`D4_4_service.ipynb`](https://colab.research.google.com/github/SDAIAAcademy/ae-203/blob/main/labs/D4_4_service.ipynb) | about 20, then none (replayed) |
 
 Exercises are marked **✏️ Exercise** and raise `NotImplementedError` until you fill them in; the cell after each one supplies a reference result, so the rest of the notebook still runs. Complete versions are in `solutions/`. Stretch cells are optional.
 

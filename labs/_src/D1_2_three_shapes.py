@@ -24,7 +24,7 @@ from pathlib import Path
 
 IN_COLAB = "google.colab" in sys.modules
 if IN_COLAB:
-    REPO_URL = "https://github.com/SDAIAAcademy/llm-applications.git"
+    REPO_URL = "https://github.com/SDAIAAcademy/ae-203.git"
     if not Path("/content/llm-applications").exists():
         subprocess.run(["git", "clone", "-q", REPO_URL, "/content/llm-applications"], check=True)
     os.chdir("/content/llm-applications/labs")

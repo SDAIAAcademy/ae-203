@@ -1,7 +1,7 @@
 {
   "$schema": "https://sdaiaacademy.github.io/engine/schemas/course.schema.json",
   "engine": "1",
-  "id": "llm-applications",
+  "id": "ae-203",
   "code": "AE-203",
   "version": "2027.1.0",
   "lang": "en",
@@ -26,8 +26,8 @@
     "Writes and runs unit tests"
   ],
   "site": {
-    "url": "https://sdaiaacademy.github.io/llm-applications/",
-    "repo": "SDAIAAcademy/llm-applications"
+    "url": "https://sdaiaacademy.github.io/ae-203/",
+    "repo": "SDAIAAcademy/ae-203"
   },
   "outcomes": [
     {

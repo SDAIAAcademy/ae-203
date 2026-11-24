@@ -108,14 +108,16 @@ def run_tool(arguments: str) -> str:
     except ValidationError as e:
         return json.dumps({"error": "invalid arguments: " + "; ".join(
             f"{'.'.join(map(str, x['loc']))}: {x['msg']}" for x in e.errors())})
-    with cf.ThreadPoolExecutor(1) as ex:
-        fut = ex.submit(STATUS.get, a.route, a.date.isoformat())
-        try:
-            return json.dumps(fut.result(timeout=TIMEOUT))
-        except cf.TimeoutError:
-            return json.dumps({"error": f"trip-status did not answer within {TIMEOUT} s; tell the rider and offer a ticket"})
-        except D.ToolError as e:
-            return json.dumps({"error": str(e)})
+    ex = cf.ThreadPoolExecutor(1)  # not "with": leaving a with block waits for the slow call to end
+    fut = ex.submit(STATUS.get, a.route, a.date.isoformat())
+    try:
+        return json.dumps(fut.result(timeout=TIMEOUT))
+    except cf.TimeoutError:
+        return json.dumps({"error": f"trip-status did not answer within {TIMEOUT} s; tell the rider and offer a ticket"})
+    except D.ToolError as e:
+        return json.dumps({"error": str(e)})
+    finally:
+        ex.shutdown(wait=False)
     # END SOLUTION
 
 
@@ -131,6 +133,40 @@ except NotImplementedError:
 for c, o in zip(CASES, outs):
     print(f"{c:42} -> {o[:110]}")
 llm.check("delay_minutes" in outs[0] and all('"error"' in o for o in outs[1:]), "one result and four useful errors")
+
+# %% [markdown]
+# 🔍 **Look at** · the caller's deadline. The rider's app waits a fixed time for Wasil's whole answer, and the tool call
+# is one step inside it. A step with its own fixed timeout can run on after the app has given up. Pass the time left
+# down instead: the call waits `min(TIMEOUT, time left)`, and is not started at all when no time is left.
+
+# %%
+import time
+
+
+def status_by(route: str, date: str, deadline: float) -> dict:
+    """get_trip_status within the caller's deadline (a time.monotonic() value)."""
+    left = deadline - time.monotonic()
+    if left <= 0:
+        return {"error": "the caller's deadline has passed; trip-status was not called"}
+    wait = min(TIMEOUT, left)
+    ex = cf.ThreadPoolExecutor(1)
+    fut = ex.submit(STATUS.get, route, date)
+    try:
+        return fut.result(timeout=wait)
+    except cf.TimeoutError:
+        return {"error": f"trip-status did not answer within {wait:.2f} s, the time the caller had left"}
+    finally:
+        ex.shutdown(wait=False)
+
+
+calls_before, t0 = STATUS.calls, time.monotonic()
+late = status_by("B33", "2026-11-14", deadline=t0 + 0.2)
+took = time.monotonic() - t0
+gone = status_by("M1", "2026-11-14", deadline=t0 - 0.1)
+print(late, f"after {took:.2f} s")
+print(gone)
+llm.check(took < 0.4 and STATUS.calls == calls_before + 1,
+          "the call waited only the 0.2 s left, and no call started after the deadline")
 
 # %% [markdown]
 # ## 3 · Three conversations: correct, malformed, failing (7')
@@ -278,6 +314,11 @@ except NotImplementedError:
 # 3. Where would a tool server over the Model Context Protocol change this code?
 # <details><summary>Answer</summary>Only in how the tool's definition is discovered and how the call travels; the
 # validation and error handling stay the same.</details>
+#
+# 4. The staff tool gives Wasil 4 s for a ticket. The first model call took 1.1 s and the ticket service 2.5 s. Should
+# Wasil start the second model call, which usually takes about 1 s, with its own 10-second timeout?
+# <details><summary>Answer</summary>No: 0.4 s are left, so that call would mostly run after the caller has gone. Pass the
+# time left down: skip the call (or give it 0.4 s at most) and answer at once that the ticket is open.</details>
 #
 # **Carry forward.** `wasil.Wasil.call_tool` and `tool_loop` hold this code for both services; Lab 2.4 compares the
 # loop with a fixed workflow.

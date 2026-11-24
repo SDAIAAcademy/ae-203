@@ -172,6 +172,35 @@ daily_cost(10_000, 490, 60, 3.00, 15.00)   # 23.7 a day</code></pre>
   <aside class="notes"><p>This is the evidence LO1 asks for: an annotated comparison table that matches the reference on message structure, tool calls and usage reporting. The lab's check compares each cell with data/reference/comparison.json by the field name it must mention. Point out that usage reporting is where cost dashboards silently break when a provider changes.</p></aside>
 </section>
 
+<section class="slide" id="cut-off-or-too-big" data-label="Cut off or too big" data-lo="LO1">
+  <div class="kicker">Reading the metadata</div>
+  <h2>Two short answers to the rider, two different faults in the metadata</h2>
+  <div class="cols cols-2">
+    <pre class="code s" data-file="Response A · status 200"><code>"finish_reason": "length",
+"usage": {"prompt_tokens": 1240,
+          "completion_tokens": 150}
+# the request sent max_tokens: 150</code></pre>
+    <pre class="code s" data-file="Response B · status 400"><code>error: input of 7,960 tokens plus 400
+requested output exceeds the
+8,192-token context window
+# no choices, no usage</code></pre>
+  </div>
+  <p class="lead mt">Which reply was cut off by the output limit, and which request was too large for the window?</p>
+  <aside class="notes"><p>Two minutes; let the room decide before the next slide. A: Wasil summarised a policy for a rider with max_tokens 150 on a local model with an 8,192-token window; the input fits, the model wrote until the limit. B: a long conversation history, refused before anything was generated. The numbers come from labs/_tools/call_artifacts.py; the 8,192-token window is an assumption for the example, and servers word the error differently, so read the status and the numbers, not the exact sentence.</p></aside>
+</section>
+
+<section class="slide" id="cut-off-what-next" data-label="What to do" data-lo="LO1">
+  <div class="kicker">Read the status first, then the stop reason</div>
+  <h2>A cut-off reply needs room to write; an oversized request needs a shorter input</h2>
+  <table class="t small">
+    <tr><th>What you read</th><th>What happened</th><th>What to do</th></tr>
+    <tr><td>200, <code>finish_reason</code> <code>length</code> (Messages: <code>stop_reason</code> <code>max_tokens</code>), output tokens equal your limit</td><td>The model wrote until your output limit: the reply is cut off</td><td>Raise the limit or ask for less; never parse a cut-off JSON reply as complete</td></tr>
+    <tr><td>400 naming the context window; no choices, no usage</td><td>The input, and on some servers the output allowance too, is more than the window: nothing was generated</td><td>Trim the history, the passages or the tool definitions; the same request fails again</td></tr>
+    <tr><td>200, <code>finish_reason</code> <code>stop</code></td><td>A complete reply</td><td>Use it</td></tr>
+  </table>
+  <aside class="notes"><p>Answer to the previous slide: A is cut off (150 of 150 output tokens, a 200 and a reply); B never reached the model (a 400, no usage). Neither is fixed by a retry. A parallel case to try on the room: a ticket summary comes back with 3,105 input tokens and 256 of 256 output tokens; asking for all 30 passages gives 8,020 input tokens plus 256 requested output against the same window. The first is cut off, the second is refused.</p><p>The Chat Completions reference defines length as the maximum number of tokens specified in the request being reached; the Responses reference says a request whose input exceeds the context window fails with a 400 error unless truncation is turned on; the Messages reference lists max_tokens among the stop reasons.</p><p>Sources: OpenAI API reference for Chat Completions and Responses; Anthropic Messages API reference.</p></aside>
+</section>
+
 <section class="slide" id="one-interface" data-label="One interface" data-lo="LO1">
   <div class="kicker">Provider-neutral code</div>
   <h2>Handle the shape in one place; the rest of the code never sees it</h2>
@@ -189,6 +218,40 @@ usage = resp.usage</code></pre>
     </div>
   </div>
   <aside class="notes"><p>Show labs/llm.py on screen: complete() builds the request once; the provider is configuration. The scripted provider is the course's offline stand-in: rules, not a model, so labs run without a key. Never present its answers as a model's. A gateway is worth it when several teams share keys, budgets and routing.</p><p>Sources: LiteLLM documentation.</p></aside>
+</section>
+
+<section class="slide" id="connection-per-call" data-label="Connections" data-lo="LO1 LO7">
+  <div class="kicker">Before the first token</div>
+  <h2>A new client for every call opens a new connection every time</h2>
+  <table class="t small">
+    <tr><th>One complaint, three model calls</th><th>New client per call</th><th>One client, reused</th></tr>
+    <tr><td>Call 1: lookup, TCP, TLS</td><td>20 + 40 + 40 ms</td><td>20 + 40 + 40 ms</td></tr>
+    <tr><td>Call 2</td><td>20 + 40 + 40 ms</td><td>reused: 0 ms</td></tr>
+    <tr><td>Call 3</td><td>20 + 40 + 40 ms</td><td>reused: 0 ms</td></tr>
+    <tr><td><b>Set-up for the complaint</b></td><td><b>300 ms</b></td><td><b>100 ms</b></td></tr>
+  </table>
+  <p class="small mt">Assumed: a 40 ms round trip to the provider and a 20 ms name lookup; the TCP handshake and the TLS 1.3 handshake take one round trip each.</p>
+  <aside class="notes"><p>Two minutes. Numbers from labs/_tools/call_artifacts.py, which states the assumptions. Ask the room: which column do you get when the code builds OpenAI(...) inside the function that makes each call? The left one. The set-up comes before the request is even sent, so it adds to the time to first token of every call.</p></aside>
+</section>
+
+<section class="slide" id="one-client-reused" data-label="Reuse" data-lo="LO1 LO7">
+  <div class="kicker">Lab 1.2 · look at llm.client()</div>
+  <h2>Make the client once and reuse it: its pool keeps the connection open</h2>
+  <div class="cols cols-2">
+    <pre class="code s" data-file="labs/llm.py · client()"><code class="language-python">_clients = {}
+
+def client(provider=None, timeout=60):
+    k = (base_url, key, timeout)
+    if k not in _clients:        # first call only
+        _clients[k] = OpenAI(base_url=base_url,
+                             api_key=key, timeout=timeout)
+    return _clients[k]           # later calls reuse its pool</code></pre>
+    <div class="stack">
+      <div class="card c-teal flat"><h4>Any HTTP library</h4><p class="small mb0">One client or session per process and server, not one per request.</p></div>
+      <div class="card c-navy flat"><h4>At Wasil's volume</h4><p class="small mb0">20,000 calls a day with a new client each spend about 33 minutes a day on set-up alone.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><p>The 33 minutes: 20,000 calls (10,000 requests at two calls each, an example mix) times 100 ms, from the same script. Lab 1.2 checks that llm.client() returns the same object on every call. The HTTPX documentation explains why: a client instance pools connections and reuses them, so later requests skip the handshakes; the OpenAI Python README describes the client's connection pool and when it is closed. Close a client only when the process ends or the settings change.</p><p>Sources: HTTPX clients page; OpenAI Python library.</p></aside>
 </section>
 
 <section class="slide" id="local-endpoint" data-label="Local" data-lo="LO1">
@@ -373,6 +436,31 @@ def test_declines_off_topic(system):
     <li>A streamed reply can still fail half way: handle the cut-off end.</li>
   </ul>
   <aside class="notes"><p>Numbers from the simulated endpoint in Lab 1.4 (a planned delay before the first word, then a fixed gap between words), so they are nearly the same on every laptop. With a real provider, ask for stream=True in Chat Completions and read the chunks; the time to first token is then a real measurement worth logging.</p></aside>
+</section>
+
+<section class="slide" id="buffered-stream" data-label="Buffered stream" data-lo="LO1 LO7">
+  <div class="kicker">Timing evidence</div>
+  <h2>The model streamed, yet the rider still waited for the whole reply</h2>
+  <table class="t small">
+    <tr><th>The same reply, timed after each hop</th><th>First byte</th><th>Last byte</th><th>Reads</th></tr>
+    <tr><td>Leaving the model server</td><td>0.60 s</td><td>1.15 s</td><td>12</td></tr>
+    <tr><td>After Darb's API gateway</td><td>0.61 s</td><td>1.16 s</td><td>12</td></tr>
+    <tr><td>On the rider's phone, after the edge proxy</td><td>1.17 s</td><td>1.17 s</td><td>1</td></tr>
+  </table>
+  <p class="lead mt">Which hop holds the reply back?</p>
+  <aside class="notes"><p>Two minutes. Planned values from labs/_tools/call_artifacts.py: the model sends 12 pieces 0.05 s apart from 0.60 s, and each hop adds 0.01 s. Let the room answer before the next slide. The streaming code was right; the rider's experience was not.</p></aside>
+</section>
+
+<section class="slide" id="find-the-buffer" data-label="Find the buffer" data-lo="LO1 LO7">
+  <div class="kicker">Hop by hop</div>
+  <h2>The first hop where first and last byte meet is the one that buffers</h2>
+  <ul class="bullets">
+    <li>Time the first byte, the last byte and the number of reads after each hop, from the model outward.</li>
+    <li>A hop that buffers holds every piece until the reply is complete: first byte equals last byte, in one read, while the hop before it still streams.</li>
+    <li>Here that is the edge proxy. Turn off response buffering for the streaming route there, then time it again.</li>
+  </ul>
+  <div class="callout warn mt"><b>Change only the hop the numbers name.</b> If the gateway's row had already shown one read, the proxy after it would be innocent.</div>
+  <aside class="notes"><p>A parallel case from the same script: the model starts at 0.45 s and sends 20 pieces until 1.21 s; after the gateway the first and last byte both arrive at 1.23 s in one read, and the phone sees 1.24 s. There the gateway buffers and the proxy only passes on what it got. Proxies and gateways can be set to buffer whole responses, some of them by default, and compression or content inspection can do the same; the fix is a setting of that hop for the streaming route. Lab 1.4 shows the effect with a relay that buffers: the time to first token becomes the total time.</p></aside>
 </section>
 
 <section class="slide" id="timeouts" data-label="Timeouts" data-lo="LO1 LO7">

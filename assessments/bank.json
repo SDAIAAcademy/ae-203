@@ -814,6 +814,147 @@
       "level": "understand",
       "pool": "practice",
       "weight": 1
+    },
+    {
+      "id": "lo1-cut-off-reply",
+      "type": "single",
+      "prompt": "Wasil asks a local model for a refund-policy summary in JSON with max_tokens set to 200. The response has status 200, finish_reason \"length\", 2,480 prompt tokens and 200 completion tokens, and the text does not parse as JSON. What is the right next step?",
+      "options": [
+        "Trim the conversation history, because the input overflowed the context window",
+        "Send the same request again, because a broken JSON reply is a passing fault",
+        "Close the open brackets of the reply by code and use the repaired object",
+        "Raise max_tokens or ask for a shorter summary, then send the request again"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "A 200 with finish_reason \"length\" and 200 of 200 output tokens means the reply was cut off at the output limit; an input too large for the window is refused with an error and no reply.",
+      "misconceptions": [
+        "Confuses a cut-off reply with an oversized request; the 200 status and the usage show the input was accepted",
+        "Thinks the failure is random; the same request stops at the same limit again",
+        "Treats a cut-off reply as complete; closing the brackets keeps a summary with its end missing",
+        ""
+      ],
+      "lo": [
+        "LO1"
+      ],
+      "day": "day1",
+      "session": 2,
+      "level": "analyze",
+      "pool": "practice",
+      "weight": 1
+    },
+    {
+      "id": "lo1-client-reuse",
+      "type": "tf",
+      "prompt": "Wasil builds a new client object for every model call to a hosted provider. Building the client once and reusing it would save a TCP and a TLS handshake on every call after the first.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A reused client keeps its connection to the provider open in a pool, so only the first call pays for the lookup, the TCP handshake and the TLS handshake.",
+      "misconceptions": [
+        "",
+        "Thinks a connection costs nothing once the server is warm; each new client opens a connection of its own"
+      ],
+      "lo": [
+        "LO1"
+      ],
+      "day": "day1",
+      "session": 2,
+      "level": "understand",
+      "pool": "practice",
+      "weight": 1
+    },
+    {
+      "id": "lo7-buffered-stream",
+      "type": "single",
+      "prompt": "A streamed reply is timed at three points. Leaving the model server: first byte 0.42 s, last byte 1.30 s, 22 reads. After the API gateway: first and last byte 1.32 s, 1 read. On the rider's phone, after the edge proxy: first and last byte 1.33 s, 1 read. Where should Ziyad change a setting?",
+      "options": [
+        "On the edge proxy, the last server before the rider's phone",
+        "On the API gateway, where the reads first fall to one",
+        "On the model server, because it streams too slowly",
+        "In the phone app, because it reads the stream badly"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "The gateway is the first hop where first and last byte meet in one read while the hop before it still streams, so it holds the reply until it is complete.",
+      "misconceptions": [
+        "Blames the hop nearest the symptom; the proxy already receives the reply in one piece",
+        "",
+        "Ignores the first row; the model sends its first byte at 0.42 s, in 22 pieces",
+        "Blames the client; the phone can only read what reaches it, and it arrives in one piece"
+      ],
+      "lo": [
+        "LO7"
+      ],
+      "day": "day1",
+      "session": 4,
+      "level": "analyze",
+      "pool": "practice",
+      "weight": 1
+    },
+    {
+      "id": "lo3-caller-deadline",
+      "type": "single",
+      "prompt": "Darb's staff app gives Wasil 4.0 s per request. After a model call and a ticket lookup, 0.5 s are left. The next model call usually takes about 1.2 s and has its own 10-second timeout. What should Wasil do?",
+      "options": [
+        "Start the call with its own 10-second timeout, since the reply is nearly ready",
+        "Start the call, and retry it once if the app has closed the connection",
+        "Start the call with a 4.0-second timeout, the whole budget of the app",
+        "Skip the call and send the short reply that the ticket is open, right now"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "With 0.5 s left a 1.2 s call would finish after the caller has gone; passing the time left down means not starting it and answering while the app still listens.",
+      "misconceptions": [
+        "Uses the step's own timeout and ignores the caller's budget; the work would finish for nobody",
+        "Retries work that no one is waiting for any more",
+        "Passes the caller's whole budget instead of the time left after the earlier steps",
+        ""
+      ],
+      "lo": [
+        "LO3"
+      ],
+      "day": "day2",
+      "session": 3,
+      "level": "apply",
+      "pool": "practice",
+      "weight": 1
+    },
+    {
+      "id": "lo7-bad-json-status",
+      "type": "single",
+      "prompt": "Darb's app sends Wasil's /ask a body with a trailing comma, so it is not valid JSON. Which response from Wasil is right?",
+      "options": [
+        "A 4xx status with a body that names the JSON error, so the client fixes its request",
+        "A 500 status, because the server could not parse the body",
+        "A 200 status with an empty answer, so the app shows nothing",
+        "A 503 status that asks the client to try again later"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A body that is not JSON is the client's error: a 4xx tells it to fix the request and not to retry it as it is, and the reply says what is wrong.",
+      "misconceptions": [
+        "",
+        "Reads a parsing failure as a server fault; the client's retries would resend the same broken body",
+        "Hides the error; the app team never learns that its request is broken",
+        "Invites retries that can never pass; the body stays broken"
+      ],
+      "lo": [
+        "LO7"
+      ],
+      "day": "day4",
+      "session": 4,
+      "level": "apply",
+      "pool": "practice",
+      "weight": 1
     }
   ]
 }

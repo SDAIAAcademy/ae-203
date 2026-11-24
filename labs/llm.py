@@ -126,15 +126,24 @@ def count_tokens(obj: Any) -> int:
 
 
 # ------------------------------------------------------------------ the client
+_clients: dict[tuple, Any] = {}
+
+
 def client(provider: str | None = None, timeout: float = 60, max_retries: int = 0):
-    """An OpenAI SDK client pointed at the provider. The same class talks to every OpenAI-compatible server."""
+    """An OpenAI SDK client pointed at the provider. The same class talks to every OpenAI-compatible server.
+
+    Made once per provider and settings, then reused: its connection pool keeps the TCP and TLS connection open, so
+    the second and later calls skip the set-up."""
     from openai import OpenAI
 
     p = PROVIDERS[provider or PROVIDER]
     if p["base_url"] is None:
         raise ValueError("the scripted provider has no client; call complete()")
     key = os.getenv(p["key_env"] or "", "") or "not-needed"
-    return OpenAI(base_url=p["base_url"], api_key=key, timeout=timeout, max_retries=max_retries)
+    k = (p["base_url"], key, timeout, max_retries)
+    if k not in _clients:
+        _clients[k] = OpenAI(base_url=p["base_url"], api_key=key, timeout=timeout, max_retries=max_retries)
+    return _clients[k]
 
 
 def _cache_key(payload: dict) -> Path:

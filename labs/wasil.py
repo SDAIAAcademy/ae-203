@@ -108,13 +108,15 @@ class Wasil:
         try:
             if name == "get_trip_status":
                 a = StatusArgs.model_validate(raw)
-                with cf.ThreadPoolExecutor(1) as ex:
-                    fut = ex.submit(self.status.get, a.route, a.date.isoformat())
-                    try:
-                        return json.dumps(fut.result(timeout=self.STATUS_TIMEOUT))
-                    except cf.TimeoutError:
-                        return json.dumps({"error": f"trip-status for {a.route} did not answer within "
-                                                    f"{self.STATUS_TIMEOUT} s; tell the rider and open a ticket"})
+                ex = cf.ThreadPoolExecutor(1)  # not "with": leaving a with block waits for the slow call to end
+                fut = ex.submit(self.status.get, a.route, a.date.isoformat())
+                try:
+                    return json.dumps(fut.result(timeout=self.STATUS_TIMEOUT))
+                except cf.TimeoutError:
+                    return json.dumps({"error": f"trip-status for {a.route} did not answer within "
+                                                f"{self.STATUS_TIMEOUT} s; tell the rider and open a ticket"})
+                finally:
+                    ex.shutdown(wait=False)
             if name == "create_ticket":
                 a = TicketArgs.model_validate(raw)
                 return json.dumps(self.tickets.create(a.category, a.route, a.date and a.date.isoformat(),

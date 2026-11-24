@@ -301,6 +301,40 @@ Reply with the corrected JSON only.</code></pre>
   <aside class="notes"><p>B33's feed is slow by design (1.5 seconds against a 0.5-second timeout in the lab). The call runs in a thread with a timeout so the conversation never hangs. An exception would end the conversation with nothing for the rider; a tool result lets the model explain.</p></aside>
 </section>
 
+<section class="slide" id="deadline-trace" data-label="Deadline trace" data-lo="LO3">
+  <div class="kicker">One request, three steps, one caller</div>
+  <h2>The app gave up at 3.0 s; Wasil kept working until 3.7 s</h2>
+  <div class="trace s">
+    <div class="ev user"><b>0.0 s</b>the rider app sends "Was bus 33 late yesterday?" and waits 3.0 s</div>
+    <div class="ev call"><b>0.0 to 0.9 s</b>model call 1 asks for <code>get_trip_status(B33)</code></div>
+    <div class="ev call"><b>0.9 to 2.4 s</b>trip-status answers, inside its own 2.0 s timeout</div>
+    <div class="ev call"><b>2.4 to 3.7 s</b>model call 2 writes the reply, with its own 10 s timeout</div>
+    <div class="ev error"><b>3.0 s</b>the app times out and shows the rider an error</div>
+    <div class="ev error"><b>3.7 s</b>the reply goes to a closed connection: 0.7 s of model work, paid for, read by nobody</div>
+  </div>
+  <aside class="notes"><p>Two minutes. Here the service is slow but inside its own timeout, which is set for a different budget than the app's. Each step's timeout was reasonable alone; none knew the caller's budget. Ask: which step should not have started, and what did it know at 2.4 s? Elapsed times are planned values from labs/_tools/call_artifacts.py.</p></aside>
+</section>
+
+<section class="slide" id="pass-the-deadline" data-label="Pass it down" data-lo="LO3">
+  <div class="kicker">Lab 2.3 · look at status_by()</div>
+  <h2>Pass the time left down the chain, and do not start what cannot finish</h2>
+  <div class="cols cols-2">
+    <pre class="code s" data-file="Passing the deadline down"><code class="language-python">deadline = time.monotonic() + 3.0   # the caller's budget
+
+def left():
+    return deadline - time.monotonic()
+
+if left() &lt; 1.0:                    # a reply takes about 1 s
+    return delayed_reply()          # "a ticket is open"
+llm.complete(msgs, timeout=min(10, left()))</code></pre>
+    <div class="stack">
+      <div class="stat"><div class="big">2.4 s</div><div class="lbl">Wasil replies: with 0.6 s left, model call 2 is not started</div></div>
+      <div class="stat"><div class="big">0 s</div><div class="lbl">of work after the app has gone</div></div>
+    </div>
+  </div>
+  <aside class="notes"><p>Each step gets the smaller of its own timeout and the time left; a step that cannot finish is not started, and the rider gets the short delayed reply while the app still listens. Across services, send the time left (not a clock time) with the request, so clock differences do not matter; gRPC's guide describes exactly this, and says the server should stop work once the caller's deadline has passed. A parallel case from the same script: a staff tool gives Wasil 5.0 s for a refund ticket; the model takes 1.2 s and the busy ticket service 2.6 s, so the confirming call that needs 1.6 s would end at 5.4 s. Passed down, it gets the 1.2 s left and stops at 5.0 s. Lab 2.3 shows status_by() waiting only the 0.2 s it is given and refusing to start after the deadline.</p><p>Sources: gRPC deadlines guide.</p></aside>
+</section>
+
 <section class="slide" id="tool-tests" data-label="Tests" data-lo="LO3">
   <div class="kicker">Lab 2.3 · step 4: the evidence for LO3</div>
   <h2>Six tests, every one of them without a model</h2>

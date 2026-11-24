@@ -216,6 +216,26 @@ except (NotImplementedError, AttributeError):
     print("run_tests not written yet")
 
 # %% [markdown]
+# 🔍 **Look at** · a body that is not JSON. A client with a bug sends `{"text": "Was B27 late?"` with no closing brace.
+# The typed endpoint refuses it with a 4xx status and a body that says what is wrong, before any model call. A handler
+# that parsed the body by hand would raise and answer 500: the client would read a server fault, retry a request that
+# can never succeed, and page whoever runs the service.
+
+# %%
+try:
+    llm.complete = Recorder(TAPE, "replay")  # a model call here would raise KeyError
+    bad = TestClient(make_app(wasil.Wasil())).post("/ask", content='{"text": "Was B27 late?"',
+                                                    headers={"Content-Type": "application/json"})
+    first = bad.json()["detail"][0]
+    print(bad.status_code, first["type"], "|", first["msg"])
+    llm.check(400 <= bad.status_code < 500 and first["type"] == "json_invalid",
+              "a body that is not JSON is the client's error (4xx), named in the reply, and costs no model call")
+except (NotImplementedError, AttributeError):
+    print("make_app not written yet")
+finally:
+    llm.complete = REAL_COMPLETE
+
+# %% [markdown]
 # ## 4 · Configuration and cost per 1,000 requests (6')
 #
 # Settings that change between a laptop, a test run and production (provider, model, timeouts, the abstention
@@ -331,6 +351,12 @@ except NotImplementedError:
 # 3. Why measure cost per request on the golden set, not on one message?
 # <details><summary>Answer</summary>Requests differ: complaints make several calls, questions one; only a realistic
 # mix gives a number a budget can use.</details>
+#
+# 4. The app team's client sends `{"text": "Where is my card?", }` (a trailing comma). What should Wasil answer, and
+# what should the client do next?
+# <details><summary>Answer</summary>A 4xx status (FastAPI answers 422 with type <code>json_invalid</code>; 400 is the
+# general status for a malformed request), with a body that names the problem. The client fixes the request and does
+# not retry it as it is; a 5xx would wrongly tell it the fault was the server's and that a retry might pass.</details>
 #
 # **Carry forward.** The capstone repository has this service, these tests in `tests/`, and the cost per 1,000 requests
 # in its README.

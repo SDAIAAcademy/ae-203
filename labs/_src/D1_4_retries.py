@@ -70,6 +70,29 @@ print(f"first token after {ttft:.2f} s, whole reply after {total:.2f} s: {stream
 llm.check(ttft < total, "the rider sees words before the reply is complete")
 
 # %% [markdown]
+# 🔍 **Look at** · a stream that arrives in one piece. Between the model and the rider's phone sit other servers, such
+# as a gateway or a proxy. One that buffers the response holds every piece until the reply is complete, and the rider
+# waits for the whole reply again. Measure the same stream behind a relay that buffers.
+
+# %%
+class BufferingRelay:
+    """Stands for a server on the way that holds the whole response before passing it on."""
+
+    def __init__(self, endpoint: SlowEndpoint):
+        self.endpoint = endpoint
+
+    def stream(self, prompt: str):
+        yield "".join(self.endpoint.stream(prompt))
+
+
+try:
+    b_ttft, b_total, _ = measure_stream(BufferingRelay(SlowEndpoint([])))
+except NotImplementedError:
+    b_ttft, b_total = 1.0, 1.0
+print(f"behind the relay: first token after {b_ttft:.2f} s, whole reply after {b_total:.2f} s")
+llm.check(b_ttft > 0.9 * b_total, "behind a buffering relay the first word arrives with the last")
+
+# %% [markdown]
 # ## 2 · A retry with exponential backoff, only for errors worth retrying (7')
 #
 # Retry a timeout, a 429 (rate limit) and a 5xx (server error). Do **not** retry a 400: the same request will fail the
@@ -244,5 +267,10 @@ except NotImplementedError:
 # 3. Streaming cut the time to first token but not the total time. Why does it still matter to the rider?
 # <details><summary>Answer</summary>The rider starts reading at once; perceived waiting is the time to the first
 # words.</details>
+#
+# 4. Measured at the model server the first piece leaves after 0.4 s; measured on the rider's phone the first piece and
+# the last arrive together after 1.5 s, in one read. What do you look for next?
+# <details><summary>Answer</summary>A server on the way that buffers the response: measure first and last byte after
+# each hop, and the first hop where they come together, in one read, is the one to change.</details>
 #
 # **Carry forward.** The service of Lab 4.4 sets a timeout on every model call and reports failures in its health check.

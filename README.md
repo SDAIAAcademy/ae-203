@@ -143,6 +143,12 @@ Each line is a capability; the examples are interchangeable.
 - [promptfoo](https://www.promptfoo.dev/)
 - [Inspect](https://inspect.aisi.org.uk/)
 
+### HTTP and services
+
+- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html)
+- [gRPC: deadlines](https://grpc.io/docs/guides/deadlines/)
+- [HTTPX: clients and connection pooling](https://www.python-httpx.org/advanced/clients/)
+
 ### National references
 
 - [Personal Data Protection Law](https://sdaia.gov.sa/en/SDAIA/about/Documents/PersonalDataProtectionLaw.pdf)

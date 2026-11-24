@@ -192,6 +192,16 @@ for p in (hosted, "local"):
 llm.check(all(b.get("model") for b in both), "one client, two endpoints, the same response shape")
 
 # %% [markdown]
+# 🔍 **Look at** · `llm.client()` in `labs/llm.py`. It makes the SDK client once per provider and settings and returns
+# the same object afterwards. The client keeps a pool of open connections, so only the first call to a server pays for
+# opening the connection (and, over HTTPS, the TLS handshake); a new client per call would pay it every time.
+
+# %%
+same = llm.client("local") is llm.client("local")
+print("the same client object for every call to the local endpoint:", same)
+llm.check(same, "the client is made once and reused")
+
+# %% [markdown]
 # ## ✱ Stretch · The Responses shape for real
 #
 # With an OpenRouter key set, send `SHAPES["responses"]["request"]` (with a real model name) through
@@ -227,6 +237,12 @@ except NotImplementedError:
 # 3. Why might a local model still answer differently?
 # <details><summary>Answer</summary>A different model, a different chat template and tool-call support: the protocol
 # is the same, the behaviour is not. Evaluate it (Day 4) before switching.</details>
+#
+# 4. A reply comes back with `finish_reason` "length" and `completion_tokens` equal to the `max_tokens` you sent. Was
+# the input too long for the model?
+# <details><summary>Answer</summary>No: the model answered and stopped at your output limit, so the reply is cut off.
+# An input too long for the context window is refused with an error status (a 400 on the APIs that document it) and no reply at all. Raise the limit or ask for
+# a shorter answer, and never parse a cut-off reply as complete.</details>
 #
 # **Carry forward.** Every later lab calls models through `llm.complete`, so switching provider is one setting in
 # `labs/.env`.

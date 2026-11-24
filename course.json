@@ -3,7 +3,7 @@
   "engine": "1",
   "id": "ae-203",
   "code": "AE-203",
-  "version": "2027.1.0",
+  "version": "2027.2.0",
   "lang": "en",
   "title": {
     "en": "Building Applications on Language Models",
@@ -172,7 +172,7 @@
             ],
             "stretch": "Send the Responses shape to a provider that serves it"
           },
-          "summary": "Chat Completions, Responses and Messages side by side, and one client for hosted and local endpoints"
+          "summary": "Chat Completions, Responses and Messages side by side, one client made once for hosted and local endpoints, and a cut-off reply told from an oversized request"
         },
         {
           "title": "Prompts as versioned code",
@@ -250,7 +250,7 @@
             ],
             "stretch": "A retry budget shared by all requests"
           },
-          "summary": "Streaming, timeouts, which errors to retry, backoff with jitter, and a fallback model"
+          "summary": "Streaming and where it gets buffered, timeouts, which errors to retry, backoff with jitter, and a fallback model"
         }
       ]
     },
@@ -372,7 +372,7 @@
             ],
             "stretch": "The ticket service as a second tool"
           },
-          "summary": "Tool schemas, the call-execute-return cycle, argument validation, tool errors and timeouts"
+          "summary": "Tool schemas, the call-execute-return cycle, argument validation, tool errors and timeouts, and the caller's deadline passed down the chain"
         },
         {
           "title": "Workflow or agent",
@@ -730,7 +730,7 @@
             ],
             "stretch": "Run the service and call it from the command line"
           },
-          "summary": "A web API around the assistant, a health check, tests on recorded responses, configuration and cost"
+          "summary": "A web API around the assistant, a health check, client errors answered with 4xx and never 5xx, tests on recorded responses, configuration and cost"
         }
       ]
     },
@@ -927,6 +927,23 @@
         {
           "title": "Inspect",
           "url": "https://inspect.aisi.org.uk/"
+        }
+      ]
+    },
+    {
+      "group": "HTTP and services",
+      "items": [
+        {
+          "title": "RFC 9110: HTTP Semantics",
+          "url": "https://www.rfc-editor.org/rfc/rfc9110.html"
+        },
+        {
+          "title": "gRPC: deadlines",
+          "url": "https://grpc.io/docs/guides/deadlines/"
+        },
+        {
+          "title": "HTTPX: clients and connection pooling",
+          "url": "https://www.python-httpx.org/advanced/clients/"
         }
       ]
     },

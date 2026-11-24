@@ -348,6 +348,30 @@ def ask(req: Ask) -> Reply:
   <aside class="notes"><p>In the capstone these live in tests/test_service.py and run with pytest. Add the risky items of Lab 4.3 as tests too: a masked phone number must never appear in a reply.</p></aside>
 </section>
 
+<section class="slide" id="bad-body-status" data-label="Bad body" data-lo="LO7">
+  <div class="kicker">Two handlers, two bad bodies</div>
+  <h2>A body that is not JSON is the client's error: answer 4xx, never 500</h2>
+  <table class="t small">
+    <tr><th>Handler</th><th>Body sent</th><th>Status and reply</th></tr>
+    <tr><td>Typed: <code>ask(req: Ask)</code></td><td>closing brace missing</td><td>422, <code>json_invalid</code>: "JSON decode error"</td></tr>
+    <tr><td>Typed</td><td>valid JSON, <code>txt</code> for <code>text</code></td><td>422, <code>missing</code>: "Field required"</td></tr>
+    <tr><td>By hand: <code>json.loads(await request.body())</code></td><td>closing brace missing</td><td>500, no detail</td></tr>
+    <tr><td>By hand</td><td>valid JSON, <code>txt</code> for <code>text</code></td><td>500, no detail</td></tr>
+  </table>
+  <aside class="notes"><p>A real run of FastAPI on the course's environment, in labs/_tools/call_artifacts.py. The handler written by hand raises on the bad body (a decode error, then a missing key), and an unhandled exception becomes a 500. The typed handler lets the framework parse and validate first. Lab 4.4 checks the same on Wasil's own app: a body that is not JSON gets 422 and never reaches the model.</p></aside>
+</section>
+
+<section class="slide" id="client-error-reply" data-label="What the client does" data-lo="LO7">
+  <div class="kicker">The status is an instruction to the client</div>
+  <h2>A 4xx says "fix your request"; a 5xx says "our fault, try again"</h2>
+  <div class="cols cols-2">
+    <div class="card c-teal"><h4>4xx: the request is wrong</h4><p class="small mb0">The client fixes the body and does not retry it as it is. 400 covers malformed syntax, 422 well-formed content the server cannot accept; FastAPI answers 422 for both and tells them apart by <code>type</code>. The reply names the problem.</p></div>
+    <div class="card c-coral"><h4>5xx: the server failed</h4><p class="small mb0">The client's retry loop from Day 1 sends the same broken body again, and whoever runs the service is alerted for a fault that is the client's.</p></div>
+  </div>
+  <div class="callout warn mt"><b>A 500 for a bad body costs twice:</b> retries that can never pass, and an alert that points at the wrong team.</div>
+  <aside class="notes"><p>HTTP defines the 4xx class as the client seeming to have erred, and asks the server to explain the error and whether it is temporary or permanent. A parallel case: Darb's app sends the received date as "15/11/2026"; the date pattern on Ask refuses it with 422 and names the field received, and the app team fixes the format. Ziyad's alerts should fire on 5xx, never on 4xx alone.</p><p>Sources: RFC 9110 HTTP Semantics; FastAPI testing.</p></aside>
+</section>
+
 <section class="slide" id="cost-1000" data-label="Cost" data-lo="LO7">
   <div class="kicker">Lab 4.4 · step 4</div>
   <h2>Cost per 1,000 requests, from measured use on a realistic mix</h2>

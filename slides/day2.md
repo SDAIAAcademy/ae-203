@@ -1,7 +1,7 @@
 ---
 course: "Building Applications on Language Models"
 code: "AE-203"
-version: "2027.1.0"
+version: "2027.2.0"
 deck: "day2"
 day: 2
 language: "en"
@@ -27,7 +27,7 @@ AI Engineering Track · 4 teaching days + capstone day · 4 sessions · 4 labs �
 
 - **Session 1 · Schemas for model output**: A typed schema for what the assistant needs from a message, and how often the model meets it
 - **Session 2 · Validation, retry and fallback**: Validation errors as feedback, a cap on retries, and a human queue for what still fails
-- **Session 3 · Tool calling**: Tool schemas, the call-execute-return cycle, argument validation, tool errors and timeouts
+- **Session 3 · Tool calling**: Tool schemas, the call-execute-return cycle, argument validation, tool errors and timeouts, and the caller's deadline passed down the chain
 - **Session 4 · Workflow or agent**: The same task as a fixed workflow and as a tool loop, compared on steps, cost and failures
 
 #### [day2#review-day1] What changes when Wasil moves to a local server?
@@ -321,6 +321,36 @@ Feed validation errors back to the model, cap the retries and route failures to 
 
 **Wasil (good example):** I could not reach the trip-status service just now. I have noted your message and a staff member will follow up.
 
+#### [day2#deadline-trace] The app gave up at 3.0 s; Wasil kept working until 3.7 s
+
+*The same question, a deployment with a longer tool timeout*
+
+- 0.0 s: the rider app sends "Was bus 33 late yesterday?" and waits 3.0 s
+- 0.0 to 0.9 s: model call 1 asks for `get_trip_status(B33)`
+- 0.9 to 2.4 s: trip-status answers after 1.5 s: here its timeout is 2.0 s, not the lab's 0.5 s
+- 2.4 to 3.7 s: model call 2 writes the reply, with its own 10 s timeout
+- 3.0 s: the app times out and shows the rider an error
+- 3.7 s: the reply goes to a closed connection: 0.7 s of model work, paid for, read by nobody
+
+#### [day2#pass-the-deadline] Pass the time left down the chain, and do not start what cannot finish
+
+*Lab 2.3 · look at run_tool_by()*
+
+```python
+# file: Passing the deadline down
+deadline = time.monotonic() + 3.0   # the caller's budget
+
+def left():
+    return deadline - time.monotonic()
+
+if left() < 1.0:                    # a reply takes about 1 s
+    return delayed_reply()          # "a ticket is open"
+llm.complete(msgs, timeout=min(10, left()))
+```
+
+- **2.4 s** Wasil replies: with 0.6 s left, model call 2 is not started
+- **0 s** of work after the app has gone
+
 #### [day2#tool-tests] Six tests, every one of them without a model
 
 *Lab 2.3 · step 4: the evidence for LO3*
@@ -336,7 +366,6 @@ Feed validation errors back to the model, cap the retries and route failures to 
 *The same tools, served*
 
 - An MCP server lists its tools with their schemas; a client discovers them and sends calls.
-- Darb could serve trip-status and tickets once, for Wasil and for staff tools alike.
 - Validation and error handling stay exactly where they are: in the server's code.
 
 > **Concept level here.** The next course in the track, AE-302, builds an MCP server.

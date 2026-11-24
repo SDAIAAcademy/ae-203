@@ -2,9 +2,9 @@
   "v": 1,
   "engine": "1.0.0",
   "build": {
-    "at": "2026-11-15T03:19:06Z",
-    "version": "2027.1.0",
-    "commit": "1da0dd7"
+    "at": "2026-11-24T14:38:29Z",
+    "version": "2027.2.0",
+    "commit": "ba00f32"
   },
   "lang": "en",
   "dir": "ltr",
@@ -15,7 +15,7 @@
   "course": {
     "id": "ae-203",
     "code": "AE-203",
-    "version": "2027.1.0",
+    "version": "2027.2.0",
     "title": "Building Applications on Language Models",
     "tagline": "Build a tested bilingual assistant service on any language model: typed outputs, tools, grounded answers, evaluation and safety checks",
     "description": "Participants build a bilingual rider assistant for a fictional transit authority on top of any language model, hosted or open-weight. They call models through a provider-neutral interface, extract validated structured data from rider messages, add tool calls to a synthetic trip-status service, ground answers in a policy corpus with citations and abstention, write a small evaluation set and run the assistant against it, and add input and output checks for personal data and instruction-like text. The result is a small tested web service.",
@@ -160,7 +160,7 @@
             "n": 2,
             "label": "Session 2",
             "title": "Three API shapes, one interface",
-            "summary": "Chat Completions, Responses and Messages side by side, and one client for hosted and local endpoints",
+            "summary": "Chat Completions, Responses and Messages side by side, one client made once for hosted and local endpoints, and a cut-off reply told from an oversized request",
             "outcomes": [
               "Locate messages, tool calls and usage in each of the three API shapes",
               "Fill a comparison table that matches the reference",
@@ -243,7 +243,7 @@
             "n": 4,
             "label": "Session 4",
             "title": "Streaming, timeouts and retries",
-            "summary": "Streaming, timeouts, which errors to retry, backoff with jitter, and a fallback model",
+            "summary": "Streaming and where it gets buffered, timeouts, which errors to retry, backoff with jitter, and a fallback model",
             "outcomes": [
               "Measure the time to first token of a streamed reply",
               "Retry only the errors worth retrying, with backoff",
@@ -382,7 +382,7 @@
             "n": 3,
             "label": "Session 3",
             "title": "Tool calling",
-            "summary": "Tool schemas, the call-execute-return cycle, argument validation, tool errors and timeouts",
+            "summary": "Tool schemas, the call-execute-return cycle, argument validation, tool errors and timeouts, and the caller's deadline passed down the chain",
             "outcomes": [
               "Define a tool from a typed argument model",
               "Validate arguments and return errors the model can act on",
@@ -781,7 +781,7 @@
             "n": 4,
             "label": "Session 4",
             "title": "Packaging the assistant as a service",
-            "summary": "A web API around the assistant, a health check, tests on recorded responses, configuration and cost",
+            "summary": "A web API around the assistant, a health check, client errors answered with 4xx and never 5xx, tests on recorded responses, configuration and cost",
             "outcomes": [
               "Wrap the assistant in a web API with a health check",
               "Test the service on recorded model responses",
@@ -1021,6 +1021,23 @@
           {
             "title": "Inspect",
             "url": "https://inspect.aisi.org.uk/"
+          }
+        ]
+      },
+      {
+        "group": "HTTP and services",
+        "items": [
+          {
+            "title": "RFC 9110: HTTP Semantics",
+            "url": "https://www.rfc-editor.org/rfc/rfc9110.html"
+          },
+          {
+            "title": "gRPC: deadlines",
+            "url": "https://grpc.io/docs/guides/deadlines/"
+          },
+          {
+            "title": "HTTPX: clients and connection pooling",
+            "url": "https://www.python-httpx.org/advanced/clients/"
           }
         ]
       },

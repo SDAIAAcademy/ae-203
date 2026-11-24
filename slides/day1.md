@@ -1,7 +1,7 @@
 ---
 course: "Building Applications on Language Models"
 code: "AE-203"
-version: "2027.1.0"
+version: "2027.2.0"
 deck: "day1"
 day: 1
 language: "en"
@@ -26,9 +26,9 @@ AI Engineering Track · 4 teaching days + capstone day · 4 sessions · 4 labs �
 *Today*
 
 - **Session 1 · Tokens, context and cost**: What a token is, why Arabic costs more of them, and what a request really sends and costs
-- **Session 2 · Three API shapes, one interface**: Chat Completions, Responses and Messages side by side, and one client for hosted and local endpoints
+- **Session 2 · Three API shapes, one interface**: Chat Completions, Responses and Messages side by side, one client made once for hosted and local endpoints, and a cut-off reply told from an oversized request
 - **Session 3 · Prompts as versioned code**: Instructions in a versioned file with an owner, rendered safely and pinned by tests
-- **Session 4 · Streaming, timeouts and retries**: Streaming, timeouts, which errors to retry, backoff with jitter, and a fallback model
+- **Session 4 · Streaming, timeouts and retries**: Streaming and where it gets buffered, timeouts, which errors to retry, backoff with jitter, and a fallback model
 
 #### [day1#meet-darb] Darb Transit Authority wants a rider assistant that it can test and defend
 
@@ -196,6 +196,38 @@ All three carry `get_trip_status(route="M1", date="2026-11-14")` for "Was the Re
 | Why it stopped | `finish_reason` | `status` and item types | `stop_reason` |
 | Usage | `prompt_tokens`, `completion_tokens` | `input_tokens`, `output_tokens` | `input_tokens`, `output_tokens` |
 
+#### [day1#cut-off-or-too-big] Two short answers to the rider, two different faults in the metadata
+
+*Reading the metadata*
+
+```
+# file: Response A · status 200
+"finish_reason": "length",
+"usage": {"prompt_tokens": 1240,
+          "completion_tokens": 150}
+# the request sent max_tokens: 150
+```
+
+```
+# file: Response B · status 400
+error: input of 8,350 tokens
+exceeds the 8,192-token
+context window
+# no choices, no usage
+```
+
+Which reply was cut off by the output limit, and which request was too large for the window?
+
+#### [day1#cut-off-what-next] A cut-off reply needs room to write; an oversized request needs a shorter input
+
+*Read the status first, then the stop reason*
+
+| What you read | What happened | What to do |
+| --- | --- | --- |
+| 200, `finish_reason` `length` (Messages: `stop_reason` `max_tokens`), output tokens equal your limit | The model wrote until your output limit: the reply is cut off | Raise the limit or ask for less; never parse a cut-off JSON reply as complete |
+| 400 naming the context window; no choices, no usage | The input, and on some servers the output allowance too, is more than the window: nothing was generated | Trim the history, the passages or the tool definitions; the same request fails again |
+| 200, `finish_reason` `stop` | A complete reply | Use it |
+
 #### [day1#one-interface] Handle the shape in one place; the rest of the code never sees it
 
 *Provider-neutral code*
@@ -214,6 +246,21 @@ usage = resp.usage
 - **Your own thin client.** What the course uses: one function, a cache, a fallback list, a ledger of tokens.
 - **A gateway or library.** LiteLLM and similar tools translate between providers for you, with routing and budgets.
 
+#### [day1#connection-per-call] A new client for every call opens a new connection every time
+
+*Before the first token*
+
+| One complaint, three model calls | New client per call | One client, reused |
+| --- | --- | --- |
+| Call 1: lookup, TCP, TLS | 20 + 40 + 40 ms | 20 + 40 + 40 ms |
+| Call 2 | 20 + 40 + 40 ms | reused: 0 ms |
+| Call 3 | 20 + 40 + 40 ms | reused: 0 ms |
+| **Set-up for the complaint** | **300 ms** | **100 ms** |
+
+Assumed: a 40 ms round trip and a 20 ms name lookup; TCP and TLS 1.3 take one round trip each.
+
+> **Make the client once and reuse it:** its pool keeps the connection open. `llm.client()` keeps one per provider (Lab 1.2).
+
 #### [day1#local-endpoint] A local server that speaks the same protocol changes three settings, not your code
 
 *Hosted or local*
@@ -231,8 +278,7 @@ usage = resp.usage
 *Working with free hosted models*
 
 - Free variants on OpenRouter have an id that ends in `:free` and limits per minute and per day.
-- The course default and its fallbacks are settings in `labs/.env`, not code.
-- Identical requests are replayed from a local cache, so re-running a cell spends nothing.
+- The course default and its fallbacks are settings in `labs/.env`; identical requests replay from a local cache.
 - A model that disappears answers with an error: pick another free model with tool support.
 
 #### [day1#checkpoint-2] What breaks when the provider changes?
@@ -408,6 +454,28 @@ Move the assistant's instructions into a versioned template, write two tests tha
 - Stream to a person reading; do not stream to code that needs the whole JSON.
 - A streamed reply can still fail half way: handle the cut-off end.
 
+#### [day1#buffered-stream] The model streamed, yet the rider still waited for the whole reply
+
+*Timing evidence*
+
+| The same reply, timed after each hop | First byte | Last byte | Reads |
+| --- | --- | --- | --- |
+| Leaving the model server | 0.60 s | 1.15 s | 12 |
+| After Darb's API gateway | 0.61 s | 1.16 s | 12 |
+| On the rider's phone, after the edge proxy | 1.17 s | 1.17 s | 1 |
+
+Which hop holds the reply back?
+
+#### [day1#find-the-buffer] The first hop where first and last byte meet is the one that buffers
+
+*Hop by hop*
+
+- Time the first byte, the last byte and the number of reads after each hop, from the model outward.
+- A hop that buffers holds every piece until the reply is complete: first byte equals last byte, in one read, while the hop before it still streams.
+- Here that is the edge proxy. Turn off response buffering for the streaming route there, then time it again.
+
+> **Change only the hop the numbers name.** If the gateway's row had already shown one read, the proxy after it would be innocent.
+
 #### [day1#timeouts] Every model call needs a timeout shorter than the rider's patience
 
 *Never wait forever*
@@ -415,8 +483,6 @@ Move the assistant's instructions into a versioned template, write two tests tha
 - A call without a timeout ties up a worker until the provider gives up, if it ever does.
 - Set it from your latency budget: Wasil's reply should start within a few seconds.
 - A timeout is a failure you chose: decide what happens next, retry or fall back.
-
-> **The client's default may be long.** The OpenAI Python client takes a `timeout` argument; the course client passes one on every call.
 
 #### [day1#which-errors-retry] Retry what may pass next time; raise what will fail again
 

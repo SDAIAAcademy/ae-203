@@ -2,9 +2,9 @@
   "v": 1,
   "engine": "1.0.0",
   "build": {
-    "at": "2026-11-15T03:19:06Z",
-    "version": "2027.1.0",
-    "commit": "1da0dd7"
+    "at": "2026-11-24T14:38:29Z",
+    "version": "2027.2.0",
+    "commit": "ba00f32"
   },
   "lang": "en",
   "dir": "ltr",
@@ -24,7 +24,7 @@
       "n": 2,
       "session": 0,
       "title": "Calling models well",
-      "text": "Today Calling models well Session 1 · Tokens, context and cost What a token is, why Arabic costs more of them, and what a request really sends and costs Session 2 · Three API shapes, one interface Chat Completions, Responses and Messages side by side, and one client for hosted and local endpoints Session 3 · Prompts as versioned code Instructions in a versioned file with an owner, rendered safely and pinned by tests Session 4 · Streaming, timeouts and retries Streaming, timeouts, which errors to retry, backoff with jitter, and a fallback model",
+      "text": "Today Calling models well Session 1 · Tokens, context and cost What a token is, why Arabic costs more of them, and what a request really sends and costs Session 2 · Three API shapes, one interface Chat Completions, Responses and Messages side by side, one client made once for hosted and local endpoints, and a cut-off reply told from an oversized request Session 3 · Prompts as versioned code Instructions in a versioned file with an owner, rendered safely and pinned by tests Session 4 · Streaming, timeouts and retries Streaming and where it gets buffered, timeouts, which errors to retry, backoff with jitter, and a fallback model",
       "href": "../slides/day1.html#agenda"
     },
     {
@@ -155,8 +155,26 @@
     },
     {
       "deck": "day1",
-      "id": "one-interface",
+      "id": "cut-off-or-too-big",
       "n": 17,
+      "session": 2,
+      "title": "Two short answers to the rider, two different faults in the metadata",
+      "text": "Reading the metadata Two short answers to the rider, two different faults in the metadata \"finish_reason\": \"length\", \"usage\": {\"prompt_tokens\": 1240, \"completion_tokens\": 150} # the request sent max_tokens: 150 error: input of 8,350 tokens exceeds the 8,192-token context window # no choices, no usage Which reply was cut off by the output limit, and which request was too large for the window?",
+      "href": "../slides/day1.html#cut-off-or-too-big"
+    },
+    {
+      "deck": "day1",
+      "id": "cut-off-what-next",
+      "n": 18,
+      "session": 2,
+      "title": "A cut-off reply needs room to write; an oversized request needs a shorter input",
+      "text": "Read the status first, then the stop reason A cut-off reply needs room to write; an oversized request needs a shorter input What you read What happened What to do 200, finish_reason length (Messages: stop_reason max_tokens), output tokens equal your limit The model wrote until your output limit: the reply is cut off Raise the limit or ask for less; never parse a cut-off JSON reply as complete 400 naming the context window; no choices, no usage The input, and on some servers the output allowance too, is more than the window: nothing was generated Trim the history, the passages or the tool definitions; the same request fails again 200, finish_reason stop A complete reply Use it",
+      "href": "../slides/day1.html#cut-off-what-next"
+    },
+    {
+      "deck": "day1",
+      "id": "one-interface",
+      "n": 19,
       "session": 2,
       "title": "Handle the shape in one place; the rest of the code never sees it",
       "text": "Provider-neutral code Handle the shape in one place; the rest of the code never sees it resp = llm.complete(messages, tools=TOOLS) # provider from LLM_PROVIDER: # openrouter hosted, free models # local any OpenAI-compatible server # scripted offline stand-in text = llm.text(resp) usage = resp.usage Your own thin client What the course uses: one function, a cache, a fallback list, a ledger of tokens. A gateway or library LiteLLM and similar tools translate between providers for you, with routing and budgets.",
@@ -164,8 +182,17 @@
     },
     {
       "deck": "day1",
+      "id": "connection-per-call",
+      "n": 20,
+      "session": 2,
+      "title": "A new client for every call opens a new connection every time",
+      "text": "Before the first token A new client for every call opens a new connection every time One complaint, three model calls New client per call One client, reused Call 1: lookup, TCP, TLS 20 + 40 + 40 ms 20 + 40 + 40 ms Call 2 20 + 40 + 40 ms reused: 0 ms Call 3 20 + 40 + 40 ms reused: 0 ms Set-up for the complaint 300 ms 100 ms Assumed: a 40 ms round trip and a 20 ms name lookup; TCP and TLS 1.3 take one round trip each. Make the client once and reuse it: its pool keeps the connection open. llm.client() keeps one per provider (Lab 1.2).",
+      "href": "../slides/day1.html#connection-per-call"
+    },
+    {
+      "deck": "day1",
       "id": "local-endpoint",
-      "n": 18,
+      "n": 21,
       "session": 2,
       "title": "A local server that speaks the same protocol changes three settings, not your code",
       "text": "Hosted or local A local server that speaks the same protocol changes three settings, not your code Setting Hosted (OpenRouter) Local server Base URL https://openrouter.ai/api/v1 http://127.0.0.1:8765/v1 Key from OPENROUTER_API_KEY usually none Model name a free model id whatever the server loaded Same protocol, different behaviour. Another model, chat template and tool support: evaluate before switching.",
@@ -174,16 +201,16 @@
     {
       "deck": "day1",
       "id": "free-models-change",
-      "n": 19,
+      "n": 22,
       "session": 2,
       "title": "Free models come and go and have request limits: plan for both",
-      "text": "Working with free hosted models Free models come and go and have request limits: plan for both Free variants on OpenRouter have an id that ends in :free and limits per minute and per day. The course default and its fallbacks are settings in labs/.env, not code. Identical requests are replayed from a local cache, so re-running a cell spends nothing. A model that disappears answers with an error: pick another free model with tool support.",
+      "text": "Working with free hosted models Free models come and go and have request limits: plan for both Free variants on OpenRouter have an id that ends in :free and limits per minute and per day. The course default and its fallbacks are settings in labs/.env; identical requests replay from a local cache. A model that disappears answers with an error: pick another free model with tool support.",
       "href": "../slides/day1.html#free-models-change"
     },
     {
       "deck": "day1",
       "id": "checkpoint-2",
-      "n": 20,
+      "n": 23,
       "session": 2,
       "title": "What breaks when the provider changes?",
       "text": "Checkpoint What breaks when the provider changes? Ziyad moves Wasil from a Chat Completions provider to one that serves only the Messages shape. The cost dashboard reads usage.prompt_tokens. What happens to it? It keeps working, since every provider reports usage It shows higher costs, since the new provider is dearer It reads the tokens from the reply's text instead It finds no such field: Messages reports input_tokens",
@@ -192,7 +219,7 @@
     {
       "deck": "day1",
       "id": "lab-1-2",
-      "n": 21,
+      "n": 24,
       "session": 2,
       "title": "One request, three shapes, one client",
       "text": "Lab 1.2 · 25 min One request, three shapes, one client Read the same request in three API shapes, fill the comparison table against the reference, and send one request to a hosted and a local endpoint through one client. D1_2_three_shapes.ipynb Read the tool call out of each shape 6 min Read the usage out of each shape 6 min Fill the comparison table and check it 6 min The same call to a hosted and a local endpoint 7 min ✱ Stretch: Send the Responses shape to a provider that serves it",
@@ -201,7 +228,7 @@
     {
       "deck": "day1",
       "id": "s3",
-      "n": 22,
+      "n": 25,
       "session": 3,
       "title": "Prompts as versioned code",
       "text": "Session 3 Prompts as versioned code Separate system instructions from the rider's message Keep a prompt as a versioned template with an owner Pin a prompt's behaviour with tests before a release 03",
@@ -210,7 +237,7 @@
     {
       "deck": "day1",
       "id": "system-and-user",
-      "n": 23,
+      "n": 26,
       "session": 3,
       "title": "Instructions come from Darb; the message comes from the rider",
       "text": "Who says what Instructions come from Darb; the message comes from the rider System: You are Wasil, the rider assistant of Darb Transit Authority. Today is 2026-11-15. Never promise a refund. User: The 27 bus was 22 minutes late yesterday. I want a refund. Darb's instructionsThe rider's words The system message holds what is true for every rider: identity, rules, the date. The user message holds only what this rider wrote. Never paste rider text into the instructions.",
@@ -219,7 +246,7 @@
     {
       "deck": "day1",
       "id": "examples-in-prompt",
-      "n": 24,
+      "n": 27,
       "session": 3,
       "title": "One or two examples in the prompt fix the format faster than a paragraph",
       "text": "Showing, not only telling One or two examples in the prompt fix the format faster than a paragraph Example riderel bas 27 ta2a5ar ams Example reply{\"route\": \"B27\", \"date\": \"2026-11-14\", \"complaint_type\": \"delay\"} Choose hard examples Arabizi, Arabic-Indic digits, a date in words: the cases the model gets wrong. Keep them few Each example is sent on every call; it is part of the stable prefix.",
@@ -228,7 +255,7 @@
     {
       "deck": "day1",
       "id": "prompt-as-file",
-      "n": 25,
+      "n": 28,
       "session": 3,
       "title": "A prompt is a file with a version and an owner, not a string in the code",
       "text": "Lab 1.3 · steps 1 and 2 A prompt is a file with a version and an owner, not a string in the code --- name: wasil version: 1 owner: Ghada Al-Qahtani note: moved out of the code --- You are Wasil, ... Today is {today}. Introduce yourself as: \"I am Wasil, ...\" If the request is not about Darb, reply: ... Under version control: every change has a diff, an author and a reason. Rendered with named values; a missing value stops the call. The owner reviews changes to behaviour, as a code owner would.",
@@ -237,7 +264,7 @@
     {
       "deck": "day1",
       "id": "tests-pin-behaviour",
-      "n": 26,
+      "n": 29,
       "session": 3,
       "title": "Pin behaviour with tests that check a property, not the wording",
       "text": "Lab 1.3 · step 3 Pin behaviour with tests that check a property, not the wording def test_discloses_ai(system): return \"ai assistant\" in reply_to(system, \"Who are you?\").lower() def test_declines_off_topic(system): reply = reply_to(system, \"Write me a poem about the sea.\") return \"only help with darb\" in reply.lower() Two properties Darb promised: riders know they talk to an AI assistant, and Wasil stays on Darb business.",
@@ -246,7 +273,7 @@
     {
       "deck": "day1",
       "id": "a-change-is-a-release",
-      "n": 27,
+      "n": 30,
       "session": 3,
       "title": "A friendlier rewrite failed both tests: a prompt change is a release",
       "text": "Lab 1.3 · step 4 A friendlier rewrite failed both tests: a prompt change is a release -Introduce yourself as: \"I am Wasil, Darb's AI ...\" -If the request is not about Darb, reply: \"I can ...\" +Be warm and helpful with anything the rider asks. Test v1 v2 Discloses AI pass fail Declines off-topic pass fail Nothing in the diff looked dangerous. The tests caught what review alone would miss.",
@@ -255,7 +282,7 @@
     {
       "deck": "day1",
       "id": "prompt-release-flow",
-      "n": 28,
+      "n": 31,
       "session": 3,
       "title": "Edit, test, review, release, and keep the old version to roll back to",
       "text": "The release path Edit, test, review, release, and keep the old version to roll back to Edit a new version file → Test the pinned properties → Review by the owner → Release with a changelog line Day 4 widens the tests into a 40-case evaluation set that runs on every change of prompt, model or code.",
@@ -264,7 +291,7 @@
     {
       "deck": "day1",
       "id": "checkpoint-3",
-      "n": 29,
+      "n": 32,
       "session": 3,
       "title": "Which test pins the behaviour?",
       "text": "Checkpoint Which test pins the behaviour? Ghada wants a test that fails if a prompt change stops Wasil from telling riders it is an AI assistant. Which test does that and survives harmless rewording? Ask \"Who are you?\" and check that the reply mentions an AI assistant Ask \"Who are you?\" and compare the reply with a saved reply Check that the prompt file contains the word \"AI\" Check that the reply is under 30 words long",
@@ -273,7 +300,7 @@
     {
       "deck": "day1",
       "id": "lab-1-3",
-      "n": 30,
+      "n": 33,
       "session": 3,
       "title": "Wasil's instructions as a versioned template",
       "text": "Lab 1.3 · 25 min Wasil's instructions as a versioned template Move the assistant's instructions into a versioned template, write two tests that pin its behaviour, and watch a well-meant edit fail them. D1_3_prompt_versions.ipynb Save the instructions with a header 5 min Load and render, refusing missing variables 7 min Two tests that pin its behaviour 7 min A well-meant edit against the tests 6 min ✱ Stretch: Pin the Arabic disclosure too",
@@ -282,7 +309,7 @@
     {
       "deck": "day1",
       "id": "s4",
-      "n": 31,
+      "n": 34,
       "session": 4,
       "title": "Streaming, timeouts and retries",
       "text": "Session 4 Streaming, timeouts and retries Measure the time to first token of a streamed reply Retry only the errors worth retrying, with backoff Fall back to a second model and test every path 04",
@@ -291,7 +318,7 @@
     {
       "deck": "day1",
       "id": "streaming",
-      "n": 32,
+      "n": 35,
       "session": 4,
       "title": "Streaming shows the first words early; the total time stays the same",
       "text": "Lab 1.4 · step 1 Streaming shows the first words early; the total time stays the same 0.60 s to the first word on the simulated endpoint about 1 s to the whole reply Stream to a person reading; do not stream to code that needs the whole JSON. A streamed reply can still fail half way: handle the cut-off end.",
@@ -299,17 +326,35 @@
     },
     {
       "deck": "day1",
+      "id": "buffered-stream",
+      "n": 36,
+      "session": 4,
+      "title": "The model streamed, yet the rider still waited for the whole reply",
+      "text": "Timing evidence The model streamed, yet the rider still waited for the whole reply The same reply, timed after each hop First byte Last byte Reads Leaving the model server 0.60 s 1.15 s 12 After Darb's API gateway 0.61 s 1.16 s 12 On the rider's phone, after the edge proxy 1.17 s 1.17 s 1 Which hop holds the reply back?",
+      "href": "../slides/day1.html#buffered-stream"
+    },
+    {
+      "deck": "day1",
+      "id": "find-the-buffer",
+      "n": 37,
+      "session": 4,
+      "title": "The first hop where first and last byte meet is the one that buffers",
+      "text": "Hop by hop The first hop where first and last byte meet is the one that buffers Time the first byte, the last byte and the number of reads after each hop, from the model outward. A hop that buffers holds every piece until the reply is complete: first byte equals last byte, in one read, while the hop before it still streams. Here that is the edge proxy. Turn off response buffering for the streaming route there, then time it again. Change only the hop the numbers name. If the gateway's row had already shown one read, the proxy after it would be innocent.",
+      "href": "../slides/day1.html#find-the-buffer"
+    },
+    {
+      "deck": "day1",
       "id": "timeouts",
-      "n": 33,
+      "n": 38,
       "session": 4,
       "title": "Every model call needs a timeout shorter than the rider's patience",
-      "text": "Never wait forever Every model call needs a timeout shorter than the rider's patience A call without a timeout ties up a worker until the provider gives up, if it ever does. Set it from your latency budget: Wasil's reply should start within a few seconds. A timeout is a failure you chose: decide what happens next, retry or fall back. The client's default may be long. The OpenAI Python client takes a timeout argument; the course client passes one on every call.",
+      "text": "Never wait forever Every model call needs a timeout shorter than the rider's patience A call without a timeout ties up a worker until the provider gives up, if it ever does. Set it from your latency budget: Wasil's reply should start within a few seconds. A timeout is a failure you chose: decide what happens next, retry or fall back.",
       "href": "../slides/day1.html#timeouts"
     },
     {
       "deck": "day1",
       "id": "which-errors-retry",
-      "n": 34,
+      "n": 39,
       "session": 4,
       "title": "Retry what may pass next time; raise what will fail again",
       "text": "Lab 1.4 · step 2 Retry what may pass next time; raise what will fail again Failure Retry? Why Timeout yes, a few times the next attempt may be faster 429 rate limited yes, after waiting the limit resets 500, 502, 503 yes a busy or broken server 400 bad request no the same request fails the same way 401 bad key no fix the configuration",
@@ -318,7 +363,7 @@
     {
       "deck": "day1",
       "id": "backoff-jitter",
-      "n": 35,
+      "n": 40,
       "session": 4,
       "title": "Wait longer after each failure, with a little randomness",
       "text": "How long to wait Wait longer after each failure, with a little randomness for attempt in range(retries + 1): try: return endpoint(prompt, timeout=timeout) except TimeoutError: ... except EndpointError as e: if e.status not in RETRYABLE: raise # a 400 is not retried time.sleep(base * 2 ** attempt + random.uniform(0, base)) Jitter keeps clients that failed together from retrying together.",
@@ -327,7 +372,7 @@
     {
       "deck": "day1",
       "id": "fallback-model",
-      "n": 36,
+      "n": 41,
       "session": 4,
       "title": "When the primary keeps failing, a fallback model answers",
       "text": "Lab 1.4 · step 3 When the primary keeps failing, a fallback model answers primary timeout after 0.5 s primary timeout after 0.5 s primary timeout after 0.5 s fallback called reply [fallback] Route M1 is running 12 minutes late. A fallback is another model. It must pass the same tests; record which model answered each request.",
@@ -336,7 +381,7 @@
     {
       "deck": "day1",
       "id": "test-the-failures",
-      "n": 37,
+      "n": 42,
       "session": 4,
       "title": "Test each failure path on purpose, with a planned slow endpoint",
       "text": "Lab 1.4 · step 4 Test each failure path on purpose, with a planned slow endpoint Test Plan of the endpoint Expected slow then ok 0.8 s, then 0.05 s one timeout, then the reply rate limited twice 429, 429, then 0 s three attempts fallback after server errors 503 three times the fallback answers bad request not retried 400 one attempt, no fallback",
@@ -345,7 +390,7 @@
     {
       "deck": "day1",
       "id": "checkpoint-4",
-      "n": 38,
+      "n": 43,
       "session": 4,
       "title": "Retry, fall back or raise?",
       "text": "Checkpoint Retry, fall back or raise? Wasil's call to the primary model answers 400: the tool schema it sent is invalid. What should the client do? Retry three times with backoff Send the same request to the fallback model Raise the error and fix the schema Return an empty reply to the rider",
@@ -354,7 +399,7 @@
     {
       "deck": "day1",
       "id": "lab-1-4",
-      "n": 39,
+      "n": 44,
       "session": 4,
       "title": "Timeouts, retries and a fallback model",
       "text": "Lab 1.4 · 25 min Timeouts, retries and a fallback model Add a timeout, a retry with backoff and a fallback model, and test them against a simulated slow endpoint. D1_4_retries.ipynb Stream a reply and measure the time to first token 6 min A retry with exponential backoff 7 min A fallback model 6 min Four tests against planned failures 6 min ✱ Stretch: A retry budget shared by all requests",
@@ -363,7 +408,7 @@
     {
       "deck": "day1",
       "id": "wrap-up",
-      "n": 40,
+      "n": 45,
       "session": 4,
       "title": "Three things to keep",
       "text": "Day 1 · wrap-up Three things to keep Count before you choose Tokens per request, by language, times 10,000 a day: the price list then decides. One interface The shape lives in one adapter; the provider is configuration. Prompts and failures are code Versioned, owned, tested: the instructions and every failure path.",
@@ -372,7 +417,7 @@
     {
       "deck": "day1",
       "id": "next",
-      "n": 41,
+      "n": 46,
       "session": 4,
       "title": "Day 2: Structured data and tools",
       "text": "Next Day 2: Structured data and tools Rider messages become typed objects, and Wasil calls the trip-status and ticket services. Finish any open lab at home from its solution in labs/solutions/.",
@@ -393,7 +438,7 @@
       "n": 2,
       "session": 0,
       "title": "Structured data and tools",
-      "text": "Today Structured data and tools Session 1 · Schemas for model output A typed schema for what the assistant needs from a message, and how often the model meets it Session 2 · Validation, retry and fallback Validation errors as feedback, a cap on retries, and a human queue for what still fails Session 3 · Tool calling Tool schemas, the call-execute-return cycle, argument validation, tool errors and timeouts Session 4 · Workflow or agent The same task as a fixed workflow and as a tool loop, compared on steps, cost and failures",
+      "text": "Today Structured data and tools Session 1 · Schemas for model output A typed schema for what the assistant needs from a message, and how often the model meets it Session 2 · Validation, retry and fallback Validation errors as feedback, a cap on retries, and a human queue for what still fails Session 3 · Tool calling Tool schemas, the call-execute-return cycle, argument validation, tool errors and timeouts, and the caller's deadline passed down the chain Session 4 · Workflow or agent The same task as a fixed workflow and as a tool loop, compared on steps, cost and failures",
       "href": "../slides/day2.html#agenda"
     },
     {
@@ -614,8 +659,26 @@
     },
     {
       "deck": "day2",
-      "id": "tool-tests",
+      "id": "deadline-trace",
       "n": 27,
+      "session": 3,
+      "title": "The app gave up at 3.0 s; Wasil kept working until 3.7 s",
+      "text": "The same question, a deployment with a longer tool timeout The app gave up at 3.0 s; Wasil kept working until 3.7 s 0.0 s the rider app sends \"Was bus 33 late yesterday?\" and waits 3.0 s 0.0 to 0.9 s model call 1 asks for get_trip_status(B33) 0.9 to 2.4 s trip-status answers after 1.5 s: here its timeout is 2.0 s, not the lab's 0.5 s 2.4 to 3.7 s model call 2 writes the reply, with its own 10 s timeout 3.0 s the app times out and shows the rider an error 3.7 s the reply goes to a closed connection: 0.7 s of model work, paid for, read by nobody",
+      "href": "../slides/day2.html#deadline-trace"
+    },
+    {
+      "deck": "day2",
+      "id": "pass-the-deadline",
+      "n": 28,
+      "session": 3,
+      "title": "Pass the time left down the chain, and do not start what cannot finish",
+      "text": "Lab 2.3 · look at run_tool_by() Pass the time left down the chain, and do not start what cannot finish deadline = time.monotonic() + 3.0 # the caller's budget def left(): return deadline - time.monotonic() if left() < 1.0: # a reply takes about 1 s return delayed_reply() # \"a ticket is open\" llm.complete(msgs, timeout=min(10, left())) 2.4 s Wasil replies: with 0.6 s left, model call 2 is not started 0 s of work after the app has gone",
+      "href": "../slides/day2.html#pass-the-deadline"
+    },
+    {
+      "deck": "day2",
+      "id": "tool-tests",
+      "n": 29,
       "session": 3,
       "title": "Six tests, every one of them without a model",
       "text": "Lab 2.3 · step 4: the evidence for LO3 Six tests, every one of them without a model Correct a valid call returns the status Malformed broken JSON; a route that breaks the pattern Service errors unknown route; a date outside the window; a timeout 6 of 6 pass in the reference run, in under five seconds",
@@ -624,16 +687,16 @@
     {
       "deck": "day2",
       "id": "mcp-concept",
-      "n": 28,
+      "n": 30,
       "session": 3,
       "title": "A Model Context Protocol server serves tools to any client that speaks it",
-      "text": "The same tools, served A Model Context Protocol server serves tools to any client that speaks it An MCP server lists its tools with their schemas; a client discovers them and sends calls. Darb could serve trip-status and tickets once, for Wasil and for staff tools alike. Validation and error handling stay exactly where they are: in the server's code. Concept level here. The next course in the track, AE-302, builds an MCP server.",
+      "text": "The same tools, served A Model Context Protocol server serves tools to any client that speaks it An MCP server lists its tools with their schemas; a client discovers them and sends calls. Validation and error handling stay exactly where they are: in the server's code. Concept level here. The next course in the track, AE-302, builds an MCP server.",
       "href": "../slides/day2.html#mcp-concept"
     },
     {
       "deck": "day2",
       "id": "checkpoint-3",
-      "n": 29,
+      "n": 31,
       "session": 3,
       "title": "What should the tool return?",
       "text": "Checkpoint What should the tool return? The model calls get_trip_status(route=\"bas 27\", date=\"2026-11-14\"). What should Wasil's code send back to the model? Pass the call to the service and return what it says An error saying the route must match M1 to M4 or B and two digits Raise an exception and stop the conversation Change it to B27 silently and run the call",
@@ -642,7 +705,7 @@
     {
       "deck": "day2",
       "id": "lab-2-3",
-      "n": 30,
+      "n": 32,
       "session": 3,
       "title": "The trip-status service as a tool",
       "text": "Lab 2.3 · 25 min The trip-status service as a tool Expose the trip-status service as a tool and handle a correct call, a malformed call, a tool error and a timeout, with a test for each. D2_3_tool_calling.ipynb A tool definition from a typed model 5 min Run a call: validate, execute, return 6 min Three conversations: correct, malformed, failing 7 min A test suite for the tool 7 min ✱ Stretch: The ticket service as a second tool",
@@ -651,7 +714,7 @@
     {
       "deck": "day2",
       "id": "s4",
-      "n": 31,
+      "n": 33,
       "session": 4,
       "title": "Workflow or agent",
       "text": "Session 4 Workflow or agent Write a task as a fixed workflow of model and tool steps Write the same task as a model-driven tool loop Choose between them from measured steps, cost and failures 04",
@@ -660,7 +723,7 @@
     {
       "deck": "day2",
       "id": "workflow-vs-agent",
-      "n": 32,
+      "n": 34,
       "session": 4,
       "title": "In a workflow your code decides; in a tool loop the model does",
       "text": "Who decides the next step? In a workflow your code decides; in a tool loop the model does Fixed workflow Extract, look up the status, open a ticket, reply. The model reads the message; code runs the steps in order. Tool loop The model gets both tools and chooses what to call and when to stop, within a step budget. The question is not which is modern. It is whether the steps depend on what the tools return.",
@@ -669,7 +732,7 @@
     {
       "deck": "day2",
       "id": "workflow-code",
-      "n": 33,
+      "n": 35,
       "session": 4,
       "title": "The workflow is ordinary code with one model call in it",
       "text": "Lab 2.4 · step 1 The workflow is ordinary code with one model call in it obj, _, _ = wasil.extract(m[\"text\"], m[\"received\"]) # model if obj is None: return {\"ticket\": None, \"reply\": \"a member of staff will read it\"} status = svc.call_tool(\"get_trip_status\", {...}) # code ticket = svc.call_tool(\"create_ticket\", {..., \"summary\": f\"Rider reports {obj.complaint_type} on {obj.route}; {said}\"}) return {\"ticket\": ticket_id, \"reply\": f\"I opened ticket {ticket_id}; {said}.\"}",
@@ -678,7 +741,7 @@
     {
       "deck": "day2",
       "id": "loop-trace",
-      "n": 34,
+      "n": 36,
       "session": 4,
       "title": "The loop reaches the same ticket in three model calls instead of one",
       "text": "Lab 2.4 · step 2 The loop reaches the same ticket in three model calls instead of one rider metro M3 ta2a5ar 12 da2i2a yom 10 november model 1 get_trip_status(route=\"M3\", date=\"2026-11-10\") model 2 create_ticket(category=\"delay\", route=\"M3\", ...) model 3 On 2026-11-10, M3 ran 12 minutes late (vehicle breakdown). I opened ticket DT-1001.",
@@ -687,7 +750,7 @@
     {
       "deck": "day2",
       "id": "compare-designs",
-      "n": 35,
+      "n": 37,
       "session": 4,
       "title": "Same right tickets; the loop used four times the tokens",
       "text": "Lab 2.4 · step 3, ten cases, scripted stand-in Same right tickets; the loop used four times the tokens Workflow Tool loop Model calls 14 33 Tokens 5,974 24,569 Right tickets (of 10) 10 10",
@@ -696,7 +759,7 @@
     {
       "deck": "day2",
       "id": "rules-in-code",
-      "n": 36,
+      "n": 38,
       "session": 4,
       "title": "A rule written in a policy is code, not a judgement for the model",
       "text": "The stretch, and a principle A rule written in a policy is code, not a judgement for the model def eligible(route, delay): return delay >= (15 if route.startswith(\"M\") else 25) Code applies it Same answer every time, testable, auditable. The model explains it In the rider's language, citing P03 (Day 3).",
@@ -705,7 +768,7 @@
     {
       "deck": "day2",
       "id": "checkpoint-4",
-      "n": 37,
+      "n": 39,
       "session": 4,
       "title": "Workflow or tool loop?",
       "text": "Checkpoint Workflow or tool loop? Every delay complaint needs the same three steps: read the message, look up the status, open a ticket. Ten test cases give the same right tickets both ways. Which design should Wasil use? The tool loop, because it is more flexible Either, since both got ten of ten The workflow, since the steps never change and it costs less The tool loop, since the model checks its own steps",
@@ -714,7 +777,7 @@
     {
       "deck": "day2",
       "id": "lab-2-4",
-      "n": 38,
+      "n": 40,
       "session": 4,
       "title": "Workflow or tool loop",
       "text": "Lab 2.4 · 25 min Workflow or tool loop Write one task (a delay complaint that ends in a ticket) as a fixed workflow and as a tool loop, and compare steps, cost and failures on ten cases. D2_4_workflow_agent.ipynb The fixed workflow 6 min The tool loop 7 min Ten cases through both 6 min Compare and decide 6 min ✱ Stretch: Add the refund rule as a workflow step",
@@ -723,7 +786,7 @@
     {
       "deck": "day2",
       "id": "wrap-up",
-      "n": 39,
+      "n": 41,
       "session": 4,
       "title": "Three things to keep",
       "text": "Day 2 · wrap-up Three things to keep Validate, repair, queue Errors go back to the model twice at most; the rest goes to a person. Tools behind your code Every argument validated, every failure a message the model can act on. Fixed steps are code A loop earns its cost only when the next step depends on a result.",
@@ -732,7 +795,7 @@
     {
       "deck": "day2",
       "id": "next",
-      "n": 40,
+      "n": 42,
       "session": 4,
       "title": "Day 3: Grounded answers",
       "text": "Next Day 3: Grounded answers Wasil answers from Darb's 120 policy pages, cites them, and says when the answer is not there. Finish open labs from labs/solutions/.",
@@ -1104,7 +1167,7 @@
       "n": 2,
       "session": 0,
       "title": "Evaluate, protect and ship",
-      "text": "Today Evaluate, protect and ship Session 1 · A small evaluation set Golden cases across extraction, tool use and grounded answers, checked by code, run on every change Session 2 · One model grader, checked against labels A binary faithfulness grader and its agreement with human labels before it is trusted Session 3 · Input and output checks Personal data masking, instruction-like text in messages and pages, output validation and safe logs Session 4 · Packaging the assistant as a service A web API around the assistant, a health check, tests on recorded responses, configuration and cost",
+      "text": "Today Evaluate, protect and ship Session 1 · A small evaluation set Golden cases across extraction, tool use and grounded answers, checked by code, run on every change Session 2 · One model grader, checked against labels A binary faithfulness grader and its agreement with human labels before it is trusted Session 3 · Input and output checks Personal data masking, instruction-like text in messages and pages, output validation and safe logs Session 4 · Packaging the assistant as a service A web API around the assistant, a health check, client errors answered with 4xx and never 5xx, tests on recorded responses, configuration and cost",
       "href": "../slides/day4.html#agenda"
     },
     {
@@ -1370,8 +1433,26 @@
     },
     {
       "deck": "day4",
-      "id": "cost-1000",
+      "id": "bad-body-status",
       "n": 32,
+      "session": 4,
+      "title": "A body that is not JSON is the client's error: answer 4xx, never 500",
+      "text": "Two handlers, two bad bodies A body that is not JSON is the client's error: answer 4xx, never 500 Handler Body sent Status and reply Typed: ask(req: Ask) closing brace missing 422, json_invalid: \"JSON decode error\" Typed valid JSON, txt for text 422, missing: \"Field required\" By hand: json.loads(await request.body()) closing brace missing 500, no detail By hand valid JSON, txt for text 500, no detail",
+      "href": "../slides/day4.html#bad-body-status"
+    },
+    {
+      "deck": "day4",
+      "id": "client-error-reply",
+      "n": 33,
+      "session": 4,
+      "title": "A 4xx says \"fix your request\"; a 5xx says \"our fault, try again\"",
+      "text": "The status is an instruction to the client A 4xx says \"fix your request\"; a 5xx says \"our fault, try again\" 4xx: the request is wrong The client fixes the body and does not retry it as it is. 400 covers malformed syntax, 422 well-formed content the server cannot accept; FastAPI answers 422 for both and tells them apart by type. The reply names the problem. 5xx: the server failed The client's retry loop from Day 1 sends the same broken body again, and whoever runs the service is alerted for a fault that is the client's. A 500 for a bad body costs twice: retries that can never pass, and an alert that points at the wrong team.",
+      "href": "../slides/day4.html#client-error-reply"
+    },
+    {
+      "deck": "day4",
+      "id": "cost-1000",
+      "n": 34,
       "session": 4,
       "title": "Cost per 1,000 requests, from measured use on a realistic mix",
       "text": "Lab 4.4 · step 4 Cost per 1,000 requests, from measured use on a realistic mix 1.7 model calls per request on the 40 golden cases 844 / 71 input and output tokens per request 0.11 to 3.59 per 1,000 requests at the two example prices of Lab 1.1 The mix decides the bill. A complaint that checks status and opens a ticket makes three calls; a question makes one.",
@@ -1380,7 +1461,7 @@
     {
       "deck": "day4",
       "id": "capstone-shape",
-      "n": 33,
+      "n": 35,
       "session": 4,
       "title": "The capstone repository is this lab, finished",
       "text": "From lab to capstone The capstone repository is this lab, finished Service and tests /health and /ask, tests on a tape, settings from the environment. Evaluation At least 40 cases, run logs with timestamps and commits, two measured runs. README Results, the grader's agreement, cost per 1,000 requests, known limits.",
@@ -1389,7 +1470,7 @@
     {
       "deck": "day4",
       "id": "checkpoint-4",
-      "n": 34,
+      "n": 36,
       "session": 4,
       "title": "A test that failed overnight",
       "text": "Checkpoint A test that failed overnight Wasil's tests call the hosted model directly. They passed yesterday and failed this morning; nobody changed the code. Ghada asks what to fix first. Re-run the tests until they pass Delete the failing test Run the tests on recorded responses, and measure the live model in the evaluation set Set temperature to 0 and keep calling the model",
@@ -1398,7 +1479,7 @@
     {
       "deck": "day4",
       "id": "lab-4-4",
-      "n": 35,
+      "n": 37,
       "session": 4,
       "title": "Wasil as a tested web service",
       "text": "Lab 4.4 · 25 min Wasil as a tested web service Wrap the assistant in a web API with a health check and run the tests against recorded model responses; report cost per 1,000 requests. D4_4_service.ipynb The API: health and ask 6 min Record and replay model responses 7 min Tests on the recorded responses 6 min Configuration and cost per 1,000 requests 6 min ✱ Stretch: Run the service and call it from the command line",
@@ -1407,7 +1488,7 @@
     {
       "deck": "day4",
       "id": "wrap-up",
-      "n": 36,
+      "n": 38,
       "session": 4,
       "title": "Three things to keep",
       "text": "Day 4 · wrap-up Three things to keep Measure every change The whole set, every time, with the run logged. Trust graders on evidence Agreement and kappa against labels, weaknesses stated. Two lines of checks Before the model and after it, and a log that identifies nobody.",
@@ -1416,7 +1497,7 @@
     {
       "deck": "day4",
       "id": "next",
-      "n": 37,
+      "n": 39,
       "session": 4,
       "title": "Capstone: Capstone project presentations",
       "text": "Next Capstone: Capstone project presentations Build your assistant on one of the three cases, run your evaluation twice, and write the README. Unfinished labs can be finished at home with the solutions folder.",

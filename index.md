@@ -1,7 +1,7 @@
 ---
 course: "Building Applications on Language Models"
 code: "AE-203"
-version: "2027.1.0"
+version: "2027.2.0"
 language: "en"
 view: "trainee"
 source: "https://sdaiaacademy.github.io/ae-203/index.html"
@@ -203,6 +203,12 @@ An assistant for one of three supplied cases or an approved own case, submitted 
 - [promptfoo](https://www.promptfoo.dev/)
 - [Inspect](https://inspect.aisi.org.uk/)
 
+### HTTP and services
+
+- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html)
+- [gRPC: deadlines](https://grpc.io/docs/guides/deadlines/)
+- [HTTPX: clients and connection pooling](https://www.python-httpx.org/advanced/clients/)
+
 ### National references
 
 - [Personal Data Protection Law](https://sdaia.gov.sa/en/SDAIA/about/Documents/PersonalDataProtectionLaw.pdf)
@@ -215,4 +221,4 @@ An assistant for one of three supplied cases or an approved own case, submitted 
 
 SDAIA Academy · AI Engineering Track · Building Applications on Language Models
 
-Course version 2027.1.0 · engine 1.0.0 · built 2026-11-15 · commit 1da0dd7
+Course version 2027.2.0 · engine 1.0.0 · built 2026-11-24 · commit ba00f32

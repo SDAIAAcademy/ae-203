@@ -1,7 +1,7 @@
 ---
 course: "Building Applications on Language Models"
 code: "AE-203"
-version: "2027.1.0"
+version: "2027.2.0"
 deck: "day4"
 day: 4
 language: "en"
@@ -28,7 +28,7 @@ AI Engineering Track · 4 teaching days + capstone day · 4 sessions · 4 labs �
 - **Session 1 · A small evaluation set**: Golden cases across extraction, tool use and grounded answers, checked by code, run on every change
 - **Session 2 · One model grader, checked against labels**: A binary faithfulness grader and its agreement with human labels before it is trusted
 - **Session 3 · Input and output checks**: Personal data masking, instruction-like text in messages and pages, output validation and safe logs
-- **Session 4 · Packaging the assistant as a service**: A web API around the assistant, a health check, tests on recorded responses, configuration and cost
+- **Session 4 · Packaging the assistant as a service**: A web API around the assistant, a health check, client errors answered with 4xx and never 5xx, tests on recorded responses, configuration and cost
 
 #### [day4#review-day3] A perfect citation to the wrong rule
 
@@ -380,6 +380,26 @@ def ask(req: Ask) -> Reply:
 | /ask answers every recorded case exactly as recorded | parsing, tools and checks after a refactor |
 | An empty message is refused with 422 | validation before any call |
 | An unrecorded request raises | tests that cannot spend money by accident |
+
+#### [day4#bad-body-status] A body that is not JSON is the client's error: answer 4xx, never 500
+
+*Two handlers, two bad bodies*
+
+| Handler | Body sent | Status and reply |
+| --- | --- | --- |
+| Typed: `ask(req: Ask)` | closing brace missing | 422, `json_invalid`: "JSON decode error" |
+| Typed | valid JSON, `txt` for `text` | 422, `missing`: "Field required" |
+| By hand: `json.loads(await request.body())` | closing brace missing | 500, no detail |
+| By hand | valid JSON, `txt` for `text` | 500, no detail |
+
+#### [day4#client-error-reply] A 4xx says "fix your request"; a 5xx says "our fault, try again"
+
+*The status is an instruction to the client*
+
+- **4xx: the request is wrong.** The client fixes the body and does not retry it as it is. 400 covers malformed syntax, 422 well-formed content the server cannot accept; FastAPI answers 422 for both and tells them apart by `type`. The reply names the problem.
+- **5xx: the server failed.** The client's retry loop from Day 1 sends the same broken body again, and whoever runs the service is alerted for a fault that is the client's.
+
+> **A 500 for a bad body costs twice:** retries that can never pass, and an alert that points at the wrong team.
 
 #### [day4#cost-1000] Cost per 1,000 requests, from measured use on a realistic mix
 

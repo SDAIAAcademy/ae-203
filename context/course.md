@@ -1,7 +1,7 @@
 ---
 course: "Building Applications on Language Models"
 code: "AE-203"
-version: "2027.1.0"
+version: "2027.2.0"
 scope: "course"
 language: "en"
 view: "trainee"
@@ -43,9 +43,9 @@ AI Engineering Track · 4 teaching days + capstone day · 4 sessions · 4 labs �
 *Today*
 
 - **Session 1 · Tokens, context and cost**: What a token is, why Arabic costs more of them, and what a request really sends and costs
-- **Session 2 · Three API shapes, one interface**: Chat Completions, Responses and Messages side by side, and one client for hosted and local endpoints
+- **Session 2 · Three API shapes, one interface**: Chat Completions, Responses and Messages side by side, one client made once for hosted and local endpoints, and a cut-off reply told from an oversized request
 - **Session 3 · Prompts as versioned code**: Instructions in a versioned file with an owner, rendered safely and pinned by tests
-- **Session 4 · Streaming, timeouts and retries**: Streaming, timeouts, which errors to retry, backoff with jitter, and a fallback model
+- **Session 4 · Streaming, timeouts and retries**: Streaming and where it gets buffered, timeouts, which errors to retry, backoff with jitter, and a fallback model
 
 #### [day1#meet-darb] Darb Transit Authority wants a rider assistant that it can test and defend
 
@@ -213,6 +213,38 @@ All three carry `get_trip_status(route="M1", date="2026-11-14")` for "Was the Re
 | Why it stopped | `finish_reason` | `status` and item types | `stop_reason` |
 | Usage | `prompt_tokens`, `completion_tokens` | `input_tokens`, `output_tokens` | `input_tokens`, `output_tokens` |
 
+#### [day1#cut-off-or-too-big] Two short answers to the rider, two different faults in the metadata
+
+*Reading the metadata*
+
+```
+# file: Response A · status 200
+"finish_reason": "length",
+"usage": {"prompt_tokens": 1240,
+          "completion_tokens": 150}
+# the request sent max_tokens: 150
+```
+
+```
+# file: Response B · status 400
+error: input of 8,350 tokens
+exceeds the 8,192-token
+context window
+# no choices, no usage
+```
+
+Which reply was cut off by the output limit, and which request was too large for the window?
+
+#### [day1#cut-off-what-next] A cut-off reply needs room to write; an oversized request needs a shorter input
+
+*Read the status first, then the stop reason*
+
+| What you read | What happened | What to do |
+| --- | --- | --- |
+| 200, `finish_reason` `length` (Messages: `stop_reason` `max_tokens`), output tokens equal your limit | The model wrote until your output limit: the reply is cut off | Raise the limit or ask for less; never parse a cut-off JSON reply as complete |
+| 400 naming the context window; no choices, no usage | The input, and on some servers the output allowance too, is more than the window: nothing was generated | Trim the history, the passages or the tool definitions; the same request fails again |
+| 200, `finish_reason` `stop` | A complete reply | Use it |
+
 #### [day1#one-interface] Handle the shape in one place; the rest of the code never sees it
 
 *Provider-neutral code*
@@ -231,6 +263,21 @@ usage = resp.usage
 - **Your own thin client.** What the course uses: one function, a cache, a fallback list, a ledger of tokens.
 - **A gateway or library.** LiteLLM and similar tools translate between providers for you, with routing and budgets.
 
+#### [day1#connection-per-call] A new client for every call opens a new connection every time
+
+*Before the first token*
+
+| One complaint, three model calls | New client per call | One client, reused |
+| --- | --- | --- |
+| Call 1: lookup, TCP, TLS | 20 + 40 + 40 ms | 20 + 40 + 40 ms |
+| Call 2 | 20 + 40 + 40 ms | reused: 0 ms |
+| Call 3 | 20 + 40 + 40 ms | reused: 0 ms |
+| **Set-up for the complaint** | **300 ms** | **100 ms** |
+
+Assumed: a 40 ms round trip and a 20 ms name lookup; TCP and TLS 1.3 take one round trip each.
+
+> **Make the client once and reuse it:** its pool keeps the connection open. `llm.client()` keeps one per provider (Lab 1.2).
+
 #### [day1#local-endpoint] A local server that speaks the same protocol changes three settings, not your code
 
 *Hosted or local*
@@ -248,8 +295,7 @@ usage = resp.usage
 *Working with free hosted models*
 
 - Free variants on OpenRouter have an id that ends in `:free` and limits per minute and per day.
-- The course default and its fallbacks are settings in `labs/.env`, not code.
-- Identical requests are replayed from a local cache, so re-running a cell spends nothing.
+- The course default and its fallbacks are settings in `labs/.env`; identical requests replay from a local cache.
 - A model that disappears answers with an error: pick another free model with tool support.
 
 #### [day1#checkpoint-2] What breaks when the provider changes?
@@ -425,6 +471,28 @@ Move the assistant's instructions into a versioned template, write two tests tha
 - Stream to a person reading; do not stream to code that needs the whole JSON.
 - A streamed reply can still fail half way: handle the cut-off end.
 
+#### [day1#buffered-stream] The model streamed, yet the rider still waited for the whole reply
+
+*Timing evidence*
+
+| The same reply, timed after each hop | First byte | Last byte | Reads |
+| --- | --- | --- | --- |
+| Leaving the model server | 0.60 s | 1.15 s | 12 |
+| After Darb's API gateway | 0.61 s | 1.16 s | 12 |
+| On the rider's phone, after the edge proxy | 1.17 s | 1.17 s | 1 |
+
+Which hop holds the reply back?
+
+#### [day1#find-the-buffer] The first hop where first and last byte meet is the one that buffers
+
+*Hop by hop*
+
+- Time the first byte, the last byte and the number of reads after each hop, from the model outward.
+- A hop that buffers holds every piece until the reply is complete: first byte equals last byte, in one read, while the hop before it still streams.
+- Here that is the edge proxy. Turn off response buffering for the streaming route there, then time it again.
+
+> **Change only the hop the numbers name.** If the gateway's row had already shown one read, the proxy after it would be innocent.
+
 #### [day1#timeouts] Every model call needs a timeout shorter than the rider's patience
 
 *Never wait forever*
@@ -432,8 +500,6 @@ Move the assistant's instructions into a versioned template, write two tests tha
 - A call without a timeout ties up a worker until the provider gives up, if it ever does.
 - Set it from your latency budget: Wasil's reply should start within a few seconds.
 - A timeout is a failure you chose: decide what happens next, retry or fall back.
-
-> **The client's default may be long.** The OpenAI Python client takes a `timeout` argument; the course client passes one on every call.
 
 #### [day1#which-errors-retry] Retry what may pass next time; raise what will fail again
 
@@ -543,7 +609,7 @@ AI Engineering Track · 4 teaching days + capstone day · 4 sessions · 4 labs �
 
 - **Session 1 · Schemas for model output**: A typed schema for what the assistant needs from a message, and how often the model meets it
 - **Session 2 · Validation, retry and fallback**: Validation errors as feedback, a cap on retries, and a human queue for what still fails
-- **Session 3 · Tool calling**: Tool schemas, the call-execute-return cycle, argument validation, tool errors and timeouts
+- **Session 3 · Tool calling**: Tool schemas, the call-execute-return cycle, argument validation, tool errors and timeouts, and the caller's deadline passed down the chain
 - **Session 4 · Workflow or agent**: The same task as a fixed workflow and as a tool loop, compared on steps, cost and failures
 
 #### [day2#review-day1] What changes when Wasil moves to a local server?
@@ -837,6 +903,36 @@ Feed validation errors back to the model, cap the retries and route failures to 
 
 **Wasil (good example):** I could not reach the trip-status service just now. I have noted your message and a staff member will follow up.
 
+#### [day2#deadline-trace] The app gave up at 3.0 s; Wasil kept working until 3.7 s
+
+*The same question, a deployment with a longer tool timeout*
+
+- 0.0 s: the rider app sends "Was bus 33 late yesterday?" and waits 3.0 s
+- 0.0 to 0.9 s: model call 1 asks for `get_trip_status(B33)`
+- 0.9 to 2.4 s: trip-status answers after 1.5 s: here its timeout is 2.0 s, not the lab's 0.5 s
+- 2.4 to 3.7 s: model call 2 writes the reply, with its own 10 s timeout
+- 3.0 s: the app times out and shows the rider an error
+- 3.7 s: the reply goes to a closed connection: 0.7 s of model work, paid for, read by nobody
+
+#### [day2#pass-the-deadline] Pass the time left down the chain, and do not start what cannot finish
+
+*Lab 2.3 · look at run_tool_by()*
+
+```python
+# file: Passing the deadline down
+deadline = time.monotonic() + 3.0   # the caller's budget
+
+def left():
+    return deadline - time.monotonic()
+
+if left() < 1.0:                    # a reply takes about 1 s
+    return delayed_reply()          # "a ticket is open"
+llm.complete(msgs, timeout=min(10, left()))
+```
+
+- **2.4 s** Wasil replies: with 0.6 s left, model call 2 is not started
+- **0 s** of work after the app has gone
+
 #### [day2#tool-tests] Six tests, every one of them without a model
 
 *Lab 2.3 · step 4: the evidence for LO3*
@@ -852,7 +948,6 @@ Feed validation errors back to the model, cap the retries and route failures to 
 *The same tools, served*
 
 - An MCP server lists its tools with their schemas; a client discovers them and sends calls.
-- Darb could serve trip-status and tickets once, for Wasil and for staff tools alike.
 - Validation and error handling stay exactly where they are: in the server's code.
 
 > **Concept level here.** The next course in the track, AE-302, builds an MCP server.
@@ -1450,7 +1545,7 @@ AI Engineering Track · 4 teaching days + capstone day · 4 sessions · 4 labs �
 - **Session 1 · A small evaluation set**: Golden cases across extraction, tool use and grounded answers, checked by code, run on every change
 - **Session 2 · One model grader, checked against labels**: A binary faithfulness grader and its agreement with human labels before it is trusted
 - **Session 3 · Input and output checks**: Personal data masking, instruction-like text in messages and pages, output validation and safe logs
-- **Session 4 · Packaging the assistant as a service**: A web API around the assistant, a health check, tests on recorded responses, configuration and cost
+- **Session 4 · Packaging the assistant as a service**: A web API around the assistant, a health check, client errors answered with 4xx and never 5xx, tests on recorded responses, configuration and cost
 
 #### [day4#review-day3] A perfect citation to the wrong rule
 
@@ -1802,6 +1897,26 @@ def ask(req: Ask) -> Reply:
 | /ask answers every recorded case exactly as recorded | parsing, tools and checks after a refactor |
 | An empty message is refused with 422 | validation before any call |
 | An unrecorded request raises | tests that cannot spend money by accident |
+
+#### [day4#bad-body-status] A body that is not JSON is the client's error: answer 4xx, never 500
+
+*Two handlers, two bad bodies*
+
+| Handler | Body sent | Status and reply |
+| --- | --- | --- |
+| Typed: `ask(req: Ask)` | closing brace missing | 422, `json_invalid`: "JSON decode error" |
+| Typed | valid JSON, `txt` for `text` | 422, `missing`: "Field required" |
+| By hand: `json.loads(await request.body())` | closing brace missing | 500, no detail |
+| By hand | valid JSON, `txt` for `text` | 500, no detail |
+
+#### [day4#client-error-reply] A 4xx says "fix your request"; a 5xx says "our fault, try again"
+
+*The status is an instruction to the client*
+
+- **4xx: the request is wrong.** The client fixes the body and does not retry it as it is. 400 covers malformed syntax, 422 well-formed content the server cannot accept; FastAPI answers 422 for both and tells them apart by `type`. The reply names the problem.
+- **5xx: the server failed.** The client's retry loop from Day 1 sends the same broken body again, and whoever runs the service is alerted for a fault that is the client's.
+
+> **A 500 for a bad body costs twice:** retries that can never pass, and an alert that points at the wrong team.
 
 #### [day4#cost-1000] Cost per 1,000 requests, from measured use on a realistic mix
 

@@ -358,7 +358,7 @@ def ask(req: Ask) -> Reply:
     <tr><td>By hand: <code>json.loads(await request.body())</code></td><td>closing brace missing</td><td>500, no detail</td></tr>
     <tr><td>By hand</td><td>valid JSON, <code>txt</code> for <code>text</code></td><td>500, no detail</td></tr>
   </table>
-  <aside class="notes"><p>A real run of FastAPI on the course's environment, in labs/_tools/call_artifacts.py. The handler written by hand raises on the bad body (a decode error, then a missing key), and an unhandled exception becomes a 500. The typed handler lets the framework parse and validate first. Lab 4.4 checks the same on Wasil's own app: a body that is not JSON gets 422 and never reaches the model.</p></aside>
+  <aside class="notes"><p>Two minutes for this slide and two for the next, taken from capstone-shape (now one minute) and tests, which the lab's step 3 repeats. A real run of FastAPI on the course's environment, in labs/_tools/call_artifacts.py. The handler written by hand raises on the bad body (a decode error, then a missing key), and an unhandled exception becomes a 500. The typed handler lets the framework parse and validate first. Lab 4.4 checks the same on Wasil's own app: a body that is not JSON gets 422 and never reaches the model.</p></aside>
 </section>
 
 <section class="slide" id="client-error-reply" data-label="What the client does" data-lo="LO7">
@@ -392,7 +392,7 @@ def ask(req: Ask) -> Reply:
     <div class="card c-coral"><h4>Evaluation</h4><p class="small mb0">At least 40 cases, run logs with timestamps and commits, two measured runs.</p></div>
     <div class="card c-purple"><h4>README</h4><p class="small mb0">Results, the grader's agreement, cost per 1,000 requests, known limits.</p></div>
   </div>
-  <aside class="notes"><p>Walk through labs/capstone/README.md: three supplied cases on Darb's data, or an own case approved by the trainer. The defence is eight minutes and four of questions: the participant runs the evaluation, explains a failing case the assessor picks, and predicts the result of one new case.</p></aside>
+  <aside class="notes"><p>One minute: point to labs/capstone/README.md and leave the walk-through to the capstone day, so the two slides on client errors fit the session. Three supplied cases on Darb's data, or an own case approved by the trainer. The defence is eight minutes and four of questions: the participant runs the evaluation, explains a failing case the assessor picks, and predicts the result of one new case.</p></aside>
 </section>
 
 <section class="slide" id="checkpoint-4" data-lo="LO7">

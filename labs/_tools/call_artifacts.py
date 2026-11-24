@@ -37,7 +37,7 @@ WINDOW = 8192  # the context window of the local model in the example, assumed
 TRUNC = {
     "slide A (policy summary)": {"status": 200, "finish_reason": "length", "prompt_tokens": 1240,
                                  "completion_tokens": 150, "max_tokens": 150},
-    "slide B (long history)": {"status": 400, "input_tokens": 7960, "max_tokens": 400},
+    "slide B (long history)": {"status": 400, "input_tokens": 8350, "max_tokens": 400},
     "parallel C (ticket summary)": {"status": 200, "finish_reason": "length", "prompt_tokens": 3105,
                                     "completion_tokens": 256, "max_tokens": 256},
     "parallel D (all passages)": {"status": 400, "input_tokens": 8020, "max_tokens": 256},
@@ -124,6 +124,7 @@ def malformed_body_run() -> list[dict]:
 
     class Ask(BaseModel):
         text: str = Field(min_length=1, max_length=2000)
+        received: str | None = Field(default=None, pattern=r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")  # as in Lab 4.4
 
     app = FastAPI()
 
@@ -138,14 +139,16 @@ def malformed_body_run() -> list[dict]:
 
     c = TestClient(app, raise_server_exceptions=False)
     bodies = {"missing brace": '{"text": "Was B27 late yesterday?", "received": "2026-11-15"',
-              "valid JSON, wrong field": '{"txt": "Was B27 late yesterday?"}'}
+              "valid JSON, wrong field": '{"txt": "Was B27 late yesterday?"}',
+              "date as 15/11/2026 (parallel)": '{"text": "Was B27 late yesterday?", "received": "15/11/2026"}'}
     rows = []
     for path in ("/ask", "/ask-by-hand"):
         for name, body in bodies.items():
             r = c.post(path, content=body, headers={"Content-Type": "application/json"})
             detail = r.json()["detail"][0] if r.status_code == 422 else None
             rows.append({"endpoint": path, "body": name, "status": r.status_code,
-                         "type": detail and detail["type"], "msg": detail and detail["msg"]})
+                         "type": detail and detail["type"], "msg": detail and detail["msg"],
+                         "field": detail and detail["loc"][-1]})
     return rows
 
 

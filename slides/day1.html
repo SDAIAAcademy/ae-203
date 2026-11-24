@@ -180,13 +180,13 @@ daily_cost(10_000, 490, 60, 3.00, 15.00)   # 23.7 a day</code></pre>
 "usage": {"prompt_tokens": 1240,
           "completion_tokens": 150}
 # the request sent max_tokens: 150</code></pre>
-    <pre class="code s" data-file="Response B · status 400"><code>error: input of 7,960 tokens plus 400
-requested output exceeds the
-8,192-token context window
+    <pre class="code s" data-file="Response B · status 400"><code>error: input of 8,350 tokens
+exceeds the 8,192-token
+context window
 # no choices, no usage</code></pre>
   </div>
   <p class="lead mt">Which reply was cut off by the output limit, and which request was too large for the window?</p>
-  <aside class="notes"><p>Two minutes; let the room decide before the next slide. A: Wasil summarised a policy for a rider with max_tokens 150 on a local model with an 8,192-token window; the input fits, the model wrote until the limit. B: a long conversation history, refused before anything was generated. The numbers come from labs/_tools/call_artifacts.py; the 8,192-token window is an assumption for the example, and servers word the error differently, so read the status and the numbers, not the exact sentence.</p></aside>
+  <aside class="notes"><p>Two minutes for this slide and two for the next, taken from tool-call-three-ways and results-and-usage: show those two briskly, since Lab 1.2 steps 1 to 3 go through every cell. Let the room decide before the next slide. A: Wasil summarised a policy for a rider with max_tokens 150 on a local model with an 8,192-token window; the input fits, the model wrote until the limit. B: a long conversation history of 8,350 tokens, more than the whole window, refused before anything was generated. The numbers come from labs/_tools/call_artifacts.py; the 8,192-token window is an assumption for the example, and servers word the error differently, so read the status and the numbers, not the exact sentence.</p></aside>
 </section>
 
 <section class="slide" id="cut-off-what-next" data-label="What to do" data-lo="LO1">
@@ -198,7 +198,7 @@ requested output exceeds the
     <tr><td>400 naming the context window; no choices, no usage</td><td>The input, and on some servers the output allowance too, is more than the window: nothing was generated</td><td>Trim the history, the passages or the tool definitions; the same request fails again</td></tr>
     <tr><td>200, <code>finish_reason</code> <code>stop</code></td><td>A complete reply</td><td>Use it</td></tr>
   </table>
-  <aside class="notes"><p>Answer to the previous slide: A is cut off (150 of 150 output tokens, a 200 and a reply); B never reached the model (a 400, no usage). Neither is fixed by a retry. A parallel case to try on the room: a ticket summary comes back with 3,105 input tokens and 256 of 256 output tokens; asking for all 30 passages gives 8,020 input tokens plus 256 requested output against the same window. The first is cut off, the second is refused.</p><p>The Chat Completions reference defines length as the maximum number of tokens specified in the request being reached; the Responses reference says a request whose input exceeds the context window fails with a 400 error unless truncation is turned on; the Messages reference lists max_tokens among the stop reasons.</p><p>Sources: OpenAI API reference for Chat Completions and Responses; Anthropic Messages API reference.</p></aside>
+  <aside class="notes"><p>Answer to the previous slide: A is cut off (150 of 150 output tokens, a 200 and a reply); B never reached the model (a 400, no usage). Neither is fixed by a retry. A parallel case to try on the room: a ticket summary comes back with 3,105 input tokens and 256 of 256 output tokens: cut off. Asking for all 30 passages gives 8,020 input tokens, which fit the window alone, plus 256 requested output: a server that counts the output allowance against the window refuses it, so trim the passages or lower the allowance.</p><p>The Chat Completions reference defines length as the maximum number of tokens specified in the request being reached; the Responses reference says a request whose input exceeds the context window fails with a 400 error unless truncation is turned on; the Messages reference lists max_tokens among the stop reasons.</p><p>Sources: OpenAI API reference for Chat Completions and Responses; Anthropic Messages API reference.</p></aside>
 </section>
 
 <section class="slide" id="one-interface" data-label="One interface" data-lo="LO1">
@@ -230,28 +230,9 @@ usage = resp.usage</code></pre>
     <tr><td>Call 3</td><td>20 + 40 + 40 ms</td><td>reused: 0 ms</td></tr>
     <tr><td><b>Set-up for the complaint</b></td><td><b>300 ms</b></td><td><b>100 ms</b></td></tr>
   </table>
-  <p class="small mt">Assumed: a 40 ms round trip to the provider and a 20 ms name lookup; the TCP handshake and the TLS 1.3 handshake take one round trip each.</p>
-  <aside class="notes"><p>Two minutes. Numbers from labs/_tools/call_artifacts.py, which states the assumptions. Ask the room: which column do you get when the code builds OpenAI(...) inside the function that makes each call? The left one. The set-up comes before the request is even sent, so it adds to the time to first token of every call.</p></aside>
-</section>
-
-<section class="slide" id="one-client-reused" data-label="Reuse" data-lo="LO1 LO7">
-  <div class="kicker">Lab 1.2 · look at llm.client()</div>
-  <h2>Make the client once and reuse it: its pool keeps the connection open</h2>
-  <div class="cols cols-2">
-    <pre class="code s" data-file="labs/llm.py · client()"><code class="language-python">_clients = {}
-
-def client(provider=None, timeout=60):
-    k = (base_url, key, timeout)
-    if k not in _clients:        # first call only
-        _clients[k] = OpenAI(base_url=base_url,
-                             api_key=key, timeout=timeout)
-    return _clients[k]           # later calls reuse its pool</code></pre>
-    <div class="stack">
-      <div class="card c-teal flat"><h4>Any HTTP library</h4><p class="small mb0">One client or session per process and server, not one per request.</p></div>
-      <div class="card c-navy flat"><h4>At Wasil's volume</h4><p class="small mb0">20,000 calls a day with a new client each spend about 33 minutes a day on set-up alone.</p></div>
-    </div>
-  </div>
-  <aside class="notes"><p>The 33 minutes: 20,000 calls (10,000 requests at two calls each, an example mix) times 100 ms, from the same script. Lab 1.2 checks that llm.client() returns the same object on every call. The HTTPX documentation explains why: a client instance pools connections and reuses them, so later requests skip the handshakes; the OpenAI Python README describes the client's connection pool and when it is closed. Close a client only when the process ends or the settings change.</p><p>Sources: HTTPX clients page; OpenAI Python library.</p></aside>
+  <p class="small mt-s">Assumed: a 40 ms round trip and a 20 ms name lookup; TCP and TLS 1.3 take one round trip each.</p>
+  <div class="callout tip mt-s"><b>Make the client once and reuse it:</b> its pool keeps the connection open. <code>llm.client()</code> keeps one per provider (Lab 1.2).</div>
+  <aside class="notes"><p>Three minutes, taken from the two slides that follow: show local-endpoint and free-models-change briskly, since Lab 1.2 step 4 and the lab notes repeat them. Numbers from labs/_tools/call_artifacts.py, which states the assumptions. Ask the room: which column do you get when the code builds OpenAI(...) inside the function that makes each call? The left one. The set-up comes before the request is even sent, so it adds to the time to first token of every call. At Wasil's volume, 20,000 calls a day (10,000 requests at two calls each, an example mix) with a new client each spend about 33 minutes a day on set-up alone. The rule holds for any HTTP library: one client or session per process and server, not one per request.</p><p>Show llm.client() in labs/llm.py: a dictionary of clients keyed by address, key and timeout, filled on the first call. The HTTPX documentation explains why it pays: a client instance pools connections and reuses them, so later requests skip the handshakes. The OpenAI Python README speaks of the client's connection pool and says the underlying HTTP connections are closed when the client is closed or garbage collected, so close a client only when the process ends or the settings change.</p><p>Sources: HTTPX clients page; OpenAI Python library.</p></aside>
 </section>
 
 <section class="slide" id="local-endpoint" data-label="Local" data-lo="LO1">
@@ -272,8 +253,7 @@ def client(provider=None, timeout=60):
   <h2>Free models come and go and have request limits: plan for both</h2>
   <ul class="bullets">
     <li>Free variants on OpenRouter have an id that ends in <code>:free</code> and limits per minute and per day.</li>
-    <li>The course default and its fallbacks are settings in <code>labs/.env</code>, not code.</li>
-    <li>Identical requests are replayed from a local cache, so re-running a cell spends nothing.</li>
+    <li>The course default and its fallbacks are settings in <code>labs/.env</code>; identical requests replay from a local cache.</li>
     <li>A model that disappears answers with an error: pick another free model with tool support.</li>
   </ul>
   <aside class="notes"><p>When this course was built, the free list included google/gemma-4-31b-it:free and google/gemma-4-26b-a4b-it:free with tool support; check the models page with the free filter before class, because the list changes. The limits are on the OpenRouter limits page; quote them from there on the day.</p><p>Sources: OpenRouter API rate limits page; OpenRouter models list.</p></aside>
@@ -448,7 +428,7 @@ def test_declines_off_topic(system):
     <tr><td>On the rider's phone, after the edge proxy</td><td>1.17 s</td><td>1.17 s</td><td>1</td></tr>
   </table>
   <p class="lead mt">Which hop holds the reply back?</p>
-  <aside class="notes"><p>Two minutes. Planned values from labs/_tools/call_artifacts.py: the model sends 12 pieces 0.05 s apart from 0.60 s, and each hop adds 0.01 s. Let the room answer before the next slide. The streaming code was right; the rider's experience was not.</p></aside>
+  <aside class="notes"><p>Two minutes for this slide and two for the next; the time comes from timeouts (shortened to one minute) and backoff-jitter, which Lab 1.4 step 2 repeats. Planned values from labs/_tools/call_artifacts.py: the model sends 12 pieces 0.05 s apart from 0.60 s, and each hop adds 0.01 s. Let the room answer before the next slide. The streaming code was right; the rider's experience was not.</p></aside>
 </section>
 
 <section class="slide" id="find-the-buffer" data-label="Find the buffer" data-lo="LO1 LO7">
@@ -471,8 +451,7 @@ def test_declines_off_topic(system):
     <li>Set it from your latency budget: Wasil's reply should start within a few seconds.</li>
     <li>A timeout is a failure you chose: decide what happens next, retry or fall back.</li>
   </ul>
-  <div class="callout warn mt"><b>The client's default may be long.</b> The OpenAI Python client takes a <code>timeout</code> argument; the course client passes one on every call.</div>
-  <aside class="notes"><p>llm.client() passes timeout and max_retries explicitly so nobody relies on a library default. Ask what Wasil should tell a rider after a timeout: that the answer is delayed and a ticket can be opened, not silence.</p></aside>
+  <aside class="notes"><p>One minute: the slide was shortened to make room for the two slides on buffering. The client's default may be long: the OpenAI Python client takes a timeout argument, and llm.client() passes timeout and max_retries explicitly so nobody relies on a library default. Ask what Wasil should tell a rider after a timeout: that the answer is delayed and a ticket can be opened, not silence.</p></aside>
 </section>
 
 <section class="slide" id="which-errors-retry" data-label="Retry or not" data-lo="LO1 LO7">

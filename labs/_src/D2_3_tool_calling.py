@@ -137,32 +137,36 @@ llm.check("delay_minutes" in outs[0] and all('"error"' in o for o in outs[1:]), 
 # %% [markdown]
 # 🔍 **Look at** · the caller's deadline. The rider's app waits a fixed time for Wasil's whole answer, and the tool call
 # is one step inside it. A step with its own fixed timeout can run on after the app has given up. Pass the time left
-# down instead: the call waits `min(TIMEOUT, time left)`, and is not started at all when no time is left.
+# down instead: your `run_tool` waits `min(TIMEOUT, time left)`, and is not called at all when no time is left. (If
+# the check below fails because the call took 1.5 s, your `run_tool` waits for the slow call to end after its timeout:
+# a `with` block around the thread pool does that.)
 
 # %%
 import time
 
 
-def status_by(route: str, date: str, deadline: float) -> dict:
-    """get_trip_status within the caller's deadline (a time.monotonic() value)."""
+def run_tool_by(arguments: str, deadline: float) -> str:
+    """run_tool within the caller's deadline (a time.monotonic() value)."""
+    global TIMEOUT
     left = deadline - time.monotonic()
     if left <= 0:
-        return {"error": "the caller's deadline has passed; trip-status was not called"}
-    wait = min(TIMEOUT, left)
-    ex = cf.ThreadPoolExecutor(1)
-    fut = ex.submit(STATUS.get, route, date)
+        return json.dumps({"error": "the caller's deadline has passed; trip-status was not called"})
+    own, TIMEOUT = TIMEOUT, round(min(TIMEOUT, left), 2)
     try:
-        return fut.result(timeout=wait)
-    except cf.TimeoutError:
-        return {"error": f"trip-status did not answer within {wait:.2f} s, the time the caller had left"}
+        try:
+            return run_tool(arguments)
+        except NotImplementedError:  # step 2 not written yet: the reference implementation
+            ref = wasil.Wasil.__new__(wasil.Wasil)
+            ref.status, ref.STATUS_TIMEOUT, ref.tickets = STATUS, TIMEOUT, D.Tickets()
+            return ref.call_tool("get_trip_status", arguments)
     finally:
-        ex.shutdown(wait=False)
+        TIMEOUT = own
 
 
 calls_before, t0 = STATUS.calls, time.monotonic()
-late = status_by("B33", "2026-11-14", deadline=t0 + 0.2)
+late = run_tool_by('{"route": "B33", "date": "2026-11-14"}', deadline=t0 + 0.2)
 took = time.monotonic() - t0
-gone = status_by("M1", "2026-11-14", deadline=t0 - 0.1)
+gone = run_tool_by('{"route": "M1", "date": "2026-11-14"}', deadline=t0 - 0.1)
 print(late, f"after {took:.2f} s")
 print(gone)
 llm.check(took < 0.4 and STATUS.calls == calls_before + 1,

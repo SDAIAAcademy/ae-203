@@ -901,21 +901,21 @@
     {
       "id": "lo3-caller-deadline",
       "type": "single",
-      "prompt": "Darb's staff app gives Wasil 4.0 s per request. After a model call and a ticket lookup, 0.5 s are left. The next model call usually takes about 1.2 s and has its own 10-second timeout. What should Wasil do?",
+      "prompt": "The rider app's request to Wasil has 0.8 s left when Wasil calls the ticket service, whose own timeout is 3 s. What timeout should that ticket call get?",
       "options": [
-        "Start the call with its own 10-second timeout, since the reply is nearly ready",
-        "Start the call, and retry it once if the app has closed the connection",
-        "Start the call with a 4.0-second timeout, the whole budget of the app",
-        "Skip the call and send the short reply that the ticket is open, right now"
+        "3 s, the ticket service's own timeout, as configured",
+        "3.8 s, the two budgets added together",
+        "None, because the app's own timeout covers the call",
+        "0.8 s, the time the app's request still has left"
       ],
       "correct": [
         3
       ],
-      "explanation": "With 0.5 s left a 1.2 s call would finish after the caller has gone; passing the time left down means not starting it and answering while the app still listens.",
+      "explanation": "Each step waits the smaller of its own timeout and the time its caller has left; past 0.8 s nobody is waiting for the ticket call's result.",
       "misconceptions": [
-        "Uses the step's own timeout and ignores the caller's budget; the work would finish for nobody",
-        "Retries work that no one is waiting for any more",
-        "Passes the caller's whole budget instead of the time left after the earlier steps",
+        "Uses the step's own timeout and ignores the caller's budget; the call could run 2.2 s after the app has gone",
+        "Adds budgets that belong to different callers; the app does not wait longer because a service is slow",
+        "Thinks the caller's timeout stops the work; the app stops waiting, but Wasil and the service keep working",
         ""
       ],
       "lo": [
@@ -930,22 +930,22 @@
     {
       "id": "lo7-bad-json-status",
       "type": "single",
-      "prompt": "Darb's app sends Wasil's /ask a body with a trailing comma, so it is not valid JSON. Which response from Wasil is right?",
+      "prompt": "Wasil's /ask handler reads the body with json.loads by hand. When a client sends a body that is not valid JSON, the service answers 500 and the on-call phone rings. What is the right change?",
       "options": [
-        "A 4xx status with a body that names the JSON error, so the client fixes its request",
-        "A 500 status, because the server could not parse the body",
-        "A 200 status with an empty answer, so the app shows nothing",
-        "A 503 status that asks the client to try again later"
+        "Let the framework parse and validate the body, so a bad body gets a 4xx that names the error",
+        "Parse the body up to three times before answering, in case it was read too early",
+        "Answer 503 instead, so the client waits and tries again later",
+        "Mute the alerts for /ask, since the fault is in the client's code"
       ],
       "correct": [
         0
       ],
-      "explanation": "A body that is not JSON is the client's error: a 4xx tells it to fix the request and not to retry it as it is, and the reply says what is wrong.",
+      "explanation": "A body that is not JSON is the client's error: a 4xx tells the client to fix its request and not to retry it as it is, and alerts stay for real server faults.",
       "misconceptions": [
         "",
-        "Reads a parsing failure as a server fault; the client's retries would resend the same broken body",
-        "Hides the error; the app team never learns that its request is broken",
-        "Invites retries that can never pass; the body stays broken"
+        "Treats a broken body as a timing problem; the same bytes fail the same way every time",
+        "Invites retries that can never pass, and still reports the fault as the server's",
+        "Hides real server faults too; the status, not the alert, is what is wrong"
       ],
       "lo": [
         "LO7"

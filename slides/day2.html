@@ -302,21 +302,21 @@ Reply with the corrected JSON only.</code></pre>
 </section>
 
 <section class="slide" id="deadline-trace" data-label="Deadline trace" data-lo="LO3">
-  <div class="kicker">One request, three steps, one caller</div>
+  <div class="kicker">The same question, a deployment with a longer tool timeout</div>
   <h2>The app gave up at 3.0 s; Wasil kept working until 3.7 s</h2>
   <div class="trace s">
     <div class="ev user"><b>0.0 s</b>the rider app sends "Was bus 33 late yesterday?" and waits 3.0 s</div>
     <div class="ev call"><b>0.0 to 0.9 s</b>model call 1 asks for <code>get_trip_status(B33)</code></div>
-    <div class="ev call"><b>0.9 to 2.4 s</b>trip-status answers, inside its own 2.0 s timeout</div>
+    <div class="ev call"><b>0.9 to 2.4 s</b>trip-status answers after 1.5 s: here its timeout is 2.0 s, not the lab's 0.5 s</div>
     <div class="ev call"><b>2.4 to 3.7 s</b>model call 2 writes the reply, with its own 10 s timeout</div>
     <div class="ev error"><b>3.0 s</b>the app times out and shows the rider an error</div>
     <div class="ev error"><b>3.7 s</b>the reply goes to a closed connection: 0.7 s of model work, paid for, read by nobody</div>
   </div>
-  <aside class="notes"><p>Two minutes. Here the service is slow but inside its own timeout, which is set for a different budget than the app's. Each step's timeout was reasonable alone; none knew the caller's budget. Ask: which step should not have started, and what did it know at 2.4 s? Elapsed times are planned values from labs/_tools/call_artifacts.py.</p></aside>
+  <aside class="notes"><p>Two minutes for this slide and two for the next, taken from mcp-concept (now one minute) and tool-tests, which the lab's step 4 repeats. Here the service is slow but inside its own timeout, which is set for a different budget than the app's. Each step's timeout was reasonable alone; none knew the caller's budget. Ask: which step should not have started, and what did it know at 2.4 s? Elapsed times are planned values from labs/_tools/call_artifacts.py.</p></aside>
 </section>
 
 <section class="slide" id="pass-the-deadline" data-label="Pass it down" data-lo="LO3">
-  <div class="kicker">Lab 2.3 · look at status_by()</div>
+  <div class="kicker">Lab 2.3 · look at run_tool_by()</div>
   <h2>Pass the time left down the chain, and do not start what cannot finish</h2>
   <div class="cols cols-2">
     <pre class="code s" data-file="Passing the deadline down"><code class="language-python">deadline = time.monotonic() + 3.0   # the caller's budget
@@ -332,7 +332,7 @@ llm.complete(msgs, timeout=min(10, left()))</code></pre>
       <div class="stat"><div class="big">0 s</div><div class="lbl">of work after the app has gone</div></div>
     </div>
   </div>
-  <aside class="notes"><p>Each step gets the smaller of its own timeout and the time left; a step that cannot finish is not started, and the rider gets the short delayed reply while the app still listens. Across services, send the time left (not a clock time) with the request, so clock differences do not matter; gRPC's guide describes exactly this, and says the server should stop work once the caller's deadline has passed. A parallel case from the same script: a staff tool gives Wasil 5.0 s for a refund ticket; the model takes 1.2 s and the busy ticket service 2.6 s, so the confirming call that needs 1.6 s would end at 5.4 s. Passed down, it gets the 1.2 s left and stops at 5.0 s. Lab 2.3 shows status_by() waiting only the 0.2 s it is given and refusing to start after the deadline.</p><p>Sources: gRPC deadlines guide.</p></aside>
+  <aside class="notes"><p>Each step gets the smaller of its own timeout and the time left; a step that cannot finish is not started, and the rider gets the short delayed reply while the app still listens. Across services, send the time left (not a clock time) with the request, so clock differences do not matter; gRPC's guide describes exactly this, and says the server should stop work once the caller's deadline has passed. A parallel case from the same script: a staff tool gives Wasil 5.0 s for a refund ticket; the model takes 1.2 s and the busy ticket service 2.6 s, so the confirming call that needs 1.6 s would end at 5.4 s. Passed down, it gets the 1.2 s left and stops at 5.0 s. Lab 2.3 shows run_tool_by() waiting only the 0.2 s it is given and refusing to start after the deadline.</p><p>Sources: gRPC deadlines guide.</p></aside>
 </section>
 
 <section class="slide" id="tool-tests" data-label="Tests" data-lo="LO3">
@@ -352,11 +352,10 @@ llm.complete(msgs, timeout=min(10, left()))</code></pre>
   <h2>A Model Context Protocol server serves tools to any client that speaks it</h2>
   <ul class="bullets">
     <li>An MCP server lists its tools with their schemas; a client discovers them and sends calls.</li>
-    <li>Darb could serve trip-status and tickets once, for Wasil and for staff tools alike.</li>
     <li>Validation and error handling stay exactly where they are: in the server's code.</li>
   </ul>
   <div class="callout note mt"><b>Concept level here.</b> The next course in the track, AE-302, builds an MCP server.</div>
-  <aside class="notes"><p>Keep this to two minutes; the entry asks for MCP at concept level. The protocol changes how definitions are discovered and how calls travel, not what a good tool looks like.</p><p>Sources: Model Context Protocol site.</p></aside>
+  <aside class="notes"><p>Keep this to one minute; the course covers MCP at concept level, and the time goes to the two slides on deadlines. Example: Darb could serve trip-status and tickets once, for Wasil and for staff tools alike. The protocol changes how definitions are discovered and how calls travel, not what a good tool looks like.</p><p>Sources: Model Context Protocol site.</p></aside>
 </section>
 
 <section class="slide" id="checkpoint-3" data-lo="LO3">
